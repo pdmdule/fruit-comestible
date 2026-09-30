@@ -2,7 +2,7 @@
 
 import React from 'react';
 import dynamic from 'next/dynamic';
-import { getProductOrigin } from '@/lib/productOrigins';
+import { getProductOrigin, countryCoords, resolveCountryKey } from '@/lib/productOrigins';
 import {
   Truck,
   Calendar,
@@ -13,6 +13,8 @@ import {
   CheckCircle2,
   Compass,
 } from 'lucide-react';
+
+export { countryCoords, resolveCountryKey };
 
 // Dynamically import the Leaflet map with ssr: false to support client-side rendering
 const OriginMapClient = dynamic(() => import('@/components/OriginMapClient'), {
@@ -32,7 +34,7 @@ const OriginMapClient = dynamic(() => import('@/components/OriginMapClient'), {
 
 interface ProductOriginMapProps {
   slug: string;
-  originCountry?: string;
+  originCountry?: string | null;
   productName: string;
 }
 
@@ -41,10 +43,9 @@ export default function ProductOriginMap({
   originCountry,
   productName,
 }: ProductOriginMapProps) {
-  const origin = getProductOrigin(slug, originCountry);
-  const isSwissOrigin =
-    origin.country.toLowerCase().includes('schweiz') &&
-    !origin.country.toLowerCase().includes('polen');
+  const safeOriginCountry = originCountry?.trim() || 'Schweiz';
+  const origin = getProductOrigin(slug, safeOriginCountry);
+  const isSwissOrigin = resolveCountryKey(origin.country) === 'Schweiz';
 
   return (
     <div className="bg-white border border-stone-200/90 rounded-3xl p-6 sm:p-8 lg:p-10 shadow-sm space-y-8">

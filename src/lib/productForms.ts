@@ -42,7 +42,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       },
       {
         form: 'Granulat',
-        label: 'Knusper-Granulat',
+        label: 'Granulat',
         slug: 'erdbeergranulat',
         aliases: ['erdbeergranulat', 'erdbeer-granulat', 'erdbeeren-granulat'],
         name: 'Erdbeergranulat',
@@ -88,7 +88,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       },
       {
         form: 'Granulat',
-        label: 'Knusper-Granulat',
+        label: 'Granulat',
         slug: 'himbeergranulat',
         aliases: ['himbeergranulat', 'himbeer-granulat', 'himbeeren-granulat'],
         name: 'Himbeergranulat',
@@ -134,7 +134,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       },
       {
         form: 'Granulat',
-        label: 'Knusper-Granulat',
+        label: 'Granulat',
         slug: 'sauerkirschgranulat',
         aliases: ['sauerkirschgranulat', 'sauerkirschen-granulat'],
         name: 'Sauerkirschgranulat',
@@ -213,7 +213,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       },
       {
         form: 'Granulat',
-        label: 'Knusper-Granulat',
+        label: 'Granulat',
         slug: 'aprikosengranulat',
         aliases: ['aprikosengranulat', 'aprikosen-granulat'],
         name: 'Aprikosengranulat',
@@ -259,7 +259,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       },
       {
         form: 'Granulat',
-        label: 'Knusper-Granulat',
+        label: 'Granulat',
         slug: 'zwetschgengranulat',
         aliases: ['zwetschgengranulat', 'zwetschgen-granulat'],
         name: 'Zwetschgengranulat',
@@ -305,7 +305,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       },
       {
         form: 'Granulat',
-        label: 'Knusper-Granulat',
+        label: 'Granulat',
         slug: 'apfelgranulat',
         aliases: ['apfelgranulat', 'apfel-granulat'],
         name: 'Apfelgranulat',
@@ -504,7 +504,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
     forms: [
       {
         form: 'Granulat',
-        label: 'Knusper-Granulat',
+        label: 'Granulat',
         slug: 'ananasgranulat',
         aliases: ['gefriergetrocknete-ananas', 'ananasgranulat'],
         name: 'Gefriergetrocknete Ananas (Granulat)',
@@ -521,7 +521,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
     forms: [
       {
         form: 'Granulat',
-        label: 'Knusper-Granulat',
+        label: 'Granulat',
         slug: 'maracujagranulat',
         aliases: ['gefriergetrocknete-maracuja', 'maracujagranulat'],
         name: 'Gefriergetrocknete Maracuja (Granulat)',

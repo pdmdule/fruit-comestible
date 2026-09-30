@@ -263,11 +263,11 @@ export default function ProductPurchaseSection({
 
       {/* Forms & Size Selection */}
       <div className="space-y-6 pt-2">
-        {/* Cross-linking block: "Verfügbare Formen" */}
+        {/* Cross-linking block: "Form / Konsistenz" */}
         {availableForms && availableForms.length > 1 && (
           <div className="space-y-2.5">
             <div className="flex items-center justify-between text-xs font-semibold tracking-wider uppercase text-stone-500">
-              <span className="text-stone-900 font-bold">Verfügbare Formen:</span>
+              <span className="text-stone-900 font-bold">Form / Konsistenz:</span>
               <span className="text-rose-600 font-bold normal-case">
                 {availableForms.find((f) => f.isActive)?.label || ''}
               </span>
@@ -279,7 +279,7 @@ export default function ProductPurchaseSection({
                   return (
                     <span
                       key={item.form}
-                      className="px-4 py-2.5 rounded-2xl bg-stone-900 text-white font-medium text-sm shadow-xs select-none inline-flex items-center"
+                      className="px-4 py-2.5 rounded-2xl bg-stone-900 text-white font-medium text-sm shadow-xs select-none inline-flex items-center cursor-default"
                     >
                       {item.label}
                     </span>
@@ -289,7 +289,7 @@ export default function ProductPurchaseSection({
                   <Link
                     key={item.form}
                     href={item.href}
-                    className="px-4 py-2.5 rounded-2xl border border-stone-200 bg-white text-stone-700 hover:border-stone-400 hover:bg-stone-50 font-medium text-sm transition-all duration-200 inline-flex items-center"
+                    className="px-4 py-2.5 rounded-2xl border border-stone-200 bg-white text-stone-700 hover:border-stone-900 hover:text-stone-900 hover:bg-stone-50 font-medium text-sm transition-all duration-200 inline-flex items-center cursor-pointer"
                   >
                     {item.label}
                   </Link>
@@ -299,17 +299,20 @@ export default function ProductPurchaseSection({
           </div>
         )}
 
-        {/* Size / Weight Selection */}
+        {/* Size / Weight Selection: "Grösse / Packung" */}
         <div className="space-y-2.5">
           <div className="flex items-center justify-between text-xs font-semibold tracking-wider uppercase text-stone-500">
-            <span className="text-stone-900 font-bold">Packungsgrösse:</span>
+            <span className="text-stone-900 font-bold">Grösse / Packung:</span>
             <span className="text-stone-700 font-medium normal-case">
               {currentVariant?.label_de || (currentVariant?.weight_grams ? `${currentVariant.weight_grams}g` : '')}
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            {variants.map((v) => {
+            {variants
+              .filter((v) => v.weight_grams === 100 || v.weight_grams === 200 || !v.weight_grams)
+              .sort((a, b) => (a.weight_grams || 0) - (b.weight_grams || 0))
+              .map((v) => {
               const isSelected = v.id === currentVariant?.id;
               const isVariantOutOfStock = (v.stock_quantity ?? 0) <= 0;
               const weightLabel = v.label_de || (v.weight_grams ? `${v.weight_grams}g` : 'Standard');

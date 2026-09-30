@@ -38,6 +38,8 @@ interface ProductRecord {
   origin_country?: string;
   ingredients_de?: string;
   images?: string[];
+  form?: string;
+  category?: string;
   macro_distribution?: MacroItem[];
   faq?: FaqItem[];
   product_variants?: ProductVariant[];
@@ -46,18 +48,17 @@ interface ProductRecord {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const familyInfo = getFruitFamilyInfo(slug);
-  const targetSlug = familyInfo?.dbSlugToFetch || slug;
 
   let { data: product } = await supabase
     .from('products')
-    .select('name_de, subtitle_de, description_de')
+    .select('name_de, subtitle_de, description_de, form, images, product_variants(*)')
     .eq('slug', slug)
     .maybeSingle();
 
   if (!product && familyInfo?.dbSlugToFetch) {
     const fallback = await supabase
       .from('products')
-      .select('name_de, subtitle_de, description_de')
+      .select('name_de, subtitle_de, description_de, form, images, product_variants(*)')
       .eq('slug', familyInfo.dbSlugToFetch)
       .maybeSingle();
     product = fallback.data;
@@ -65,19 +66,77 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!product && !familyInfo) {
     return {
-      title: 'Produkt nicht gefunden | fruit-Comestible Schweiz',
+      title: 'Produkt nicht gefunden | fruit-Comestible',
     };
   }
 
-  const productName = familyInfo?.activeForm?.name || product?.name_de || 'Produkt';
-  const productDesc =
-    familyInfo?.activeForm?.subtitle ||
-    product?.subtitle_de ||
-    (product?.description_de ? product.description_de.slice(0, 155) : '');
+  // Determine fruit name (prioritize DB name_de, e.g. "Gefriergetrocknetes Erdbeerpulver")
+  let productName = product?.name_de || familyInfo?.activeForm?.name || 'Gefriergetrocknete Früchte';
+  if (!productName.toLowerCase().startsWith('gefriergetrocknet')) {
+    productName = `Gefriergetrocknetes ${productName}`;
+  }
+
+  // Weight packaging string from variants (e.g. "100g / 200g")
+  const variants = (product?.product_variants || []).filter(
+    (v: any) => v.weight_grams === 100 || v.weight_grams === 200
+  );
+  const weights = Array.from(new Set(variants.map((v: any) => v.weight_grams))).sort(
+    (a: any, b: any) => a - b
+  );
+  const weightString = weights.length > 0 ? weights.map((w) => `${w}g`).join(' / ') : '100g / 200g';
+
+  // Target SEO Title: e.g. "Gefriergetrocknetes Erdbeerpulver 100g / 200g kaufen | fruit-Comestible"
+  const metaTitle = `${productName} ${weightString} kaufen | fruit-Comestible`;
+
+  // Specific Description tailored to the form
+  const formType = product?.form || familyInfo?.activeForm?.form;
+  let metaDescription = '';
+
+  if (formType === 'Pulver' || slug.includes('pulver')) {
+    metaDescription = `100% reines ${productName} ohne jegliche Zusatzstoffe oder Zuckerzusatz. Reich an natürlichen Vitaminen – ideal für Smoothies, Shakes, Müsli-Bowls und feine Backkreationen. Jetzt in ${weightString} online bestellen.`;
+  } else if (formType === 'Granulat' || slug.includes('granulat')) {
+    metaDescription = `Herrlich knuspriges ${productName} aus schonend gefriergetrockneten Früchten. Der aromatische Knusper-Crunch für dein tägliches Müsli, Porridge & Desserts. Jetzt in ${weightString} probieren.`;
+  } else {
+    metaDescription = `${productName} in kompromissloser Schweizer Spitzenqualität. Schonend gefriergetrocknet, intensiv im Geschmack und reich an Vitaminen. Erhältlich in ${weightString}. Schneller Schweizer Post Versand.`;
+  }
+
+  if (product?.subtitle_de && !metaDescription) {
+    metaDescription = product.subtitle_de;
+  }
+
+  const canonicalUrl = `https://fruit-comestible.ch/produkte/${slug}`;
+  const ogImage =
+    product?.images?.[0] ||
+    'https://images.unsplash.com/photo-1543528176-61b239494933?q=80&w=1200&auto=format&fit=crop';
 
   return {
-    title: `${productName} kaufen | fruit-Comestible Schweiz`,
-    description: productDesc,
+    title: metaTitle,
+    description: metaDescription,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: metaTitle,
+      description: metaDescription,
+      url: canonicalUrl,
+      siteName: 'fruit-Comestible Schweiz',
+      locale: 'de_CH',
+      type: 'website',
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 800,
+          alt: metaTitle,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: metaTitle,
+      description: metaDescription,
+      images: [ogImage],
+    },
   };
 }
 
@@ -106,15 +165,32 @@ export default async function ProductDetailPage({ params }: PageProps) {
   }
 
   const rawProduct = data as ProductRecord;
-  let variants = rawProduct.product_variants || [];
 
-  let displayName = rawProduct.name_de;
-  let displaySubtitle = rawProduct.subtitle_de;
+  // Sibling forms cross-linking:
+  let availableForms = familyInfo?.siblingLinks
+    ? familyInfo.siblingLinks.map((link) => ({
+        ...link,
+        label: link.form === 'Granulat' ? 'Granulat' : link.label,
+        isActive: Boolean(
+          link.href === `/produkte/${slug}` ||
+            (rawProduct.form &&
+              link.form.toLowerCase() === rawProduct.form.toLowerCase())
+        ),
+      }))
+    : [];
 
-  if (familyInfo) {
-    displayName = familyInfo.activeForm.name;
-    displaySubtitle = familyInfo.activeForm.subtitle || rawProduct.subtitle_de;
+  // Weight variants: 100g and 200g
+  let variants = (rawProduct.product_variants || []).slice();
 
+  // If variants have multiple forms from legacy db rows, filter only those matching this product's form
+  if (rawProduct.form) {
+    const matched = variants.filter(
+      (v) => !v.form_de || v.form_de.toLowerCase() === rawProduct.form?.toLowerCase()
+    );
+    if (matched.length > 0) {
+      variants = matched;
+    }
+  } else if (familyInfo) {
     const formMatched = variants.filter((v) =>
       familyInfo.activeForm.variantMatch(v.form_de, v.label_de)
     );
@@ -123,10 +199,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
     }
   }
 
+  // Sort weight variants: 100g first, then 200g
+  variants.sort((a, b) => (a.weight_grams || 0) - (b.weight_grams || 0));
+
   const product = {
     ...rawProduct,
-    name_de: displayName,
-    subtitle_de: displaySubtitle,
+    name_de: rawProduct.name_de || familyInfo?.activeForm.name || 'Gefriergetrocknete Früchte',
+    subtitle_de: rawProduct.subtitle_de || familyInfo?.activeForm.subtitle || '',
   };
 
   const primaryImage = product.images?.[0];
@@ -264,7 +343,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               productName={product.name_de}
               productId={product.id}
               image={primaryImage}
-              availableForms={familyInfo?.siblingLinks || []}
+              availableForms={availableForms}
             />
           </div>
         </div>
@@ -314,7 +393,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
           <ProductOriginMap
             slug={product.slug}
-            originCountry={product.origin_country}
+            originCountry={product.origin_country || 'Schweiz'}
             productName={product.name_de}
           />
         </section>

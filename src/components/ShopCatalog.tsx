@@ -10,6 +10,7 @@ import {
   RotateCcw,
   Sparkles,
   PackageSearch,
+  ChevronDown,
 } from 'lucide-react';
 import { expandProductsForCatalog } from '@/lib/productForms';
 import { SHOP_NAV_TABS, getCategoryConfig } from '@/lib/categoryConfig';
@@ -39,10 +40,71 @@ export interface ProductItem {
   product_variants?: ProductVariant[];
 }
 
-const SORT_OPTIONS = [
+export const SORT_OPTIONS = [
   { id: 'bestseller', label: 'Bestseller' },
   { id: 'price_asc', label: 'Preis aufsteigend' },
   { id: 'price_desc', label: 'Preis absteigend' },
+];
+
+export interface FruitFilterOption {
+  id: string;
+  label: string;
+  emoji: string;
+  matches: (product: ProductItem) => boolean;
+}
+
+export const FRUIT_FILTER_OPTIONS: FruitFilterOption[] = [
+  {
+    id: 'all',
+    label: 'Alle Früchte',
+    emoji: '🍓',
+    matches: () => true,
+  },
+  {
+    id: 'erdbeeren',
+    label: 'Erdbeeren',
+    emoji: '🍓',
+    matches: (p) => {
+      const text = `${p.slug} ${p.name_de}`.toLowerCase();
+      return text.includes('erdbeer');
+    },
+  },
+  {
+    id: 'himbeeren',
+    label: 'Himbeeren',
+    emoji: '🫐',
+    matches: (p) => {
+      const text = `${p.slug} ${p.name_de}`.toLowerCase();
+      return text.includes('himbeer');
+    },
+  },
+  {
+    id: 'blaubeeren',
+    label: 'Blaubeeren',
+    emoji: '🫐',
+    matches: (p) => {
+      const text = `${p.slug} ${p.name_de}`.toLowerCase();
+      return text.includes('blaubeer') || text.includes('heidelbeer');
+    },
+  },
+  {
+    id: 'zwetschgen',
+    label: 'Zwetschgen',
+    emoji: '🍑',
+    matches: (p) => {
+      const text = `${p.slug} ${p.name_de}`.toLowerCase();
+      return text.includes('zwetschg') || text.includes('zwetschge') || text.includes('pflaume');
+    },
+  },
+  {
+    id: 'mango',
+    label: 'Mango',
+    emoji: '🥭',
+    matches: (p) => {
+      const text = `${p.slug} ${p.name_de}`.toLowerCase();
+      return text.includes('mango');
+    },
+  },
 ];
 
 export interface ShopCatalogProps {
@@ -67,12 +129,23 @@ export default function ShopCatalog({
     return 'bestseller';
   }, [searchParams]);
 
+  const initialFruit = useMemo(() => {
+    const raw = searchParams.get('frucht')?.toLowerCase() || 'all';
+    if (FRUIT_FILTER_OPTIONS.some((f) => f.id === raw)) return raw;
+    return 'all';
+  }, [searchParams]);
+
   const searchQuery = searchParams.get('q')?.trim() || '';
   const [selectedSort, setSelectedSort] = useState(initialSort);
+  const [selectedFruit, setSelectedFruit] = useState(initialFruit);
 
   useEffect(() => {
     setSelectedSort(initialSort);
   }, [initialSort]);
+
+  useEffect(() => {
+    setSelectedFruit(initialFruit);
+  }, [initialFruit]);
 
   const updateSortParams = (newSort: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -89,19 +162,55 @@ export default function ShopCatalog({
     });
   };
 
+  const updateFruitParams = (newFruit: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (newFruit === 'all') {
+      params.delete('frucht');
+    } else {
+      params.set('frucht', newFruit);
+    }
+    const queryString = params.toString();
+    startTransition(() => {
+      router.replace(queryString ? `${pathname}?${queryString}` : pathname, {
+        scroll: false,
+      });
+    });
+  };
+
   const handleSortChange = (sortId: string) => {
     setSelectedSort(sortId);
     updateSortParams(sortId);
   };
 
+  const handleFruitChange = (fruitId: string) => {
+    setSelectedFruit(fruitId);
+    updateFruitParams(fruitId);
+  };
+
   const handleResetFilters = () => {
     setSelectedSort('bestseller');
+    setSelectedFruit('all');
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('sort');
+    params.delete('frucht');
+    params.delete('q');
+    const queryString = params.toString();
     startTransition(() => {
-      router.replace(pathname, { scroll: false });
+      router.replace(queryString ? `${pathname}?${queryString}` : pathname, {
+        scroll: false,
+      });
     });
   };
 
-  const isFiltered = selectedSort !== 'bestseller' || Boolean(searchQuery);
+  const isFiltered =
+    selectedSort !== 'bestseller' ||
+    selectedFruit !== 'all' ||
+    Boolean(searchQuery);
+
+  const isCountFiltered =
+    currentCategorySlug !== 'all' ||
+    selectedFruit !== 'all' ||
+    Boolean(searchQuery);
 
   const catalogProducts = useMemo(() => {
     return expandProductsForCatalog(products) as ProductItem[];
@@ -109,6 +218,10 @@ export default function ShopCatalog({
 
   // Filter & Sort Products
   const filteredProducts = useMemo(() => {
+    const activeFruitOption =
+      FRUIT_FILTER_OPTIONS.find((f) => f.id === selectedFruit) ||
+      FRUIT_FILTER_OPTIONS[0];
+
     return catalogProducts
       .filter((p) => {
         // 1. Text Search Filter (q)
@@ -125,8 +238,13 @@ export default function ShopCatalog({
         if (currentCategorySlug !== 'all') {
           const catConfig = getCategoryConfig(currentCategorySlug);
           if (catConfig) {
-            return catConfig.matches(p);
+            if (!catConfig.matches(p)) return false;
           }
+        }
+
+        // 3. Active Fruit Filter
+        if (selectedFruit !== 'all') {
+          if (!activeFruitOption.matches(p)) return false;
         }
 
         return true;
@@ -153,7 +271,7 @@ export default function ShopCatalog({
         if (!a.is_featured && b.is_featured) return 1;
         return 0;
       });
-  }, [catalogProducts, searchQuery, currentCategorySlug, selectedSort]);
+  }, [catalogProducts, searchQuery, currentCategorySlug, selectedFruit, selectedSort]);
 
   return (
     <div className="space-y-8">
@@ -177,37 +295,81 @@ export default function ShopCatalog({
         </div>
       )}
 
-      {/* 2. Horizontal Category Navigation Tabs Bar (Direct Static URLs for SEO) */}
-      <div className="relative">
-        <div
-          className="flex items-center gap-2 overflow-x-auto no-scrollbar flex-nowrap pb-2"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
-          {SHOP_NAV_TABS.map((tab) => {
-            const isActive = currentCategorySlug === tab.slug;
+      {/* 2. Horizontal Category Navigation Tabs Bar + Fruit Filter Chips */}
+      <div className="space-y-3">
+        <div className="relative">
+          <div
+            className="flex items-center gap-2 overflow-x-auto no-scrollbar flex-nowrap pb-1"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {SHOP_NAV_TABS.map((tab) => {
+              const isActive = currentCategorySlug === tab.slug;
+              const targetHref =
+                selectedFruit !== 'all'
+                  ? `${tab.href}?frucht=${selectedFruit}`
+                  : tab.href;
+
+              return (
+                <Link
+                  key={tab.id}
+                  href={targetHref}
+                  className={`px-5 py-2.5 rounded-full text-xs font-medium shrink-0 transition-colors duration-150 inline-flex items-center ${
+                    isActive
+                      ? 'bg-stone-900 text-white font-medium shadow-sm'
+                      : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                  }`}
+                >
+                  {tab.label}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Horizontal Fruit Filter Chips */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar flex-nowrap py-1">
+          <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider shrink-0 mr-1 hidden sm:inline">
+            Frucht:
+          </span>
+          {FRUIT_FILTER_OPTIONS.map((fruit) => {
+            const isFruitActive = selectedFruit === fruit.id;
             return (
-              <Link
-                key={tab.id}
-                href={tab.href}
-                className={`px-5 py-2.5 rounded-full text-xs font-medium shrink-0 transition-colors duration-150 inline-flex items-center ${
-                  isActive
-                    ? 'bg-stone-900 text-white font-medium shadow-sm'
-                    : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+              <button
+                key={fruit.id}
+                type="button"
+                onClick={() => handleFruitChange(fruit.id)}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-medium shrink-0 transition-all duration-150 inline-flex items-center gap-1.5 cursor-pointer border ${
+                  isFruitActive
+                    ? 'bg-rose-50 border-rose-300 text-rose-800 font-semibold shadow-2xs'
+                    : 'bg-white border-stone-200/90 text-stone-700 hover:border-stone-300 hover:bg-stone-50'
                 }`}
               >
-                {tab.label}
-              </Link>
+                <span>{fruit.emoji}</span>
+                <span>{fruit.label}</span>
+                {isFruitActive && fruit.id !== 'all' && (
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleFruitChange('all');
+                    }}
+                    className="ml-0.5 hover:text-rose-950 font-bold"
+                    title="Filter aufheben"
+                  >
+                    ×
+                  </span>
+                )}
+              </button>
             );
           })}
         </div>
       </div>
 
-      {/* 3. Controls Bar: Counter (Left) + Sorting (Right) */}
+      {/* 3. Controls Bar: Counter (Left) + Fruit & Sorting Selectors (Right) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-3.5 border-y border-stone-200/80 bg-stone-50/50 rounded-2xl px-4 sm:px-5">
-        {/* Left: Product Counter */}
-        <div className="flex items-center gap-3">
+        {/* Left: Product Counter & Active Badge */}
+        <div className="flex items-center gap-3 flex-wrap">
           <p className="text-xs sm:text-sm text-stone-600">
-            {currentCategorySlug === 'all' && !searchQuery ? (
+            {!isCountFiltered ? (
               <>
                 Zeigt alle{' '}
                 <span className="font-bold text-stone-900">
@@ -230,6 +392,20 @@ export default function ShopCatalog({
             )}
           </p>
 
+          {selectedFruit !== 'all' && (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 border border-rose-200">
+              <span>{FRUIT_FILTER_OPTIONS.find((f) => f.id === selectedFruit)?.label}</span>
+              <button
+                type="button"
+                onClick={() => handleFruitChange('all')}
+                className="hover:text-rose-950 font-bold leading-none cursor-pointer"
+                title="Fruchtfilter entfernen"
+              >
+                ×
+              </button>
+            </span>
+          )}
+
           {isFiltered && (
             <button
               type="button"
@@ -242,26 +418,53 @@ export default function ShopCatalog({
           )}
         </div>
 
-        {/* Right: Sorting Dropdown only */}
-        <div className="flex items-center gap-1.5 self-end sm:self-auto">
-          <span className="text-xs font-medium text-stone-500 hidden sm:inline">
-            Sortierung:
-          </span>
-          <div className="relative">
-            <select
-              value={selectedSort}
-              onChange={(e) => handleSortChange(e.target.value)}
-              aria-label="Produktsortierung"
-              className="text-xs font-semibold py-2 pl-3 pr-8 rounded-xl border border-stone-200 bg-white text-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-900/10 focus:border-stone-900 shadow-2xs appearance-none cursor-pointer"
-            >
-              {SORT_OPTIONS.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-stone-400">
-              <ArrowUpDown className="w-3.5 h-3.5" />
+        {/* Right: Fruit Dropdown + Sorting Dropdown */}
+        <div className="flex items-center gap-2.5 self-end sm:self-auto flex-wrap">
+          {/* Fruit Dropdown */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-medium text-stone-500 hidden md:inline">
+              Frucht:
+            </span>
+            <div className="relative">
+              <select
+                value={selectedFruit}
+                onChange={(e) => handleFruitChange(e.target.value)}
+                aria-label="Fruchtfilter"
+                className="text-xs font-semibold py-2 pl-3 pr-7 rounded-xl border border-stone-200 bg-white text-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-900/10 focus:border-stone-900 shadow-2xs appearance-none cursor-pointer"
+              >
+                {FRUIT_FILTER_OPTIONS.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.label}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-stone-400">
+                <ChevronDown className="w-3.5 h-3.5" />
+              </div>
+            </div>
+          </div>
+
+          {/* Sorting Dropdown */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-medium text-stone-500 hidden md:inline">
+              Sortierung:
+            </span>
+            <div className="relative">
+              <select
+                value={selectedSort}
+                onChange={(e) => handleSortChange(e.target.value)}
+                aria-label="Produktsortierung"
+                className="text-xs font-semibold py-2 pl-3 pr-8 rounded-xl border border-stone-200 bg-white text-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-900/10 focus:border-stone-900 shadow-2xs appearance-none cursor-pointer"
+              >
+                {SORT_OPTIONS.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-stone-400">
+                <ArrowUpDown className="w-3.5 h-3.5" />
+              </div>
             </div>
           </div>
         </div>
@@ -275,10 +478,10 @@ export default function ShopCatalog({
           </div>
           <div className="space-y-1.5">
             <h3 className="text-lg font-bold text-stone-900">
-              Keine Produkte in dieser Kategorie gefunden
+              Keine Produkte gefunden
             </h3>
             <p className="text-xs sm:text-sm text-stone-500 max-w-md mx-auto leading-relaxed">
-              Für die gewählte Kategorie gibt es aktuell keine passenden Früchte.
+              Für die gewählte Kombination aus Kategorie und Fruchtart gibt es aktuell keine passenden Früchte.
             </p>
           </div>
           <div className="pt-2">

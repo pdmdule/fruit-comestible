@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { MapPin, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 interface ProductImageGalleryProps {
   images?: string[];
@@ -10,27 +10,28 @@ interface ProductImageGalleryProps {
   originCountry?: string;
 }
 
-// Fallback high-quality curated images for freeze-dried strawberries if single image provided
-const COMPLEMENTARY_IMAGES = [
-  'https://images.unsplash.com/photo-1543528176-61b239494933?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1518635017498-87f514b751ba?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?q=80&w=1200&auto=format&fit=crop',
-];
-
 export default function ProductImageGallery({
   images,
   title,
   originCountry,
 }: ProductImageGalleryProps) {
-  // If array has at least 2 images, use them; otherwise complement with close-ups
+  // Prikazuj isključivo slike iz trenutno učitanog proizvoda (product.images)
+  const validImages = Array.isArray(images)
+    ? images.filter((img): img is string => Boolean(img && typeof img === 'string' && img.trim()))
+    : [];
+
   const galleryImages =
-    images && images.length > 1
-      ? images
-      : images && images.length === 1
-      ? [images[0], ...COMPLEMENTARY_IMAGES.slice(1)]
-      : COMPLEMENTARY_IMAGES;
+    validImages.length > 0
+      ? validImages
+      : ['https://images.unsplash.com/photo-1543528176-61b239494933?q=80&w=1200&auto=format&fit=crop'];
 
   const [activeIndex, setActiveIndex] = useState(0);
+
+  // Automatski resetuj na prvu sliku ako se promene slike (npr. pri prelasku na drugi oblik voća)
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [images]);
+
   const currentImage = galleryImages[activeIndex] || galleryImages[0];
 
   return (
@@ -60,7 +61,7 @@ export default function ProductImageGallery({
         </div>
       </div>
 
-      {/* Thumbnail Switcher */}
+      {/* Thumbnail Switcher - prikazuje se isključivo ako proizvod ima 2 ili više slika */}
       {galleryImages.length > 1 && (
         <div className="flex items-center gap-3 overflow-x-auto pb-1 pt-1">
           {galleryImages.map((img, idx) => {
@@ -71,10 +72,10 @@ export default function ProductImageGallery({
                 type="button"
                 onClick={() => setActiveIndex(idx)}
                 aria-label={`Bild ${idx + 1} auswählen`}
-                className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 transition-all duration-200 bg-stone-100 ${
+                className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 transition-all duration-200 bg-stone-100 cursor-pointer ${
                   isSelected
-                    ? 'ring-2 ring-rose-600 ring-offset-2 border-transparent scale-102 shadow-xs'
-                    : 'border border-stone-200 opacity-60 hover:opacity-100 hover:border-stone-300'
+                    ? 'ring-2 ring-stone-900 ring-offset-2 border-transparent scale-102 shadow-xs'
+                    : 'border border-stone-200 opacity-60 hover:opacity-100 hover:border-stone-400'
                 }`}
               >
                 <Image

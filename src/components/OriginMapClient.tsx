@@ -29,9 +29,10 @@ export default function OriginMapClient({
 
   const swissGps: [number, number] = [47.3769, 8.5417];
 
-  // Initialize Leaflet Map on mount
+  // Initialize Leaflet Map on mount or origin update
   useEffect(() => {
     let isMounted = true;
+    let resizeObserver: ResizeObserver | null = null;
 
     async function initMap() {
       if (typeof window === 'undefined' || !mapContainerRef.current) return;
@@ -44,11 +45,14 @@ export default function OriginMapClient({
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }
+      if (mapContainerRef.current && (mapContainerRef.current as any)._leaflet_id) {
+        delete (mapContainerRef.current as any)._leaflet_id;
+      }
 
-      // Initialize Leaflet map
+      // Initialize Leaflet map centered directly on currently loaded product's origin country
       const map = L.map(mapContainerRef.current, {
         center: origin.gps,
-        zoom: origin.zoomLevel || 8,
+        zoom: origin.zoomLevel || 7,
         scrollWheelZoom: false, // Prevent accidental scrolling when page scrolls
         zoomControl: false, // We render custom modern zoom controls
       });
@@ -106,7 +110,11 @@ export default function OriginMapClient({
         )
         .openPopup();
 
-      // Destination in Switzerland & Transport Polyline
+      // Ensure view is explicitly centered and zoomed on currently loaded product's country
+      map.setView(origin.gps, origin.zoomLevel || 7);
+      setActiveView('origin');
+
+      // Destination in Switzerland & Transport Polyline (ready for route inspection)
       if (!isSwissOrigin) {
         const swissIcon = L.divIcon({
           className: 'swiss-marker-container',
@@ -137,13 +145,28 @@ export default function OriginMapClient({
           dashArray: '6, 8',
           opacity: 0.85,
         }).addTo(map);
+      }
 
-        // Fit bounds gracefully between origin and destination
-        const bounds = L.latLngBounds([origin.gps, swissGps]);
-        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 7 });
-        setActiveView('route');
-      } else {
-        setActiveView('origin');
+      // Invalidate map size after rendering to prevent grey tiles or misalignments
+      setTimeout(() => {
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.invalidateSize();
+        }
+      }, 100);
+      setTimeout(() => {
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.invalidateSize();
+        }
+      }, 400);
+
+      // Observe container resize
+      if (typeof ResizeObserver !== 'undefined' && mapContainerRef.current) {
+        resizeObserver = new ResizeObserver(() => {
+          if (mapInstanceRef.current) {
+            mapInstanceRef.current.invalidateSize();
+          }
+        });
+        resizeObserver.observe(mapContainerRef.current);
       }
     }
 
@@ -151,6 +174,9 @@ export default function OriginMapClient({
 
     return () => {
       isMounted = false;
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
@@ -242,7 +268,7 @@ export default function OriginMapClient({
             }`}
           >
             <span>{origin.flag}</span>
-            <span>{origin.region.split('/')[0].trim()}</span>
+            <span>{origin.country}</span>
           </button>
 
           {!isSwissOrigin && (

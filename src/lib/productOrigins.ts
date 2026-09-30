@@ -461,27 +461,202 @@ export const PRODUCT_ORIGINS: Record<string, ProductOriginInfo> = {
   },
 };
 
-// Fallback helper for any slug
-export function getProductOrigin(slug: string, fallbackCountry?: string): ProductOriginInfo {
-  if (PRODUCT_ORIGINS[slug]) {
-    return PRODUCT_ORIGINS[slug];
+export const countryCoords: Record<string, { lat: number; lng: number; code: string; label: string }> = {
+  'Schweiz': { lat: 46.8182, lng: 8.2275, code: 'CH', label: 'Schweiz' },
+  'Peru': { lat: -9.19, lng: -75.0152, code: 'PE', label: 'Peru' },
+  'Ecuador': { lat: -1.8312, lng: -78.1834, code: 'EC', label: 'Ecuador' },
+  'Spanien': { lat: 40.4637, lng: -3.7492, code: 'ES', label: 'Spanien' },
+  'Costa Rica': { lat: 9.7489, lng: -83.7534, code: 'CR', label: 'Costa Rica' },
+};
+
+export interface CountryProfileData {
+  lat: number;
+  lng: number;
+  code: string;
+  label: string;
+  flag: string;
+  zoomLevel: number;
+  region: string;
+  harvestMethod: string;
+  harvestSeason: string;
+  transportMethod: string;
+  climateInfo: string;
+  funFacts: string[];
+}
+
+export const COUNTRY_PROFILES: Record<string, CountryProfileData> = {
+  'Schweiz': {
+    lat: 46.8182,
+    lng: 8.2275,
+    code: 'CH',
+    label: 'Schweiz',
+    flag: '🇨🇭',
+    zoomLevel: 8,
+    region: 'Ostschweiz / Thurgau & Wallis',
+    harvestMethod: 'Schonende Handernte bei voller Reife',
+    harvestSeason: 'Mai bis Oktober',
+    transportMethod: 'Regionaler Schweizer Kurzstrecken-Transport (< 100 km)',
+    climateInfo: 'Sonnige Schweizer Hanglagen und alpines Mikroklima mit fruchtbaren Moränenböden.',
+    funFacts: [
+      '100% naturbelassene Schweizer Früchte aus kontrolliertem regionalem Anbau.',
+      'Innerhalb kürzester Zeit nach der Ernte schonend schockgefrostet und im Hochvakuum veredelt.',
+      'Frei von jeglichem raffinierten Zucker, Schwefelung oder künstlichen Zusatzstoffen.',
+    ],
+  },
+  'Peru': {
+    lat: -9.19,
+    lng: -75.0152,
+    code: 'PE',
+    label: 'Peru',
+    flag: '🇵🇪',
+    zoomLevel: 6,
+    region: 'Piura & Lambayeque',
+    harvestMethod: 'Baumgereifte Selektivlese von Hand',
+    harvestSeason: 'Dezember bis März',
+    transportMethod: 'Klimakompensierte Frischelogistik direkt aus der Erzeugerregion',
+    climateInfo: 'Tropisch-trockenes Küstenklima im Norden Perus mit intensiver Äquatorsonne für maximalen Fruchtgeschmack.',
+    funFacts: [
+      'Peruanische Mangos gelten weltweit als besonders aromatisch, saftig und faserarm.',
+      'Durch die Gefriertrocknung im Ursprungsland bleibt das volle tropische Aroma ohne Zusatzstoffe erhalten.',
+      'Reich an wertvollem Vitamin A, Vitamin C und natürlichen sekundären Pflanzenstoffen.',
+    ],
+  },
+  'Ecuador': {
+    lat: -1.8312,
+    lng: -78.1834,
+    code: 'EC',
+    label: 'Ecuador',
+    flag: '🇪🇨',
+    zoomLevel: 7,
+    region: 'Guayas & Los Ríos',
+    harvestMethod: 'Nachhaltige Kleinbauern-Ernte von Hand',
+    harvestSeason: 'Ganzjährig sonnengereift',
+    transportMethod: 'Zertifizierter, klimabewusster Seetransport',
+    climateInfo: 'Mineralreiche vulkanische Schwemmlandböden und ganzjährig äquatoriales Tropenklima.',
+    funFacts: [
+      'Ecuador ist weltberühmt für aromatischste Baby-Bananen und Passionsfrüchte mit natürlicher Süsse.',
+      '100% sortenrein gefriertrocknet ohne Frittieren, ohne Palmöl und ohne jegliche Konservierungsstoffe.',
+      'Hervorragender natürlicher Lieferant für Kalium, Magnesium und Vitamin B6.',
+    ],
+  },
+  'Spanien': {
+    lat: 40.4637,
+    lng: -3.7492,
+    code: 'ES',
+    label: 'Spanien',
+    flag: '🇪🇸',
+    zoomLevel: 6,
+    region: 'Valencia & Murcia',
+    harvestMethod: 'Traditionelle Handsammlung bei voller Fruchtreife',
+    harvestSeason: 'November bis Mai',
+    transportMethod: 'Direkter europäischer Landtransport',
+    climateInfo: 'Mediterranes Sonnenklima mit über 300 Sonnentagen pro Jahr an der spanischen Mittelmeerküste.',
+    funFacts: [
+      'Die sonnigen Haine Valencias zählen zum traditionsreichsten Zitrusanbaugebiet Europas.',
+      'Reich an ätherischen Ölen und natürlichem Vitamin C in Schale und Fruchtfleisch.',
+      'Schonend vermahlen zu naturreinem Fruchtpulver für Dressings, Shakes und Backkreationen.',
+    ],
+  },
+  'Costa Rica': {
+    lat: 9.7489,
+    lng: -83.7534,
+    code: 'CR',
+    label: 'Costa Rica',
+    flag: '🇨🇷',
+    zoomLevel: 7,
+    region: 'San Carlos & Alajuela',
+    harvestMethod: 'Selektive Ernte von Hand bei goldgelber Vollreife',
+    harvestSeason: 'Ganzjährig',
+    transportMethod: 'Klimazertifizierter Übersee-Frischetransport',
+    climateInfo: 'Tropisches Klima mit mineralreichen Vulkanböden rund um den Arenal.',
+    funFacts: [
+      'Costa-ricanische Ananas zeichnet sich durch feine Säure und maximale natürliche Fruchtsüsse aus.',
+      'Enthält das natürliche Enzym Bromelain sowie wertvolle Vitalstoffe.',
+      'Knuspriges Granulat veredelt Porridge, Bowls und Desserts mit exotischer Frische.',
+    ],
+  },
+};
+
+/**
+ * Resolves any raw country string or ISO code (CH, PE, EC, ES, CR)
+ * to a canonical countryCoords key. Falls back to 'Schweiz'.
+ */
+export function resolveCountryKey(rawCountry?: string | null): string {
+  if (!rawCountry || !rawCountry.trim()) {
+    return 'Schweiz';
+  }
+  const clean = rawCountry.trim();
+  if (countryCoords[clean]) {
+    return clean;
+  }
+  const upper = clean.toUpperCase();
+  if (upper === 'CH') return 'Schweiz';
+  if (upper === 'PE') return 'Peru';
+  if (upper === 'EC') return 'Ecuador';
+  if (upper === 'ES') return 'Spanien';
+  if (upper === 'CR') return 'Costa Rica';
+
+  const lower = clean.toLowerCase();
+  if (lower.includes('schweiz') || lower.includes('swiss') || lower.includes('switzerland')) {
+    return 'Schweiz';
+  }
+  if (lower.includes('peru')) {
+    return 'Peru';
+  }
+  if (lower.includes('ecuador')) {
+    return 'Ecuador';
+  }
+  if (lower.includes('spanien') || lower.includes('spain')) {
+    return 'Spanien';
+  }
+  if (lower.includes('costa rica')) {
+    return 'Costa Rica';
   }
 
-  const isSwiss = (fallbackCountry || '').toLowerCase().includes('schweiz') || slug.includes('schweiz');
+  // Default fallback is always Schweiz
+  return 'Schweiz';
+}
+
+// Fallback helper for any slug & country
+export function getProductOrigin(slug: string, fallbackCountry?: string | null): ProductOriginInfo {
+  const countryKey = resolveCountryKey(fallbackCountry);
+  const countryProfile = COUNTRY_PROFILES[countryKey] || COUNTRY_PROFILES['Schweiz'];
+
+  // Check if we have an explicit match in PRODUCT_ORIGINS
+  if (PRODUCT_ORIGINS[slug]) {
+    const direct = PRODUCT_ORIGINS[slug];
+    const directCountryKey = resolveCountryKey(direct.country);
+    // If the direct entry matches the product's origin country, use its specific regional coordinates
+    if (!fallbackCountry || directCountryKey === countryKey) {
+      return direct;
+    }
+  }
+
+  // Check related base slug for Swiss berries and fruits
+  if (countryKey === 'Schweiz') {
+    for (const [key, info] of Object.entries(PRODUCT_ORIGINS)) {
+      const baseName = key.replace('gefriergetrocknete-', '').replace('gefriergetrockneter-', '');
+      if (slug.includes(baseName) || baseName.includes(slug)) {
+        if (resolveCountryKey(info.country) === 'Schweiz') {
+          return info;
+        }
+      }
+    }
+  }
+
+  // Return the targeted country profile with accurate countryCoords
+  const coords = countryCoords[countryKey] || countryCoords['Schweiz'];
   return {
-    country: fallbackCountry || 'Schweiz',
-    flag: isSwiss ? '🇨🇭' : '🌿',
-    region: isSwiss ? 'Ostschweiz / Thurgau' : 'Europäischer Qualitätsanbau',
-    harvestMethod: 'Schonende Handernte bei voller Reife',
-    harvestSeason: 'Sommer- & Herbsternten',
-    transportMethod: 'Zertifizierter Schweizer Transport',
-    climateInfo: 'Optimale Lagen mit fruchtbaren Böden und viel natürlicher Sonneneinstrahlung.',
-    gps: [47.5584, 9.0556],
-    zoomLevel: 8,
-    funFacts: [
-      'Die Früchte werden innerhalb weniger Stunden nach der Ernte schonend schockgefrostet.',
-      'Durch die Sublimation im Hochvakuum bleiben bis zu 95% der Vitamine und Enzyme erhalten.',
-      '100% frei von Zuckerzusätzen, Konservierungsstoffen oder Schwefelung.',
-    ],
+    country: coords.label,
+    flag: countryProfile.flag,
+    region: countryProfile.region,
+    harvestMethod: countryProfile.harvestMethod,
+    harvestSeason: countryProfile.harvestSeason,
+    transportMethod: countryProfile.transportMethod,
+    climateInfo: countryProfile.climateInfo,
+    gps: [coords.lat, coords.lng],
+    zoomLevel: countryProfile.zoomLevel,
+    funFacts: countryProfile.funFacts,
   };
 }
+
