@@ -65,6 +65,7 @@ export default function UeberUnsPage() {
               src="/logo.webp"
               alt="Fruit Comestible Suisse Emblem"
               fill
+              unoptimized
               sizes="(max-width: 768px) 100vw, 400px"
               className="object-contain p-8"
             />

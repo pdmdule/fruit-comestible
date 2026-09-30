@@ -42,6 +42,7 @@ export default function ProductImageGallery({
           alt={`${title} - Ansicht ${activeIndex + 1}`}
           fill
           priority
+          unoptimized
           sizes="(max-width: 1024px) 100vw, 55vw"
           className="object-cover transition-transform duration-700 ease-out group-hover:scale-108"
         />
@@ -80,6 +81,7 @@ export default function ProductImageGallery({
                   src={img}
                   alt={`${title} Thumbnail ${idx + 1}`}
                   fill
+                  unoptimized
                   sizes="96px"
                   className="object-cover"
                 />

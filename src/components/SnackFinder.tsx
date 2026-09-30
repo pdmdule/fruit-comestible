@@ -515,6 +515,7 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
                       src={primaryImage}
                       alt={product.name_de}
                       fill
+                      unoptimized
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-cover"
                     />

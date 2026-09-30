@@ -70,6 +70,7 @@ export default function Footer() {
                   src="/logo.webp"
                   alt="Fruit Comestible Logo"
                   fill
+                  unoptimized
                   sizes="44px"
                   className="object-contain"
                 />

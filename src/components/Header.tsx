@@ -90,6 +90,7 @@ export default function Header() {
                 width={120}
                 height={120}
                 priority
+                unoptimized
                 className="h-10 sm:h-11 w-auto object-contain"
               />
             </Link>
@@ -194,6 +195,7 @@ export default function Header() {
                     width={100}
                     height={100}
                     priority
+                    unoptimized
                     className="h-10 w-auto object-contain"
                   />
                 </Link>

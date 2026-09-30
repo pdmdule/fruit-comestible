@@ -1,6 +1,8 @@
-const nextConfig = {
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
   images: {
-     unoptimized: true,
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -18,9 +20,6 @@ const nextConfig = {
   },
   typescript: {
     ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
   },
 };
 

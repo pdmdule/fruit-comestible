@@ -270,6 +270,7 @@ export default function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
                           src={p.image}
                           alt={p.name_de}
                           fill
+                          unoptimized
                           sizes="48px"
                           className="object-cover group-hover:scale-105 transition-transform"
                         />
@@ -327,6 +328,7 @@ export default function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
                           src={b.image}
                           alt={b.title_de}
                           fill
+                          unoptimized
                           sizes="48px"
                           className="object-cover group-hover:scale-105 transition-transform"
                         />

@@ -484,6 +484,7 @@ export default function ProductPurchaseSection({
               src={image || '/logo.webp'}
               alt={productName || 'Produkt'}
               fill
+              unoptimized
               sizes="44px"
               className="object-cover"
             />
