@@ -1,8 +1,7 @@
-import type { NextConfig } from 'next';
+/** @type {import('next').NextConfig} */
 
 const nextConfig: NextConfig = {
   images: {
-    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -17,9 +16,6 @@ const nextConfig: NextConfig = {
         hostname: '*.supabase.co',
       },
     ],
-  },
-  typescript: {
-    ignoreBuildErrors: true,
   },
 };
 
