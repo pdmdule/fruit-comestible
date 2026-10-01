@@ -153,29 +153,44 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2 text-xs sm:text-sm">
               <li>
-                <span className="text-stone-600 hover:text-stone-900 cursor-pointer transition">
-                  Impressum (Schweiz)
-                </span>
+                <Link
+                  href="/agb#gerichtsstand"
+                  className="text-stone-600 hover:text-stone-900 transition"
+                >
+                  Impressum &amp; Rechtssitz (Schweiz)
+                </Link>
               </li>
               <li>
-                <span className="text-stone-600 hover:text-stone-900 cursor-pointer transition">
+                <Link
+                  href="/agb"
+                  className="text-stone-600 hover:text-stone-900 transition font-medium"
+                >
                   Allgemeine Geschäftsbedingungen (AGB)
-                </span>
+                </Link>
               </li>
               <li>
-                <span className="text-stone-600 hover:text-stone-900 cursor-pointer transition">
-                  Datenschutzerklärung (DSG)
-                </span>
+                <Link
+                  href="/agb#datenschutz"
+                  className="text-stone-600 hover:text-stone-900 transition"
+                >
+                  Datenschutzerklärung (DSG / DSGVO)
+                </Link>
               </li>
               <li>
-                <span className="text-stone-600 hover:text-stone-900 cursor-pointer transition">
-                  Versand- & Rückgabebedingungen
-                </span>
+                <Link
+                  href="/agb#lieferung"
+                  className="text-stone-600 hover:text-stone-900 transition"
+                >
+                  Versand- &amp; Lieferbedingungen
+                </Link>
               </li>
               <li>
-                <span className="text-stone-600 hover:text-stone-900 cursor-pointer transition">
-                  Widerrufsbelehrung
-                </span>
+                <Link
+                  href="/agb#retouren"
+                  className="text-stone-600 hover:text-stone-900 transition"
+                >
+                  Retouren &amp; Rücksendungen
+                </Link>
               </li>
             </ul>
           </div>

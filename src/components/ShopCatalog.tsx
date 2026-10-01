@@ -46,66 +46,70 @@ export const SORT_OPTIONS = [
   { id: 'price_desc', label: 'Preis absteigend' },
 ];
 
-export interface FruitFilterOption {
-  id: string;
+export interface FruitFilterItem {
   label: string;
-  emoji: string;
-  matches: (product: ProductItem) => boolean;
+  value?: string;
+  values?: string[];
+  icon: string;
 }
 
-export const FRUIT_FILTER_OPTIONS: FruitFilterOption[] = [
-  {
-    id: 'all',
-    label: 'Alle Früchte',
-    emoji: '🍓',
-    matches: () => true,
-  },
-  {
-    id: 'erdbeeren',
-    label: 'Erdbeeren',
-    emoji: '🍓',
-    matches: (p) => {
-      const text = `${p.slug} ${p.name_de}`.toLowerCase();
-      return text.includes('erdbeer');
-    },
-  },
-  {
-    id: 'himbeeren',
-    label: 'Himbeeren',
-    emoji: '🫐',
-    matches: (p) => {
-      const text = `${p.slug} ${p.name_de}`.toLowerCase();
-      return text.includes('himbeer');
-    },
-  },
-  {
-    id: 'blaubeeren',
-    label: 'Blaubeeren',
-    emoji: '🫐',
-    matches: (p) => {
-      const text = `${p.slug} ${p.name_de}`.toLowerCase();
-      return text.includes('blaubeer') || text.includes('heidelbeer');
-    },
-  },
-  {
-    id: 'zwetschgen',
-    label: 'Zwetschgen',
-    emoji: '🍑',
-    matches: (p) => {
-      const text = `${p.slug} ${p.name_de}`.toLowerCase();
-      return text.includes('zwetschg') || text.includes('zwetschge') || text.includes('pflaume');
-    },
-  },
-  {
-    id: 'mango',
-    label: 'Mango',
-    emoji: '🥭',
-    matches: (p) => {
-      const text = `${p.slug} ${p.name_de}`.toLowerCase();
-      return text.includes('mango');
-    },
-  },
+export const FRUCHT_FILTER: FruitFilterItem[] = [
+  { label: 'Alle Früchte', value: 'all', icon: '🍓' },
+  { label: 'Erdbeeren', value: 'erdbeer', icon: '🍓' },
+  { label: 'Himbeeren', value: 'himbeer', icon: '🫐' },
+  { label: 'Heidelbeeren', value: 'heidelbeer', icon: '🫐' },
+  { label: 'Aprikosen', value: 'aprikose', icon: '🍑' },
+  { label: 'Sauerkirschen', value: 'sauerkirsche', icon: '🍒' },
+  { label: 'Zwetschgen', value: 'zwetschgen', icon: '🍑' },
+  { label: 'Brombeeren', value: 'brombeere', icon: '🫐' },
+  { label: 'Johannisbeeren', value: 'johannisbeere', icon: '🫐' },
+  { label: 'Bananen', value: 'banane', icon: '🍌' },
+  { label: 'Äpfel', value: 'apfel', icon: '🍏' },
+  { label: 'Mango', value: 'mango', icon: '🥭' },
+  { label: 'Ananas & Maracuja', values: ['ananas', 'maracuja'], icon: '🍍' },
 ];
+
+export function getFruitFilterKey(filter: FruitFilterItem): string {
+  return filter.value || (filter.values ? filter.values.join('-') : 'all');
+}
+
+export function findFilterByKey(key: string): FruitFilterItem | undefined {
+  const clean = key.toLowerCase().trim();
+  return FRUCHT_FILTER.find((f) => {
+    const k = getFruitFilterKey(f);
+    if (k === clean) return true;
+    if (f.value && f.value === clean) return true;
+    if (f.values && f.values.includes(clean)) return true;
+    if (clean === 'erdbeeren' && f.value === 'erdbeer') return true;
+    if (clean === 'himbeeren' && f.value === 'himbeer') return true;
+    if ((clean === 'blaubeeren' || clean === 'blaubeer') && f.value === 'heidelbeer') return true;
+    return false;
+  });
+}
+
+export function matchesFruitFilter(item: FruitFilterItem, product: ProductItem): boolean {
+  if (item.value === 'all') return true;
+
+  const slug = product.slug.toLowerCase();
+  const name = product.name_de.toLowerCase();
+
+  if (item.values && item.values.length > 0) {
+    return item.values.some(
+      (v) => slug.includes(v.toLowerCase()) || name.includes(v.toLowerCase())
+    );
+  }
+
+  if (item.value) {
+    const val = item.value.toLowerCase();
+    return slug.includes(val) || name.includes(val);
+  }
+
+  return true;
+}
+
+// Backward compatibility aliases
+export type FruitFilterOption = FruitFilterItem;
+export const FRUIT_FILTER_OPTIONS = FRUCHT_FILTER;
 
 export interface ShopCatalogProps {
   products: ProductItem[];
@@ -131,7 +135,8 @@ export default function ShopCatalog({
 
   const initialFruit = useMemo(() => {
     const raw = searchParams.get('frucht')?.toLowerCase() || 'all';
-    if (FRUIT_FILTER_OPTIONS.some((f) => f.id === raw)) return raw;
+    const match = findFilterByKey(raw);
+    if (match) return getFruitFilterKey(match);
     return 'all';
   }, [searchParams]);
 
@@ -218,9 +223,7 @@ export default function ShopCatalog({
 
   // Filter & Sort Products
   const filteredProducts = useMemo(() => {
-    const activeFruitOption =
-      FRUIT_FILTER_OPTIONS.find((f) => f.id === selectedFruit) ||
-      FRUIT_FILTER_OPTIONS[0];
+    const activeFruitOption = findFilterByKey(selectedFruit);
 
     return catalogProducts
       .filter((p) => {
@@ -244,7 +247,9 @@ export default function ShopCatalog({
 
         // 3. Active Fruit Filter
         if (selectedFruit !== 'all') {
-          if (!activeFruitOption.matches(p)) return false;
+          if (activeFruitOption && !matchesFruitFilter(activeFruitOption, p)) {
+            return false;
+          }
         }
 
         return true;
@@ -295,11 +300,12 @@ export default function ShopCatalog({
         </div>
       )}
 
-      {/* 2. Horizontal Category Navigation Tabs Bar + Fruit Filter Chips */}
-      <div className="space-y-3">
+      {/* 2. Navigation Tabs & Controls Bar (Sticky on Mobile) */}
+      <div className="sticky top-[72px] sm:top-[80px] md:static z-30 -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 bg-stone-50/95 md:bg-transparent backdrop-blur-md md:backdrop-blur-none pt-2 pb-2 md:pt-0 md:pb-0 border-b border-stone-200/80 md:border-b-0 space-y-2 md:space-y-3 transition-all">
+        {/* Category Navigation Tabs */}
         <div className="relative">
           <div
-            className="flex items-center gap-2 overflow-x-auto no-scrollbar flex-nowrap pb-1"
+            className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar flex-nowrap pb-0.5"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {SHOP_NAV_TABS.map((tab) => {
@@ -313,7 +319,7 @@ export default function ShopCatalog({
                 <Link
                   key={tab.id}
                   href={targetHref}
-                  className={`px-5 py-2.5 rounded-full text-xs font-medium shrink-0 transition-colors duration-150 inline-flex items-center ${
+                  className={`px-3.5 py-1.5 sm:px-5 sm:py-2.5 rounded-full text-xs font-medium shrink-0 transition-colors duration-150 inline-flex items-center ${
                     isActive
                       ? 'bg-stone-900 text-white font-medium shadow-sm'
                       : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
@@ -326,144 +332,159 @@ export default function ShopCatalog({
           </div>
         </div>
 
-        {/* Horizontal Fruit Filter Chips */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar flex-nowrap py-1">
-          <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider shrink-0 mr-1 hidden sm:inline">
+        {/* Horizontal Fruit Filter Chips (Desktop/Tablet only: hidden on mobile, 2 rows on >= 1500px) */}
+        <div className="hidden md:flex items-start gap-2.5">
+          <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider shrink-0 mt-2">
             Frucht:
           </span>
-          {FRUIT_FILTER_OPTIONS.map((fruit) => {
-            const isFruitActive = selectedFruit === fruit.id;
-            return (
-              <button
-                key={fruit.id}
-                type="button"
-                onClick={() => handleFruitChange(fruit.id)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-medium shrink-0 transition-all duration-150 inline-flex items-center gap-1.5 cursor-pointer border ${
-                  isFruitActive
-                    ? 'bg-rose-50 border-rose-300 text-rose-800 font-semibold shadow-2xs'
-                    : 'bg-white border-stone-200/90 text-stone-700 hover:border-stone-300 hover:bg-stone-50'
-                }`}
-              >
-                <span>{fruit.emoji}</span>
-                <span>{fruit.label}</span>
-                {isFruitActive && fruit.id !== 'all' && (
-                  <span
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleFruitChange('all');
-                    }}
-                    className="ml-0.5 hover:text-rose-950 font-bold"
-                    title="Filter aufheben"
+          <div
+            className="fruit-filter-2rows flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar flex-nowrap py-1"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {FRUCHT_FILTER.map((fruit, idx) => {
+              const fruitKey = getFruitFilterKey(fruit);
+              const isFruitActive = selectedFruit === fruitKey;
+              return (
+                <React.Fragment key={fruitKey}>
+                  {idx === 7 && <div className="fruit-filter-break hidden" />}
+                  <button
+                    key={fruitKey}
+                    type="button"
+                    onClick={() => handleFruitChange(fruitKey)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-medium shrink-0 transition-all duration-150 inline-flex items-center gap-1.5 cursor-pointer border ${
+                      isFruitActive
+                        ? 'bg-rose-50 border-rose-300 text-rose-800 font-semibold shadow-2xs'
+                        : 'bg-white border-stone-200/90 text-stone-700 hover:border-stone-300 hover:bg-stone-50'
+                    }`}
                   >
-                    ×
-                  </span>
-                )}
-              </button>
-            );
-          })}
+                    <span>{fruit.icon}</span>
+                    <span>{fruit.label}</span>
+                    {isFruitActive && fruitKey !== 'all' && (
+                      <span
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleFruitChange('all');
+                        }}
+                        className="ml-0.5 hover:text-rose-950 font-bold"
+                        title="Filter aufheben"
+                      >
+                        ×
+                      </span>
+                    )}
+                  </button>
+                </React.Fragment>
+              );
+            })}
+          </div>
         </div>
-      </div>
 
-      {/* 3. Controls Bar: Counter (Left) + Fruit & Sorting Selectors (Right) */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-3.5 border-y border-stone-200/80 bg-stone-50/50 rounded-2xl px-4 sm:px-5">
-        {/* Left: Product Counter & Active Badge */}
-        <div className="flex items-center gap-3 flex-wrap">
-          <p className="text-xs sm:text-sm text-stone-600">
-            {!isCountFiltered ? (
-              <>
-                Zeigt alle{' '}
-                <span className="font-bold text-stone-900">
-                  {catalogProducts.length}
-                </span>{' '}
-                Produkte
-              </>
-            ) : (
-              <>
-                Zeigt{' '}
-                <span className="font-bold text-stone-900">
-                  {filteredProducts.length}
-                </span>{' '}
-                von{' '}
-                <span className="font-bold text-stone-900">
-                  {catalogProducts.length}
-                </span>{' '}
-                Produkten
-              </>
+        {/* Controls Bar: Counter (Left) + Fruit & Sorting Selectors (Right) */}
+        <div className="flex items-center justify-between gap-2 py-2 sm:py-3.5 border-y border-stone-200/80 bg-white/80 sm:bg-stone-50/50 rounded-xl sm:rounded-2xl px-3 sm:px-5">
+          {/* Left: Product Counter & Active Badge */}
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap min-w-0">
+            <p className="text-xs sm:text-sm text-stone-600 truncate">
+              {!isCountFiltered ? (
+                <>
+                  <span className="hidden sm:inline">Zeigt alle </span>
+                  <span className="font-bold text-stone-900">
+                    {catalogProducts.length}
+                  </span>{' '}
+                  <span className="hidden sm:inline">Produkte</span>
+                  <span className="sm:hidden font-medium text-stone-500">Prod.</span>
+                </>
+              ) : (
+                <>
+                  <span className="font-bold text-stone-900">
+                    {filteredProducts.length}
+                  </span>
+                  <span className="text-stone-400">/</span>
+                  <span className="font-bold text-stone-900">
+                    {catalogProducts.length}
+                  </span>
+                  <span className="hidden sm:inline text-stone-500"> Prod.</span>
+                </>
+              )}
+            </p>
+
+            {selectedFruit !== 'all' && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] sm:text-xs font-medium bg-rose-100 text-rose-800 border border-rose-200 shrink-0">
+                <span className="max-w-[70px] sm:max-w-none truncate">
+                  {findFilterByKey(selectedFruit)?.label || selectedFruit}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleFruitChange('all')}
+                  className="hover:text-rose-950 font-bold leading-none cursor-pointer"
+                  title="Fruchtfilter entfernen"
+                >
+                  ×
+                </button>
+              </span>
             )}
-          </p>
 
-          {selectedFruit !== 'all' && (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 border border-rose-200">
-              <span>{FRUIT_FILTER_OPTIONS.find((f) => f.id === selectedFruit)?.label}</span>
+            {isFiltered && (
               <button
                 type="button"
-                onClick={() => handleFruitChange('all')}
-                className="hover:text-rose-950 font-bold leading-none cursor-pointer"
-                title="Fruchtfilter entfernen"
+                onClick={handleResetFilters}
+                className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-rose-700 hover:text-rose-800 transition cursor-pointer"
+                title="Filter zurücksetzen"
               >
-                ×
+                <RotateCcw className="w-3 h-3" />
+                <span>Reset</span>
               </button>
-            </span>
-          )}
-
-          {isFiltered && (
-            <button
-              type="button"
-              onClick={handleResetFilters}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-rose-700 hover:text-rose-800 transition cursor-pointer"
-            >
-              <RotateCcw className="w-3 h-3" />
-              <span>Filter zurücksetzen</span>
-            </button>
-          )}
-        </div>
-
-        {/* Right: Fruit Dropdown + Sorting Dropdown */}
-        <div className="flex items-center gap-2.5 self-end sm:self-auto flex-wrap">
-          {/* Fruit Dropdown */}
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs font-medium text-stone-500 hidden md:inline">
-              Frucht:
-            </span>
-            <div className="relative">
-              <select
-                value={selectedFruit}
-                onChange={(e) => handleFruitChange(e.target.value)}
-                aria-label="Fruchtfilter"
-                className="text-xs font-semibold py-2 pl-3 pr-7 rounded-xl border border-stone-200 bg-white text-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-900/10 focus:border-stone-900 shadow-2xs appearance-none cursor-pointer"
-              >
-                {FRUIT_FILTER_OPTIONS.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.label}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-stone-400">
-                <ChevronDown className="w-3.5 h-3.5" />
-              </div>
-            </div>
+            )}
           </div>
 
-          {/* Sorting Dropdown */}
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs font-medium text-stone-500 hidden md:inline">
-              Sortierung:
-            </span>
-            <div className="relative">
-              <select
-                value={selectedSort}
-                onChange={(e) => handleSortChange(e.target.value)}
-                aria-label="Produktsortierung"
-                className="text-xs font-semibold py-2 pl-3 pr-8 rounded-xl border border-stone-200 bg-white text-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-900/10 focus:border-stone-900 shadow-2xs appearance-none cursor-pointer"
-              >
-                {SORT_OPTIONS.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-stone-400">
-                <ArrowUpDown className="w-3.5 h-3.5" />
+          {/* Right: Fruit Dropdown + Sorting Dropdown */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+            {/* Fruit Dropdown */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs font-medium text-stone-500 hidden md:inline">
+                Frucht:
+              </span>
+              <div className="relative">
+                <select
+                  value={selectedFruit}
+                  onChange={(e) => handleFruitChange(e.target.value)}
+                  aria-label="Fruchtfilter"
+                  className="text-xs font-semibold py-1.5 sm:py-2 pl-2.5 sm:pl-3 pr-6 sm:pr-7 rounded-lg sm:rounded-xl border border-stone-200 bg-white text-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-900/10 focus:border-stone-900 shadow-2xs appearance-none cursor-pointer max-w-[125px] sm:max-w-none truncate"
+                >
+                  {FRUCHT_FILTER.map((f) => {
+                    const fruitKey = getFruitFilterKey(f);
+                    return (
+                      <option key={fruitKey} value={fruitKey}>
+                        {f.icon ? `${f.icon} ${f.label}` : f.label}
+                      </option>
+                    );
+                  })}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 sm:px-2 text-stone-400">
+                  <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                </div>
+              </div>
+            </div>
+
+            {/* Sorting Dropdown */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs font-medium text-stone-500 hidden md:inline">
+                Sortierung:
+              </span>
+              <div className="relative">
+                <select
+                  value={selectedSort}
+                  onChange={(e) => handleSortChange(e.target.value)}
+                  aria-label="Produktsortierung"
+                  className="text-xs font-semibold py-1.5 sm:py-2 pl-2.5 sm:pl-3 pr-6 sm:pr-8 rounded-lg sm:rounded-xl border border-stone-200 bg-white text-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-900/10 focus:border-stone-900 shadow-2xs appearance-none cursor-pointer max-w-[120px] sm:max-w-none truncate"
+                >
+                  {SORT_OPTIONS.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 sm:px-2 text-stone-400">
+                  <ArrowUpDown className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                </div>
               </div>
             </div>
           </div>

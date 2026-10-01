@@ -34,3 +34,159 @@ body {
   }
 }
 
+@media (min-width: 1500px) {
+  .fruit-filter-2rows {
+    flex-wrap: wrap !important;
+    overflow: visible !important;
+    padding-bottom: 0 !important;
+  }
+  .fruit-filter-break {
+    display: block !important;
+    width: 100% !important;
+    flex-basis: 100% !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+  }
+}
+
+@keyframes spotlightFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spotlightDraw {
+  from {
+    stroke-dashoffset: 40;
+    opacity: 0;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+.animate-spotlight-fade {
+  animation: spotlightFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-spotlight-arrow {
+  animation: spotlightDraw 0.55s ease-out forwards;
+}
+
+@keyframes heroBowlPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.88) rotate(-5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes heroArrowDraw {
+  0% {
+    stroke-dashoffset: 220;
+    opacity: 0.15;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes heroBenefitPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-hero-bowl {
+  animation: heroBowlPop 350ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-hero-arrow {
+  stroke-dasharray: 220;
+  stroke-dashoffset: 220;
+  animation: heroArrowDraw 350ms cubic-bezier(0.25, 1, 0.5, 1) 150ms forwards;
+}
+
+.animate-hero-benefit-1 {
+  opacity: 0;
+  animation: heroBenefitPop 300ms cubic-bezier(0.16, 1, 0.3, 1) 400ms forwards;
+}
+.animate-hero-benefit-2 {
+  opacity: 0;
+  animation: heroBenefitPop 300ms cubic-bezier(0.16, 1, 0.3, 1) 440ms forwards;
+}
+.animate-hero-benefit-3 {
+  opacity: 0;
+  animation: heroBenefitPop 300ms cubic-bezier(0.16, 1, 0.3, 1) 480ms forwards;
+}
+.animate-hero-benefit-4 {
+  opacity: 0;
+  animation: heroBenefitPop 300ms cubic-bezier(0.16, 1, 0.3, 1) 520ms forwards;
+}
+.animate-hero-benefit-5 {
+  opacity: 0;
+  animation: heroBenefitPop 300ms cubic-bezier(0.16, 1, 0.3, 1) 560ms forwards;
+}
+
+@keyframes heroFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(1deg);
+  }
+}
+
+@keyframes heroBadgeEnter {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-hero-float {
+  animation: heroFloat 5.5s ease-in-out infinite;
+}
+
+.animate-badge-enter-1 {
+  opacity: 0;
+  animation: heroBadgeEnter 400ms cubic-bezier(0.16, 1, 0.3, 1) 100ms forwards;
+}
+.animate-badge-enter-2 {
+  opacity: 0;
+  animation: heroBadgeEnter 400ms cubic-bezier(0.16, 1, 0.3, 1) 180ms forwards;
+}
+.animate-badge-enter-3 {
+  opacity: 0;
+  animation: heroBadgeEnter 400ms cubic-bezier(0.16, 1, 0.3, 1) 260ms forwards;
+}
+.animate-badge-enter-4 {
+  opacity: 0;
+  animation: heroBadgeEnter 400ms cubic-bezier(0.16, 1, 0.3, 1) 340ms forwards;
+}
+.animate-badge-enter-5 {
+  opacity: 0;
+  animation: heroBadgeEnter 400ms cubic-bezier(0.16, 1, 0.3, 1) 420ms forwards;
+}
+

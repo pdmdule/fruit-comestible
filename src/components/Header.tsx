@@ -45,7 +45,6 @@ export default function Header() {
 
   const navLinks = [
     { label: 'Shop', href: '/shop' },
-    { label: 'Geschenkboxen', href: '/shop/geschenkboxen' },
     { label: 'Rezepte & Wissen', href: '/blog' },
     { label: 'Über uns', href: '/ueber-uns' },
   ];

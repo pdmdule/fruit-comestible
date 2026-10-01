@@ -6,8 +6,9 @@ import { supabase } from '@/lib/supabase';
 import HomeReviews from '@/components/HomeReviews';
 import HomeBlogPreview from '@/components/HomeBlogPreview';
 import NewsletterSection from '@/components/NewsletterSection';
-import HeroSlider from '@/components/HeroSlider';
+import Hero from '@/components/Hero';
 import VisualCategoryGuide from '@/components/VisualCategoryGuide';
+import BenefitSpotlightCarousel from '@/components/BenefitSpotlightCarousel';
 import SnackFinder from '@/components/SnackFinder';
 import {
   ArrowRight,
@@ -88,8 +89,8 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 font-sans antialiased space-y-24 sm:space-y-32 pb-24">
-      {/* 1. Interactive Hero Slider */}
-      <HeroSlider />
+      {/* 1. Interactive Showcase Hero Slider */}
+      <Hero />
 
       {/* 2. Visual Category Guide (Nach Verwendung wählen) */}
       <VisualCategoryGuide />
@@ -162,7 +163,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 3. Beliebte Bestseller Section */}
+      {/* 4. Interactive Benefit Spotlight Carousel */}
+      <BenefitSpotlightCarousel />
+
+      {/* 5. Beliebte Bestseller Section */}
       <section id="bestseller" className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 space-y-10 scroll-mt-24">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div className="space-y-2">
