@@ -304,7 +304,7 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-6 sm:p-8 md:p-12 border border-stone-200/90 shadow-sm max-w-4xl mx-auto transition-all">
+    <div className="bg-white rounded-3xl p-6 sm:p-8 md:p-10 border border-stone-200/90 shadow-sm w-full transition-all flex flex-col justify-between h-full">
       {/* Top Header & Progress */}
       <div className="space-y-4 mb-8">
         <div className="flex items-center justify-between gap-4">
@@ -492,7 +492,7 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
           </div>
 
           {/* Results Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
             {matchedRecommendations.map((item) => {
               const product = item.product;
               const variants = product.product_variants || [];
