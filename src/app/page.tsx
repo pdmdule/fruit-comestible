@@ -79,13 +79,13 @@ export default async function HomePage() {
 
   const products = (productsData || []) as ProductItem[];
 
-  // Bestsellers: exactly 5 items
+  // Bestsellers: 6 items (5 on desktop, 6 on mobile/tablet)
   const featuredProducts = products.filter((p) => p.is_featured);
   const bestsellerList = (
-    featuredProducts.length >= 5
+    featuredProducts.length >= 6
       ? featuredProducts
       : [...featuredProducts, ...products.filter((p) => !p.is_featured)]
-  ).slice(0, 5);
+  ).slice(0, 6);
 
   const homeBlogPosts = (blogPostsData || []).map((p) => ({
     id: p.id,
@@ -177,65 +177,65 @@ export default async function HomePage() {
       <VisualCategoryGuide />
 
       {/* 3. USPs (4 Icons in a row) */}
-      <section className="border-y border-stone-200/80 bg-white py-12 sm:py-16">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+      {/* 3. USPs / Features (4 Icons in a row / 2x2 on mobile & tablet) */}
+      <section className="border-y border-stone-200/80 bg-white">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 pt-4 pb-8 sm:pt-6 sm:pb-12 lg:py-16">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-10">
             {/* USP 1 */}
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
-                <Leaf className="w-6 h-6 stroke-[2.2]" />
+            <div className="p-3 sm:p-5 lg:p-6 rounded-2xl bg-stone-50/70 border border-stone-200/80 h-full flex flex-col justify-between">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 mb-3 sm:mb-4">
+                <Leaf className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 stroke-[2.2]" />
               </div>
               <div className="space-y-1">
-                <h2 className="font-extrabold text-stone-900 text-base">
+                <h3 className="font-semibold text-stone-900 text-sm sm:text-base lg:text-lg">
                   100% Natürlich
-                </h2>
-                <p className="text-xs text-stone-600 leading-relaxed">
-                  Ohne Zuckerzusatz, rein pflanzlich, vegan und von Natur aus
-                  glutenfrei.
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 line-clamp-2 leading-relaxed">
+                  Ohne Zuckerzusatz, rein pflanzlich, vegan und von Natur aus glutenfrei.
                 </p>
               </div>
             </div>
 
             {/* USP 2 */}
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
-                <Microscope className="w-6 h-6 stroke-[2.2]" />
+            <div className="p-3 sm:p-5 lg:p-6 rounded-2xl bg-stone-50/70 border border-stone-200/80 h-full flex flex-col justify-between">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 mb-3 sm:mb-4">
+                <Microscope className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 stroke-[2.2]" />
               </div>
               <div className="space-y-1">
-                <h2 className="font-extrabold text-stone-900 text-base">
+                <h3 className="font-semibold text-stone-900 text-sm sm:text-base lg:text-lg">
                   Schonend gefriergetrocknet
-                </h2>
-                <p className="text-xs text-stone-600 leading-relaxed">
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 line-clamp-2 leading-relaxed">
                   Bis zu 95% der Vitamine & Mineralstoffe bleiben erhalten.
                 </p>
               </div>
             </div>
 
             {/* USP 3 */}
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-red-100 text-red-700 flex items-center justify-center shrink-0">
-                <Truck className="w-6 h-6 stroke-[2.2]" />
+            <div className="p-3 sm:p-5 lg:p-6 rounded-2xl bg-stone-50/70 border border-stone-200/80 h-full flex flex-col justify-between">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-red-100 text-red-700 flex items-center justify-center shrink-0 mb-3 sm:mb-4">
+                <Truck className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 stroke-[2.2]" />
               </div>
               <div className="space-y-1">
-                <h2 className="font-extrabold text-stone-900 text-base">
+                <h3 className="font-semibold text-stone-900 text-sm sm:text-base lg:text-lg">
                   Schweizer Standard
-                </h2>
-                <p className="text-xs text-stone-600 leading-relaxed">
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 line-clamp-2 leading-relaxed">
                   Schneller, klimaneutraler Versand mit der Schweizer Post.
                 </p>
               </div>
             </div>
 
             {/* USP 4 */}
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
-                <Zap className="w-6 h-6 stroke-[2.2]" />
+            <div className="p-3 sm:p-5 lg:p-6 rounded-2xl bg-stone-50/70 border border-stone-200/80 h-full flex flex-col justify-between">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 mb-3 sm:mb-4">
+                <Zap className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 stroke-[2.2]" />
               </div>
               <div className="space-y-1">
-                <h2 className="font-extrabold text-stone-900 text-base">
+                <h3 className="font-semibold text-stone-900 text-sm sm:text-base lg:text-lg">
                   Vielseitig geniessbar
-                </h2>
-                <p className="text-xs text-stone-600 leading-relaxed">
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 line-clamp-2 leading-relaxed">
                   Perfekt für Müsli, Porridge, Smoothies oder einfach pur als Snack.
                 </p>
               </div>
@@ -268,9 +268,9 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        {/* Product Cards: 5 in a single row on desktop */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
-          {bestsellerList.map((product) => {
+        {/* Product Cards: 5 in a single row on desktop, 6 on mobile & tablet */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6 lg:gap-5 xl:gap-6">
+          {bestsellerList.slice(0, 6).map((product, index) => {
             const variants = product.product_variants || [];
             const prices = variants.map((v) => Number(v.price_chf)).filter(Boolean);
             const minPrice = prices.length > 0 ? Math.min(...prices) : 15.9;
@@ -295,7 +295,9 @@ export default async function HomePage() {
               <Link
                 key={product.id}
                 href={`/produkte/${product.slug}`}
-                className="group flex flex-col bg-white border border-stone-200/90 rounded-3xl overflow-hidden shadow-2xs hover:shadow-md hover:border-stone-300 transition-all duration-300 h-full"
+                className={`group flex flex-col bg-white border border-stone-200/90 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xs hover:shadow-md hover:border-stone-300 transition-all duration-300 h-full ${
+                  index >= 5 ? 'lg:hidden' : ''
+                }`}
               >
                 <div className="relative aspect-square w-full overflow-hidden bg-stone-100">
                   <Image
@@ -306,47 +308,47 @@ export default async function HomePage() {
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-106"
                   />
-                  <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 pointer-events-none">
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/95 text-stone-800 backdrop-blur-md border border-stone-200/80 shadow-2xs">
+                  <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 flex flex-wrap gap-1 sm:gap-1.5 pointer-events-none">
+                    <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold bg-white/95 text-stone-800 backdrop-blur-md border border-stone-200/80 shadow-2xs">
                       🇨🇭 {product.origin_country || 'Schweiz'}
                     </span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-700 text-white shadow-2xs">
+                    <span className="px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold bg-rose-700 text-white shadow-2xs">
                       Bestseller
                     </span>
                   </div>
                 </div>
 
-                <div className="flex-1 p-5 flex flex-col justify-between h-full space-y-4">
-                  <div className="space-y-1.5">
-                    <span className="text-[11px] font-bold text-emerald-700 uppercase tracking-wider block">
+                <div className="flex-1 p-3.5 sm:p-5 flex flex-col justify-between h-full space-y-3 sm:space-y-4">
+                  <div className="space-y-1 sm:space-y-1.5">
+                    <span className="text-[10px] sm:text-[11px] font-bold text-emerald-700 uppercase tracking-wider block">
                       100% Frucht
                     </span>
-                    <h3 className="text-base md:text-lg font-semibold text-stone-900 leading-snug line-clamp-2 min-h-[2.75rem] md:min-h-[3rem] group-hover:text-rose-700 transition">
+                    <h3 className="text-sm sm:text-base md:text-lg font-semibold text-stone-900 leading-snug line-clamp-2 min-h-[2.5rem] sm:min-h-[2.75rem] md:min-h-[3rem] group-hover:text-rose-700 transition">
                       {product.name_de}
                     </h3>
-                    <p className="text-sm text-stone-600 line-clamp-2 min-h-[2.5rem] leading-relaxed">
+                    <p className="text-xs sm:text-sm text-stone-600 line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] leading-relaxed">
                       {product.subtitle_de || product.description_de || 'Schonend gefriergetrocknete Schweizer Früchte.'}
                     </p>
                   </div>
 
-                  <div className="pt-3 border-t border-stone-100 space-y-3 mt-auto">
+                  <div className="pt-2.5 sm:pt-3 border-t border-stone-100 space-y-2 sm:space-y-3 mt-auto">
                     <div className="flex flex-col">
-                      <span className="text-xs md:text-sm text-stone-500 font-medium truncate">
+                      <span className="text-xs sm:text-sm text-stone-500 font-medium truncate">
                         {packSizesText}
                       </span>
-                      <div className="flex items-baseline gap-1.5 mt-0.5">
-                        <span className="text-base font-bold text-stone-900 font-sans">
+                      <div className="flex items-baseline gap-1 sm:gap-1.5 mt-0.5">
+                        <span className="text-sm sm:text-base font-bold text-stone-900 font-sans">
                           Ab CHF {minPrice.toFixed(2)}
                         </span>
-                        <span className="text-[10px] text-stone-400">
+                        <span className="text-[9px] sm:text-[10px] text-stone-400">
                           (inkl. 2.6% MwSt.)
                         </span>
                       </div>
                     </div>
 
-                    <div className="w-full h-10 rounded-2xl bg-stone-50 group-hover:bg-stone-900 group-hover:text-white border border-stone-200/80 group-hover:border-stone-900 font-bold text-xs text-stone-800 flex items-center justify-center gap-1.5 transition-all duration-200">
+                    <div className="w-full h-8 sm:h-10 rounded-xl sm:rounded-2xl bg-stone-50 group-hover:bg-stone-900 group-hover:text-white border border-stone-200/80 group-hover:border-stone-900 font-bold text-[11px] sm:text-xs text-stone-800 flex items-center justify-center gap-1.5 transition-all duration-200">
                       <span>Details ansehen</span>
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                      <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover:translate-x-0.5 transition-transform" />
                     </div>
                   </div>
                 </div>

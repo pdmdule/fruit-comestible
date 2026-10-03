@@ -304,16 +304,16 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-6 sm:p-8 md:p-10 border border-stone-200/90 shadow-sm w-full transition-all flex flex-col justify-between h-full">
+    <div className="bg-white rounded-3xl p-3 sm:p-5 lg:p-10 border border-stone-200/90 shadow-sm w-full transition-all flex flex-col justify-between h-full">
       {/* Top Header & Progress */}
-      <div className="space-y-4 mb-8">
+      <div className="space-y-2.5 sm:space-y-3 lg:space-y-4 mb-3 sm:mb-4 lg:mb-8">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200/80">
-              <Sparkles className="w-3.5 h-3.5" />
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[11px] sm:text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200/80">
+              <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               <span>Frucht & Snack Finder</span>
             </span>
-            <span className="text-xs font-medium text-stone-500">
+            <span className="text-[11px] sm:text-xs font-medium text-stone-500">
               {step <= 3 ? `Schritt ${step} von 3` : 'Ergebnis'}
             </span>
           </div>
@@ -339,7 +339,7 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full h-2 rounded-full bg-stone-100 overflow-hidden">
+        <div className="w-full h-1.5 lg:h-2 rounded-full bg-stone-100 overflow-hidden">
           <div
             className="h-full bg-gradient-to-r from-rose-600 to-rose-700 transition-all duration-500 ease-out"
             style={{
@@ -351,36 +351,36 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
 
       {/* STEP 1: VERWENDUNGSZWECK */}
       {step === 1 && (
-        <div className="space-y-6 animate-in fade-in duration-300">
-          <div className="space-y-2">
-            <h3 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
+        <div className="space-y-3 sm:space-y-4 lg:space-y-6 w-full animate-in fade-in duration-300">
+          <div className="space-y-1 sm:space-y-1.5 lg:space-y-2 text-center lg:text-left">
+            <h3 className="text-base sm:text-lg lg:text-2xl xl:text-3xl font-bold lg:font-black text-stone-900 tracking-tight">
               Wofür suchst du deine Früchte?
             </h3>
-            <p className="text-sm sm:text-base text-stone-600">
+            <p className="text-xs sm:text-sm lg:text-base text-stone-600 dark:text-stone-300 leading-relaxed">
               Wähle den primären Verwendungszweck, damit wir die passende Konsistenz und Sorte für dich abstimmen.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:gap-4 lg:pt-2 w-full">
             {PURPOSE_OPTIONS.map((opt) => {
               const Icon = opt.icon;
               return (
                 <button
                   key={opt.id}
                   onClick={() => handleSelectPurpose(opt.id)}
-                  className="group text-left p-5 sm:p-6 rounded-2xl border-2 border-stone-200/90 bg-stone-50/50 hover:bg-white hover:border-rose-600 hover:shadow-md transition-all duration-200 flex items-start gap-4 cursor-pointer"
+                  className="group flex flex-col lg:flex-row items-center lg:items-start text-center lg:text-left p-2.5 sm:p-3 lg:p-5 xl:p-6 rounded-xl lg:rounded-2xl border-2 border-stone-200/90 bg-stone-50/50 hover:bg-white hover:border-rose-600 hover:shadow-md transition-all duration-200 cursor-pointer gap-2 sm:gap-2.5 lg:gap-4 h-full justify-center lg:justify-start"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-white border border-stone-200 flex items-center justify-center shrink-0 text-stone-700 group-hover:text-rose-700 group-hover:border-rose-300 group-hover:bg-rose-50 transition-colors shadow-2xs">
-                    <Icon className="w-6 h-6 stroke-[2]" />
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg sm:rounded-xl bg-white border border-stone-200 flex items-center justify-center shrink-0 text-stone-700 group-hover:text-rose-700 group-hover:border-rose-300 group-hover:bg-rose-50 transition-colors shadow-2xs">
+                    <Icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 stroke-[2]" />
                   </div>
-                  <div className="space-y-1 flex-1">
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-rose-700 block">
+                  <div className="space-y-0.5 sm:space-y-1 flex-1">
+                    <span className="hidden lg:block text-[10px] font-extrabold uppercase tracking-wider text-rose-700">
                       {opt.tag}
                     </span>
-                    <h4 className="font-bold text-stone-900 text-base group-hover:text-rose-700 transition-colors">
+                    <h4 className="text-xs sm:text-sm lg:text-base font-semibold lg:font-bold text-center lg:text-left text-stone-900 group-hover:text-rose-700 transition-colors leading-tight sm:leading-snug">
                       {opt.title}
                     </h4>
-                    <p className="text-xs text-stone-600 leading-relaxed">
+                    <p className="hidden lg:block text-xs text-stone-600 leading-relaxed mt-1">
                       {opt.description}
                     </p>
                   </div>
@@ -393,36 +393,36 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
 
       {/* STEP 2: GESCHMACKSPROFIL */}
       {step === 2 && (
-        <div className="space-y-6 animate-in fade-in duration-300">
-          <div className="space-y-2">
-            <h3 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
+        <div className="space-y-3 sm:space-y-4 lg:space-y-6 w-full animate-in fade-in duration-300">
+          <div className="space-y-1 sm:space-y-1.5 lg:space-y-2 text-center lg:text-left">
+            <h3 className="text-base sm:text-lg lg:text-2xl xl:text-3xl font-bold lg:font-black text-stone-900 tracking-tight">
               Welches Geschmacksprofil liebst du?
             </h3>
-            <p className="text-sm sm:text-base text-stone-600">
-              Ob mild-süß, herb-frisch oder tropisch-belebend – was trifft deinen Gaumen am besten?
+            <p className="text-xs sm:text-sm lg:text-base text-stone-600 dark:text-stone-300 leading-relaxed">
+              Ob mild-süss, herb-frisch oder tropisch-belebend – was trifft deinen Gaumen am besten?
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:gap-4 lg:pt-2 w-full">
             {FLAVOR_OPTIONS.map((opt) => {
               const Icon = opt.icon;
               return (
                 <button
                   key={opt.id}
                   onClick={() => handleSelectFlavor(opt.id)}
-                  className="group text-left p-5 sm:p-6 rounded-2xl border-2 border-stone-200/90 bg-stone-50/50 hover:bg-white hover:border-rose-600 hover:shadow-md transition-all duration-200 flex items-start gap-4 cursor-pointer"
+                  className="group flex flex-col lg:flex-row items-center lg:items-start text-center lg:text-left p-2.5 sm:p-3 lg:p-5 xl:p-6 rounded-xl lg:rounded-2xl border-2 border-stone-200/90 bg-stone-50/50 hover:bg-white hover:border-rose-600 hover:shadow-md transition-all duration-200 cursor-pointer gap-2 sm:gap-2.5 lg:gap-4 h-full justify-center lg:justify-start"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-white border border-stone-200 flex items-center justify-center shrink-0 text-stone-700 group-hover:text-rose-700 group-hover:border-rose-300 group-hover:bg-rose-50 transition-colors shadow-2xs">
-                    <Icon className="w-6 h-6 stroke-[2]" />
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg sm:rounded-xl bg-white border border-stone-200 flex items-center justify-center shrink-0 text-stone-700 group-hover:text-rose-700 group-hover:border-rose-300 group-hover:bg-rose-50 transition-colors shadow-2xs">
+                    <Icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 stroke-[2]" />
                   </div>
-                  <div className="space-y-1 flex-1">
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-rose-700 block">
+                  <div className="space-y-0.5 sm:space-y-1 flex-1">
+                    <span className="hidden lg:block text-[10px] font-extrabold uppercase tracking-wider text-rose-700">
                       {opt.tag}
                     </span>
-                    <h4 className="font-bold text-stone-900 text-base group-hover:text-rose-700 transition-colors">
+                    <h4 className="text-xs sm:text-sm lg:text-base font-semibold lg:font-bold text-center lg:text-left text-stone-900 group-hover:text-rose-700 transition-colors leading-tight sm:leading-snug">
                       {opt.title}
                     </h4>
-                    <p className="text-xs text-stone-600 leading-relaxed">
+                    <p className="hidden lg:block text-xs text-stone-600 leading-relaxed mt-1">
                       {opt.description}
                     </p>
                   </div>
@@ -435,36 +435,36 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
 
       {/* STEP 3: TEXTUR & FORM */}
       {step === 3 && (
-        <div className="space-y-6 animate-in fade-in duration-300">
-          <div className="space-y-2">
-            <h3 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
+        <div className="space-y-3 sm:space-y-4 lg:space-y-6 w-full animate-in fade-in duration-300">
+          <div className="space-y-1 sm:space-y-1.5 lg:space-y-2 text-center lg:text-left">
+            <h3 className="text-base sm:text-lg lg:text-2xl xl:text-3xl font-bold lg:font-black text-stone-900 tracking-tight">
               Welche Textur bevorzugst du?
             </h3>
-            <p className="text-sm sm:text-base text-stone-600">
+            <p className="text-xs sm:text-sm lg:text-base text-stone-600 dark:text-stone-300 leading-relaxed">
               Entscheide, wie du deine schonend gefriergetrockneten Früchte am liebsten portionierst.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:gap-4 lg:pt-2 w-full">
             {TEXTURE_OPTIONS.map((opt) => {
               const Icon = opt.icon;
               return (
                 <button
                   key={opt.id}
                   onClick={() => handleSelectTexture(opt.id)}
-                  className="group text-left p-5 sm:p-6 rounded-2xl border-2 border-stone-200/90 bg-stone-50/50 hover:bg-white hover:border-rose-600 hover:shadow-md transition-all duration-200 flex items-start gap-4 cursor-pointer"
+                  className="group flex flex-col lg:flex-row items-center lg:items-start text-center lg:text-left p-2.5 sm:p-3 lg:p-5 xl:p-6 rounded-xl lg:rounded-2xl border-2 border-stone-200/90 bg-stone-50/50 hover:bg-white hover:border-rose-600 hover:shadow-md transition-all duration-200 cursor-pointer gap-2 sm:gap-2.5 lg:gap-4 h-full justify-center lg:justify-start"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-white border border-stone-200 flex items-center justify-center shrink-0 text-stone-700 group-hover:text-rose-700 group-hover:border-rose-300 group-hover:bg-rose-50 transition-colors shadow-2xs">
-                    <Icon className="w-6 h-6 stroke-[2]" />
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg sm:rounded-xl bg-white border border-stone-200 flex items-center justify-center shrink-0 text-stone-700 group-hover:text-rose-700 group-hover:border-rose-300 group-hover:bg-rose-50 transition-colors shadow-2xs">
+                    <Icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 stroke-[2]" />
                   </div>
-                  <div className="space-y-1 flex-1">
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-rose-700 block">
+                  <div className="space-y-0.5 sm:space-y-1 flex-1">
+                    <span className="hidden lg:block text-[10px] font-extrabold uppercase tracking-wider text-rose-700">
                       {opt.tag}
                     </span>
-                    <h4 className="font-bold text-stone-900 text-base group-hover:text-rose-700 transition-colors">
+                    <h4 className="text-xs sm:text-sm lg:text-base font-semibold lg:font-bold text-center lg:text-left text-stone-900 group-hover:text-rose-700 transition-colors leading-tight sm:leading-snug">
                       {opt.title}
                     </h4>
-                    <p className="text-xs text-stone-600 leading-relaxed">
+                    <p className="hidden lg:block text-xs text-stone-600 leading-relaxed mt-1">
                       {opt.description}
                     </p>
                   </div>

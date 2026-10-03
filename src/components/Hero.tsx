@@ -9,7 +9,6 @@ import {
   ChevronUp,
   ChevronDown,
   ArrowRight,
-  Sparkles,
 } from 'lucide-react';
 
 export interface BenefitBadge {
@@ -185,7 +184,7 @@ export default function Hero() {
 
   return (
     <section
-      className="relative min-h-[90vh] w-full overflow-hidden flex items-center justify-center bg-stone-50 transition-colors duration-700"
+      className="relative min-h-fit md:min-h-[85vh] lg:min-h-[90vh] w-full overflow-hidden flex items-center justify-center bg-stone-50 transition-colors duration-700"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
@@ -193,18 +192,20 @@ export default function Hero() {
     >
       {/* 
         Subtle Ambient Radial Gradient around the central image 
-        (fades gently into bg-stone-50)
+        (gently lights up the background with the fruit color)
       */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[720px] h-[720px] rounded-full blur-3xl opacity-25 pointer-events-none transition-all duration-1000"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[720px] h-[720px] rounded-full blur-3xl opacity-35 lg:opacity-25 pointer-events-none transition-all duration-1000"
         style={{
           background: `radial-gradient(circle at 50% 50%, ${currentSlide.accentColor} 0%, transparent 68%)`,
         }}
       />
 
       {/* ========================================================
-          1. GORNJI LIJEVI UGAO (Desktop Content: Naslov i Podnaslov)
+          DESKTOP LAYOUT (lg: ekrani - netaknuto prema dizajnu)
           ======================================================== */}
+
+      {/* 1. GORNJI LIJEVI UGAO (Desktop: Naslov i Podnaslov) */}
       <div
         key={`hero-text-${currentSlide.id}`}
         className="hidden lg:block absolute top-12 left-8 md:top-16 md:left-16 z-20 max-w-lg text-left space-y-4"
@@ -218,22 +219,20 @@ export default function Hero() {
           <span>🇨🇭 {currentSlide.badge}</span>
         </div>
 
-        {/* Glavni H1 Naslov (Usklađen sa svetlom pozadinom websajta: moderan, dubok kamen/crna) */}
+        {/* Glavni H1 Naslov */}
         <h1 className="text-stone-900 font-extrabold text-4xl md:text-5xl xl:text-6xl tracking-tight leading-[1.08]">
           {currentSlide.title}
         </h1>
 
-        {/* Kratak opis / podnaslov (Usklađen ton, čist i izuzetno čitljiv) */}
+        {/* Kratak opis / podnaslov */}
         <p className="text-stone-600 text-base md:text-lg lg:text-xl font-normal mt-3 max-w-lg leading-relaxed">
           {currentSlide.subtitle}
         </p>
       </div>
 
-      {/* ========================================================
-          2. TAČNI CENTAR EKRANA (Povećana Zdjelica Bez Okvira)
-          ======================================================== */}
-      <div className="relative z-10 flex items-center justify-center my-6 lg:my-0">
-        <div className="relative w-80 h-80 sm:w-96 sm:h-96 md:w-[480px] md:h-[480px] lg:w-[520px] lg:h-[520px] xl:w-[560px] xl:h-[560px] flex items-center justify-center">
+      {/* 2. TAČNI CENTAR EKRANA (Desktop: Povećana Zdjelica i Plutajući Bedževi) */}
+      <div className="hidden lg:flex relative z-10 items-center justify-center">
+        <div className="relative lg:w-[520px] lg:h-[520px] xl:w-[560px] xl:h-[560px] flex items-center justify-center">
           {/* Lebdeća animacija zdjelice (CSS floating) */}
           <div className="relative w-full h-full rounded-full animate-hero-float flex items-center justify-center">
             {/* Blagi obrubni sjaj u boji ploda tik iza zdjelice */}
@@ -242,7 +241,7 @@ export default function Hero() {
               style={{ backgroundColor: currentSlide.accentColor }}
             />
 
-            {/* Velika okrugla zdjelica (shadow-2xl, bez ikakvog okvira ili prstena) */}
+            {/* Velika okrugla zdjelica (shadow-2xl, bez okvira) */}
             <div
               key={`hero-bowl-${currentSlide.id}`}
               className="relative w-full h-full rounded-full overflow-hidden shadow-2xl"
@@ -256,30 +255,12 @@ export default function Hero() {
                 className="object-cover rounded-full"
               />
             </div>
-
-            {/* Mobilne strelice za prebacivanje na stranama zdjelice */}
-            <button
-              type="button"
-              onClick={prevSlide}
-              aria-label="Vorheriger Slajd"
-              className="lg:hidden absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 w-10 h-10 rounded-full bg-white/95 text-stone-800 shadow-md border border-stone-200 flex items-center justify-center cursor-pointer"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              type="button"
-              onClick={nextSlide}
-              aria-label="Nächster Slajd"
-              className="lg:hidden absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 w-10 h-10 rounded-full bg-white/95 text-stone-800 shadow-md border border-stone-200 flex items-center justify-center cursor-pointer"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
           </div>
 
-          {/* Floating Glassmorphism Badges (DESKTOP: Stroga Sigurnosna Zona bez preklapanja!) */}
+          {/* Floating Glassmorphism Badges (DESKTOP: Stroga Sigurnosna Zona) */}
           <div
             key={`hero-badges-${currentSlide.id}`}
-            className="hidden lg:block absolute inset-0 pointer-events-none z-30"
+            className="absolute inset-0 pointer-events-none z-30"
           >
             {currentSlide.benefits.map((benefit, idx) => {
               const animClass = `animate-badge-enter-${idx + 1}`;
@@ -303,9 +284,7 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* ========================================================
-          3. DONJI DESNI UGAO (CTA Dugmad "Jetzt Entdecken" & "Alle Früchte")
-          ======================================================== */}
+      {/* 3. DONJI DESNI UGAO (Desktop: CTA Dugmad) */}
       <div className="hidden lg:flex absolute bottom-10 right-8 md:right-16 z-20 items-center gap-3.5">
         <Link
           href={currentSlide.ctaLink}
@@ -323,21 +302,19 @@ export default function Hero() {
         </Link>
       </div>
 
-      {/* ========================================================
-          4. DESNA VERTIKALNA SREDINA (Vertikalna Navigacija Carousela)
-          ======================================================== */}
+      {/* 4. DESNA VERTIKALNA SREDINA (Desktop: Vertikalna Navigacija) */}
       <div className="hidden lg:flex absolute right-8 md:right-12 top-1/2 -translate-y-1/2 z-20 flex-col items-center gap-4 bg-white/90 backdrop-blur-md px-2.5 py-4 rounded-full border border-stone-200/90 shadow-md text-stone-800">
         {/* Strelice gore [▲] */}
         <button
           type="button"
           onClick={prevSlide}
-          aria-label="Vorheriger Slajd"
+          aria-label="Vorheriger Slide"
           className="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 flex items-center justify-center transition hover:scale-105 active:scale-95 cursor-pointer"
         >
           <ChevronUp className="w-4 h-4" />
         </button>
 
-        {/* Vertikalni brojač slajdova (npr. "01" / "05") */}
+        {/* Vertikalni brojač slajdova */}
         <div className="flex flex-col items-center font-mono text-xs my-0.5 select-none">
           <span className="font-black text-xs text-stone-900">
             {String(activeIndex + 1).padStart(2, '0')}
@@ -348,7 +325,7 @@ export default function Hero() {
           </span>
         </div>
 
-        {/* Vertikalne tačkice (pagination indicators) */}
+        {/* Vertikalne tačkice */}
         <div className="flex flex-col items-center gap-1.5 my-1">
           {HERO_SLIDES.map((slide, idx) => (
             <button
@@ -368,7 +345,7 @@ export default function Hero() {
         <button
           type="button"
           onClick={nextSlide}
-          aria-label="Nächster Slajd"
+          aria-label="Nächster Slide"
           className="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 flex items-center justify-center transition hover:scale-105 active:scale-95 cursor-pointer"
         >
           <ChevronDown className="w-4 h-4" />
@@ -376,50 +353,100 @@ export default function Hero() {
       </div>
 
       {/* ========================================================
-          5. MOBILNI PRIKAZ (RESPONSIVE: Čisti vertikalni redoslijed u stilu websajta)
+          MOBILNI I TABLET RASPORED (< lg breakpoint)
           ======================================================== */}
-      <div className="lg:hidden flex flex-col items-center text-center space-y-6 px-4 py-12 z-20 w-full max-w-lg mx-auto">
-        {/* Naslov i opis na vrhu */}
-        <div className="space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-white border border-stone-200/90 shadow-2xs text-stone-800">
+      <div className="lg:hidden flex flex-col justify-between items-center text-center px-4 pt-6 pb-4 md:py-6 min-h-fit md:min-h-[85vh] max-w-lg md:max-w-2xl mx-auto relative z-10 w-full">
+        {/* 1. VRH (Naslov i Bedž) */}
+        <div className="w-full flex flex-col items-center pt-2 sm:pt-4">
+          {/* Bedž slajda */}
+          <div className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider mb-2 bg-white border border-stone-200/90 shadow-2xs text-stone-800">
             <span
-              className="w-2 h-2 rounded-full"
+              className="w-2 h-2 rounded-full shrink-0 shadow-2xs"
               style={{ backgroundColor: currentSlide.accentColor }}
             />
             <span>🇨🇭 {currentSlide.badge}</span>
           </div>
 
-          <h1 className="text-stone-900 font-extrabold text-3xl sm:text-4xl tracking-tight leading-tight">
+          {/* Glavni H1 naslov */}
+          <h1 className="text-stone-900 font-extrabold text-3xl sm:text-4xl md:text-5xl leading-tight text-center tracking-tight">
             {currentSlide.title}
           </h1>
 
-          <p className="text-stone-600 text-sm sm:text-base font-normal max-w-md mx-auto leading-relaxed">
+          {/* Kratak podnaslov */}
+          <p className="text-stone-600 text-sm sm:text-base mt-2 max-w-md mx-auto line-clamp-2 leading-relaxed">
             {currentSlide.subtitle}
           </p>
         </div>
 
-        {/* Bedževi sa opisima ispod zdjelice (Kompaktna mreža) */}
-        <div className="w-full grid grid-cols-2 gap-2 pt-2">
-          {currentSlide.benefits.map((benefit) => (
+        {/* 2. CENTAR (Činija sa navigacijom levo/desno) */}
+        <div className="relative flex items-center justify-center my-auto w-full py-4">
+          {/* Levo dugme za prethodni slajd */}
+          <button
+            type="button"
+            onClick={prevSlide}
+            aria-label="Vorheriger Slide"
+            className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/95 backdrop-blur-md border border-stone-200/90 text-stone-800 shadow-md flex items-center justify-center active:scale-95 cursor-pointer hover:bg-stone-50 transition-all"
+          >
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
+
+          {/* Činija u sredini sa blagom lebdećom animacijom */}
+          <div className="relative w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 mx-auto flex items-center justify-center animate-hero-float">
+            {/* Blagi obrubni sjaj u boji ploda iza zdjelice */}
             <div
-              key={benefit.id}
-              className="bg-white px-3 py-2 rounded-xl border border-stone-200/90 shadow-2xs text-xs font-semibold flex items-center gap-2 text-stone-900"
+              className="absolute inset-2 rounded-full blur-2xl opacity-35 transition-all duration-1000"
+              style={{ backgroundColor: currentSlide.accentColor }}
+            />
+
+            <div
+              key={`mobile-bowl-${currentSlide.id}`}
+              className="relative w-full h-full rounded-full overflow-hidden shadow-2xl"
             >
-              <span
-                className="w-2 h-2 rounded-full shrink-0"
-                style={{ backgroundColor: currentSlide.accentColor }}
+              <Image
+                src={currentSlide.bowlImage}
+                alt={currentSlide.title}
+                fill
+                unoptimized
+                priority
+                className="object-cover rounded-full"
               />
-              <span className="truncate">{benefit.text}</span>
             </div>
-          ))}
+          </div>
+
+          {/* Desno dugme za sledeći slajd */}
+          <button
+            type="button"
+            onClick={nextSlide}
+            aria-label="Nächster Slide"
+            className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/95 backdrop-blur-md border border-stone-200/90 text-stone-800 shadow-md flex items-center justify-center active:scale-95 cursor-pointer hover:bg-stone-50 transition-all"
+          >
+            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
         </div>
 
-        {/* Dugmad i navigacija na dnu ekrana */}
-        <div className="w-full space-y-4 pt-2">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2.5">
+        {/* 3. DNO (Bedževi o voću + CTA dugmad) */}
+        <div className="w-full flex flex-col items-center">
+          {/* Bedževi o voću */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-2 md:mb-3 w-full">
+            {currentSlide.benefits.map((benefit) => (
+              <div
+                key={`mobile-${currentSlide.id}-${benefit.id}`}
+                className="bg-white/90 backdrop-blur-md border border-stone-200/90 px-3 py-1.5 rounded-xl text-xs sm:text-sm text-stone-900 font-medium shadow-2xs flex items-center gap-2"
+              >
+                <span
+                  className="w-2 h-2 rounded-full shrink-0 shadow-2xs"
+                  style={{ backgroundColor: currentSlide.accentColor }}
+                />
+                <span>{benefit.text}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Dugmad za akciju (CTA) */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full">
             <Link
               href={currentSlide.ctaLink}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-stone-900 text-white font-extrabold text-sm shadow-md cursor-pointer"
+              className="w-full sm:w-auto px-6 py-3 rounded-full text-sm font-extrabold shadow-md hover:shadow-lg bg-stone-900 hover:bg-stone-800 text-white flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <span>{currentSlide.ctaText}</span>
               <ArrowRight className="w-4 h-4" />
@@ -427,27 +454,26 @@ export default function Hero() {
 
             <Link
               href="/shop"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white text-stone-800 font-bold text-sm border border-stone-200 shadow-2xs cursor-pointer"
+              className="w-full sm:w-auto px-6 py-3 rounded-full text-sm font-bold shadow-2xs hover:shadow-sm bg-white hover:bg-stone-100 border border-stone-200/90 text-stone-800 flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <span>Alle Früchte</span>
             </Link>
           </div>
 
           {/* Mobilni indikatori i brojač */}
-          <div className="flex items-center justify-center gap-4 pt-2">
+          <div className="flex items-center justify-center gap-3 pt-2 md:pt-4">
             <div className="flex items-center gap-1.5">
               {HERO_SLIDES.map((slide, idx) => (
                 <button
                   key={slide.id}
                   onClick={() => goToSlide(idx)}
-                  aria-label={`Gehe zu Slajd ${idx + 1}`}
+                  aria-label={`Gehe zu Slide ${idx + 1}`}
                   className={`rounded-full transition-all duration-300 cursor-pointer ${
-                    idx === activeIndex ? 'w-6 h-2 bg-stone-900' : 'w-2 h-2 bg-stone-300'
+                    idx === activeIndex ? 'w-6 h-1.5 bg-stone-900' : 'w-1.5 h-1.5 bg-stone-300 hover:bg-stone-400'
                   }`}
                 />
               ))}
             </div>
-
             <span className="font-mono text-xs text-stone-600 font-bold">
               {String(activeIndex + 1).padStart(2, '0')} / {String(HERO_SLIDES.length).padStart(2, '0')}
             </span>
