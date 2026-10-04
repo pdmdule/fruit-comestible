@@ -181,9 +181,9 @@ export default function ProductPurchaseSection({
 
   return (
     <>
-      <div className="bg-white border border-stone-200/90 rounded-3xl p-6 sm:p-8 shadow-xs space-y-7">
-      {/* Price Header */}
-      <div className="space-y-1.5 pb-4 border-b border-stone-100">
+      <div className="bg-white border border-stone-200/90 rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col gap-6 sm:gap-7">
+      {/* Price Header (order-1) */}
+      <div className="order-1 space-y-1.5 pb-4 border-b border-stone-100">
         <div className="flex items-baseline justify-between gap-4">
           <div className="flex items-baseline gap-2">
             <span className="text-3xl sm:text-4xl font-extrabold tracking-tight text-stone-900 font-sans">
@@ -204,8 +204,8 @@ export default function ProductPurchaseSection({
         </p>
       </div>
 
-      {/* Swiss Trust Badges below price */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+      {/* Swiss Trust Badges (order-5 on mobile, order-2 on desktop) */}
+      <div className="order-5 lg:order-2 grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
         <div className="flex items-center gap-2.5 p-2.5 rounded-2xl bg-stone-50 border border-stone-200/60">
           <span className="text-lg leading-none shrink-0">🇨🇭</span>
           <div className="min-w-0">
@@ -261,8 +261,8 @@ export default function ProductPurchaseSection({
         </div>
       </div>
 
-      {/* Forms & Size Selection */}
-      <div className="space-y-6 pt-2">
+      {/* Forms & Size Selection (order-2 on mobile, order-3 on desktop) */}
+      <div className="order-2 lg:order-3 space-y-6 pt-1">
         {/* Cross-linking block: "Form / Konsistenz" */}
         {availableForms && availableForms.length > 1 && (
           <div className="space-y-2.5">
@@ -366,9 +366,9 @@ export default function ProductPurchaseSection({
         </div>
       </div>
 
-      {/* Fresh Fruit Calculator ("Frische-Frucht-Rechner") */}
+      {/* Fresh Fruit Calculator ("Frische-Frucht-Rechner") (order-4) */}
       {weightGrams > 0 && (
-        <div className="bg-amber-50/60 border border-amber-200/60 rounded-2xl p-4 my-4 space-y-2">
+        <div className="order-4 bg-amber-50/60 border border-amber-200/60 rounded-2xl p-4 my-1 space-y-2">
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 rounded-md bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
               <Scale className="w-3.5 h-3.5 stroke-[2.2]" />
@@ -391,26 +391,25 @@ export default function ProductPurchaseSection({
         </div>
       )}
 
-      {/* Stock Availability indicator */}
-      <div className="pt-1">
-        {isOutOfStock ? (
-          <div className="flex items-center gap-2 text-xs font-semibold text-red-800 bg-red-50 border border-red-200/80 px-3.5 py-2.5 rounded-2xl">
-            <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
-            <span>Derzeit ausverkauft – Bald wieder verfügbar</span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 text-xs font-medium text-emerald-800 bg-emerald-50 border border-emerald-200/80 px-3.5 py-2.5 rounded-2xl">
-            <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse shrink-0" />
-            <span>
-              Auf Lager ({currentVariant?.stock_quantity ?? 'Mehrere'} Stk.) –
-              Sofort lieferbar (1–2 Werktage)
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Quantity & In den Warenkorb Button */}
-      <div ref={mainCtaRef} className="space-y-3 pt-1">
+      {/* Quantity & In den Warenkorb CTA + Stock (order-3 on mobile, order-5 on desktop) */}
+      <div ref={mainCtaRef} className="order-3 lg:order-5 space-y-3 pt-1">
+        {/* Stock Availability indicator */}
+        <div>
+          {isOutOfStock ? (
+            <div className="flex items-center gap-2 text-xs font-semibold text-red-800 bg-red-50 border border-red-200/80 px-3.5 py-2.5 rounded-2xl">
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+              <span>Derzeit ausverkauft – Bald wieder verfügbar</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-xs font-medium text-emerald-800 bg-emerald-50 border border-emerald-200/80 px-3.5 py-2.5 rounded-2xl">
+              <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse shrink-0" />
+              <span>
+                Auf Lager ({currentVariant?.stock_quantity ?? 'Mehrere'} Stk.) –
+                Sofort lieferbar (1–2 Werktage)
+              </span>
+            </div>
+          )}
+        </div>
         <div className="flex items-center gap-3">
           {/* Quantity stepper */}
           <div className="flex items-center rounded-2xl border border-stone-200 bg-stone-50 p-1 shrink-0">

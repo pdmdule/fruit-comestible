@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
+import { getProductDisplayOrigin } from '@/lib/productOrigins';
 import {
   Coffee,
   Briefcase,
@@ -524,9 +525,14 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
                         <Sparkles className="w-3 h-3" />
                         <span>{item.matchPercentage} Match</span>
                       </span>
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/95 text-stone-800 backdrop-blur-md border border-stone-200/80 shadow-2xs">
-                        🇨🇭 {product.origin_country || 'Schweiz'}
-                      </span>
+                      {(() => {
+                        const { country: displayCountry, flag: displayFlag } = getProductDisplayOrigin(product);
+                        return (
+                          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/95 text-stone-800 backdrop-blur-md border border-stone-200/80 shadow-2xs">
+                            {displayFlag} {displayCountry}
+                          </span>
+                        );
+                      })()}
                     </div>
                   </div>
 

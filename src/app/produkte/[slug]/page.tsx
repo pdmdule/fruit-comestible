@@ -12,6 +12,12 @@ import ProductNutritionChart, {
 } from '@/components/ProductNutritionChart';
 import ProductFaq, { type FaqItem } from '@/components/ProductFaq';
 import ProductOriginMap from '@/components/ProductOriginMap';
+import {
+  PRODUCT_ORIGINS,
+  getProductOrigin,
+  getProductDisplayOrigin,
+  type ProductOriginData,
+} from '@/data/productOrigins';
 import { getFruitFamilyInfo } from '@/lib/productForms';
 import {
   ArrowLeft,
@@ -202,8 +208,22 @@ export default async function ProductDetailPage({ params }: PageProps) {
   // Sort weight variants: 100g first, then 200g
   variants.sort((a, b) => (a.weight_grams || 0) - (b.weight_grams || 0));
 
+  // Authentic product origin strictly mapped per product slug (no category generalization)
+  const currentOrigin: ProductOriginData =
+    PRODUCT_ORIGINS[slug] ||
+    PRODUCT_ORIGINS[rawProduct.slug] ||
+    getProductOrigin(slug, rawProduct.origin_country);
+
+  const displayOrigin = getProductDisplayOrigin({
+    slug,
+    name_de: rawProduct.name_de,
+    origin_country: currentOrigin.country,
+  });
+
   const product = {
     ...rawProduct,
+    slug,
+    origin_country: currentOrigin.country,
     name_de: rawProduct.name_de || familyInfo?.activeForm.name || 'Gefriergetrocknete Früchte',
     subtitle_de: rawProduct.subtitle_de || familyInfo?.activeForm.subtitle || '',
   };
@@ -232,18 +252,20 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
       <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-10 sm:py-16 space-y-20">
         {/* Main 2-Column Product Layout with Generous Whitespace */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        <div className="flex flex-col w-full items-stretch lg:grid lg:grid-cols-12 gap-8 lg:gap-16 lg:items-start">
           {/* Left Column: Image Gallery & Rich Product Story */}
-          <div className="lg:col-span-7 space-y-10">
-            {/* Gallery with Zoom & Thumbnails */}
-            <ProductImageGallery
-              images={product.images}
-              title={product.name_de}
-              originCountry={product.origin_country}
-            />
+          <div className="contents lg:block lg:col-span-7 lg:space-y-10">
+            {/* 1. Gallery with Zoom & Thumbnails (order-1 on mobile) */}
+            <div className="order-1 lg:order-none w-full">
+              <ProductImageGallery
+                images={product.images}
+                title={product.name_de}
+                originCountry={product.origin_country}
+              />
+            </div>
 
-            {/* Product Title, Subtitle and Description in Anthracite Stone */}
-            <div className="space-y-4 pt-2">
+            {/* 2. Product Title, Subtitle and Description (order-2 on mobile) */}
+            <div className="order-2 lg:order-none w-full space-y-4 pt-2">
               <span className="text-xs font-extrabold tracking-widest uppercase text-rose-600">
                 100% Natürliche Beeren & Früchte
               </span>
@@ -263,8 +285,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
               )}
             </div>
 
-            {/* Premium Quality Highlights in Stone & Natural Hues */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
+            {/* 4. Premium Quality Highlights (order-4 on mobile) */}
+            <div className="order-4 lg:order-none w-full grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
               <div className="p-4 rounded-3xl bg-stone-50 border border-stone-200/80 space-y-1.5">
                 <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center mb-1">
                   <Leaf className="w-4 h-4 stroke-[2.5]" />
@@ -302,8 +324,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
               </div>
             </div>
 
-            {/* Ingredients & Specification Details Box */}
-            <div className="p-7 rounded-3xl bg-stone-50/70 border border-stone-200/90 space-y-4">
+            {/* 5. Ingredients & Specification Details Box (order-5 on mobile) */}
+            <div className="order-5 lg:order-none w-full p-7 rounded-3xl bg-stone-50/70 border border-stone-200/90 space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-wider text-stone-400">
                 Produktspezifikation
               </h3>
@@ -336,15 +358,17 @@ export default async function ProductDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Right Column: Sticky Purchase Selector with Swiss Trust Badges */}
-          <div className="lg:col-span-5 lg:sticky lg:top-28">
-            <ProductPurchaseSection
-              variants={variants}
-              productName={product.name_de}
-              productId={product.id}
-              image={primaryImage}
-              availableForms={availableForms}
-            />
+          {/* Right Column: Sticky Purchase Selector (order-3 on mobile) */}
+          <div className="contents lg:block lg:col-span-5 lg:sticky lg:top-28">
+            <div className="order-3 lg:order-none w-full">
+              <ProductPurchaseSection
+                variants={variants}
+                productName={product.name_de}
+                productId={product.id}
+                image={primaryImage}
+                availableForms={availableForms}
+              />
+            </div>
           </div>
         </div>
 
@@ -393,8 +417,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
           <ProductOriginMap
             slug={product.slug}
-            originCountry={product.origin_country || 'Schweiz'}
+            originCountry={currentOrigin.country}
             productName={product.name_de}
+            originData={currentOrigin}
           />
         </section>
       </main>

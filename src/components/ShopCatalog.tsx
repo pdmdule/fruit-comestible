@@ -14,6 +14,11 @@ import {
 } from 'lucide-react';
 import { expandProductsForCatalog } from '@/lib/productForms';
 import { SHOP_NAV_TABS, getCategoryConfig } from '@/lib/categoryConfig';
+import {
+  CATEGORY_DESCRIPTIONS,
+  getCategoryDescription,
+} from '@/data/categoryDescriptions';
+import { getProductDisplayOrigin } from '@/lib/productOrigins';
 
 export interface ProductVariant {
   id: string;
@@ -126,6 +131,9 @@ export default function ShopCatalog({
   const [, startTransition] = useTransition();
 
   const currentCategorySlug = activeCategorySlug || 'all';
+  const currentCategoryDesc =
+    CATEGORY_DESCRIPTIONS[currentCategorySlug] ||
+    getCategoryDescription(currentCategorySlug);
 
   const initialSort = useMemo(() => {
     const raw = searchParams.get('sort')?.toLowerCase() || 'bestseller';
@@ -544,6 +552,8 @@ export default function ShopCatalog({
                 ? weights.map((w) => `${w}g`).join(' & ')
                 : '100g & 200g';
 
+            const { country: displayCountry, flag: displayFlag } = getProductDisplayOrigin(product);
+
             return (
               <Link
                 key={product.id}
@@ -564,7 +574,7 @@ export default function ShopCatalog({
                   {/* Badges */}
                   <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 pointer-events-none">
                     <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/95 text-stone-800 backdrop-blur-md border border-stone-200/80 shadow-2xs">
-                      🇨🇭 {product.origin_country || 'Schweiz'}
+                      {displayFlag} {displayCountry}
                     </span>
                     {product.form && product.form !== 'Mix' && product.form !== 'Box' && (
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-stone-900/90 text-white backdrop-blur-md shadow-2xs">
@@ -620,6 +630,20 @@ export default function ShopCatalog({
             );
           })}
         </div>
+      )}
+
+      {/* Category Educational & SEO Description Section */}
+      {currentCategorySlug && currentCategoryDesc && (
+        <section className="mt-12 md:mt-16 pt-8 md:pt-10 border-t border-stone-200">
+          <div className="p-6 sm:p-8 md:p-10 rounded-3xl bg-white border border-stone-200/90 shadow-2xs">
+            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-stone-900 tracking-tight mb-3 sm:mb-4">
+              {currentCategoryDesc.title}
+            </h3>
+            <p className="text-sm sm:text-base text-stone-600 dark:text-stone-300 leading-relaxed max-w-4xl">
+              {currentCategoryDesc.text}
+            </p>
+          </div>
+        </section>
       )}
     </div>
   );

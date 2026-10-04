@@ -16,6 +16,7 @@ import {
   getDailyRecipe,
   type DailyRecipe,
 } from '@/lib/dailyRecipes';
+import { getProductDisplayOrigin } from '@/lib/productOrigins';
 import {
   ArrowRight,
   Leaf,
@@ -308,14 +309,19 @@ export default async function HomePage() {
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-106"
                   />
-                  <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 flex flex-wrap gap-1 sm:gap-1.5 pointer-events-none">
-                    <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold bg-white/95 text-stone-800 backdrop-blur-md border border-stone-200/80 shadow-2xs">
-                      🇨🇭 {product.origin_country || 'Schweiz'}
-                    </span>
-                    <span className="px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold bg-rose-700 text-white shadow-2xs">
-                      Bestseller
-                    </span>
-                  </div>
+                  {(() => {
+                    const { country: displayCountry, flag: displayFlag } = getProductDisplayOrigin(product);
+                    return (
+                      <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 flex flex-wrap gap-1 sm:gap-1.5 pointer-events-none">
+                        <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold bg-white/95 text-stone-800 backdrop-blur-md border border-stone-200/80 shadow-2xs">
+                          {displayFlag} {displayCountry}
+                        </span>
+                        <span className="px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold bg-rose-700 text-white shadow-2xs">
+                          Bestseller
+                        </span>
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 <div className="flex-1 p-3.5 sm:p-5 flex flex-col justify-between h-full space-y-3 sm:space-y-4">

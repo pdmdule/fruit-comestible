@@ -1,19 +1,12 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
-import type { ProductOriginInfo } from '@/lib/productOrigins';
+import React, { useEffect, useRef, useCallback } from 'react';
+import type { ProductOriginData } from '@/data/productOrigins';
 import 'leaflet/dist/leaflet.css';
-import {
-  MapPin,
-  ZoomIn,
-  ZoomOut,
-  Navigation,
-  Layers,
-  Mountain,
-} from 'lucide-react';
+import { Navigation } from 'lucide-react';
 
 interface OriginMapClientProps {
-  origin: ProductOriginInfo;
+  origin: ProductOriginData;
   isSwissOrigin: boolean;
 }
 
@@ -23,13 +16,30 @@ export default function OriginMapClient({
 }: OriginMapClientProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
-  const tileLayerRef = useRef<any>(null);
-  const [activeView, setActiveView] = useState<'origin' | 'switzerland' | 'route'>('origin');
-  const [mapLayer, setMapLayer] = useState<'osm' | 'topo'>('osm');
 
-  const swissGps: [number, number] = [47.3769, 8.5417];
+  // Central processing & quality verification hub in Switzerland
+  const swissGps: [number, number] = [46.8182, 8.2275];
+  const startCoordinates: [number, number] =
+    origin.coordinates || origin.gps || [46.8182, 8.2275];
 
-  // Initialize Leaflet Map on mount or origin update
+  const fitRoute = useCallback(
+    (animate = false) => {
+      if (!mapInstanceRef.current) return;
+      if (!isSwissOrigin) {
+        mapInstanceRef.current.fitBounds([startCoordinates, swissGps], {
+          padding: [45, 45],
+          maxZoom: 6,
+          animate,
+        });
+      } else {
+        mapInstanceRef.current.setView(startCoordinates, origin.zoomLevel || 7.5, {
+          animate,
+        });
+      }
+    },
+    [isSwissOrigin, startCoordinates, origin.zoomLevel, swissGps]
+  );
+
   useEffect(() => {
     let isMounted = true;
     let resizeObserver: ResizeObserver | null = null;
@@ -49,122 +59,176 @@ export default function OriginMapClient({
         delete (mapContainerRef.current as any)._leaflet_id;
       }
 
-      // Initialize Leaflet map centered directly on currently loaded product's origin country
+      // Initialize strictly static & stable Leaflet map (No drag, pan, pinch, or scroll zoom)
       const map = L.map(mapContainerRef.current, {
-        center: origin.gps,
-        zoom: origin.zoomLevel || 7,
-        scrollWheelZoom: false, // Prevent accidental scrolling when page scrolls
-        zoomControl: false, // We render custom modern zoom controls
+        center: isSwissOrigin ? startCoordinates : swissGps,
+        zoom: isSwissOrigin ? origin.zoomLevel || 7.5 : 5,
+        dragging: false,
+        touchZoom: false,
+        scrollWheelZoom: false,
+        doubleClickZoom: false,
+        boxZoom: false,
+        keyboard: false,
+        zoomControl: false,
+        attributionControl: false,
       });
 
       mapInstanceRef.current = map;
 
-      // 100% Free & Open-Source OpenStreetMap Tile Layer (QGIS standard layer, zero API keys, zero cost)
-      const osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-      const tileLayer = L.tileLayer(osmUrl, {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> (QGIS Open-Source)',
-        subdomains: ['a', 'b', 'c'],
+      // Clean standard OpenStreetMap tiles
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        className: 'osm-custom-tiles',
+        subdomains: ['a', 'b', 'c'],
       }).addTo(map);
 
-      tileLayerRef.current = tileLayer;
-
-      // Custom pulsing HTML Pin Marker for Fruit Origin
-      const pulseIcon = L.divIcon({
-        className: 'origin-marker-container',
-        html: `
-          <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;">
-            <div style="position: absolute; width: 46px; height: 46px; border-radius: 50%; background-color: rgba(225, 29, 72, 0.35); animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
-            <div style="position: absolute; width: 34px; height: 34px; border-radius: 50%; background-color: rgba(225, 29, 72, 0.18);"></div>
-            <div style="position: relative; width: 34px; height: 34px; border-radius: 50%; background-color: #ffffff; border: 2.5px solid #be123c; box-shadow: 0 4px 12px rgba(0,0,0,0.18); display: flex; align-items: center; justify-content: center; font-size: 16px;">
-              ${origin.flag}
-            </div>
-          </div>
-        `,
-        iconSize: [40, 40],
-        iconAnchor: [20, 20],
-        popupAnchor: [0, -22],
-      });
-
-      const originMarker = L.marker(origin.gps, { icon: pulseIcon }).addTo(map);
-
-      originMarker
-        .bindPopup(
-          `
-          <div style="font-family: inherit; padding: 4px 6px; min-width: 170px;">
-            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-              <span style="font-size: 17px;">${origin.flag}</span>
-              <strong style="color: #1c1917; font-size: 13px; font-weight: 800;">${origin.region}</strong>
-            </div>
-            <div style="font-size: 11px; color: #57534e; line-height: 1.4;">
-              ${origin.harvestMethod}
-            </div>
-            <div style="font-size: 10px; color: #be123c; font-weight: 700; margin-top: 4px;">
-              📍 ${origin.country}
-            </div>
-          </div>
-        `,
-          { closeButton: false }
-        )
-        .openPopup();
-
-      // Ensure view is explicitly centered and zoomed on currently loaded product's country
-      map.setView(origin.gps, origin.zoomLevel || 7);
-      setActiveView('origin');
-
-      // Destination in Switzerland & Transport Polyline (ready for route inspection)
       if (!isSwissOrigin) {
-        const swissIcon = L.divIcon({
-          className: 'swiss-marker-container',
+        // 1. Origin Marker with flag and pulse
+        const originPulseIcon = L.divIcon({
+          className: 'origin-marker-pulse',
           html: `
-            <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;">
-              <div style="width: 30px; height: 30px; border-radius: 50%; background-color: #ffffff; border: 2px solid #1c1917; box-shadow: 0 3px 10px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; font-size: 14px;">
+            <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 38px; height: 38px;">
+              <div style="position: absolute; width: 44px; height: 44px; border-radius: 50%; background-color: rgba(225, 29, 72, 0.35); animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+              <div style="position: absolute; width: 32px; height: 32px; border-radius: 50%; background-color: rgba(225, 29, 72, 0.18);"></div>
+              <div style="position: relative; width: 32px; height: 32px; border-radius: 50%; background-color: #ffffff; border: 2.5px solid #be123c; box-shadow: 0 4px 12px rgba(0,0,0,0.18); display: flex; align-items: center; justify-content: center; font-size: 15px;">
+                ${origin.flag || '📍'}
+              </div>
+            </div>
+          `,
+          iconSize: [38, 38],
+          iconAnchor: [19, 19],
+          popupAnchor: [0, -20],
+        });
+
+        const originMarker = L.marker(startCoordinates, { icon: originPulseIcon }).addTo(map);
+        originMarker.bindPopup(`
+          <div style="font-family: inherit; padding: 4px 6px; min-width: 170px;">
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 3px;">
+              <span style="font-size: 16px;">${origin.flag || '📍'}</span>
+              <strong style="color: #1c1917; font-size: 12px; font-weight: 800;">${origin.region}</strong>
+            </div>
+            <div style="font-size: 11px; color: #57534e; line-height: 1.35;">
+              ${origin.description || origin.harvestMethod || ''}
+            </div>
+            <div style="font-size: 10px; color: #be123c; font-weight: 700; margin-top: 3px;">
+              📍 ${origin.country} · ${origin.harvestTime || origin.harvestSeason || ''}
+            </div>
+          </div>
+        `, { closeButton: false });
+
+        // 2. Fixed pulsing destination marker at Switzerland (fruit-comestible.ch)
+        const swissPulseIcon = L.divIcon({
+          className: 'swiss-marker-pulse',
+          html: `
+            <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 38px; height: 38px;">
+              <div style="position: absolute; width: 44px; height: 44px; border-radius: 50%; background-color: rgba(225, 29, 72, 0.4); animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+              <div style="position: absolute; width: 32px; height: 32px; border-radius: 50%; background-color: rgba(225, 29, 72, 0.2);"></div>
+              <div style="position: relative; width: 32px; height: 32px; border-radius: 50%; background-color: #ffffff; border: 2.5px solid #be123c; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; font-size: 15px;">
                 🇨🇭
               </div>
             </div>
           `,
-          iconSize: [30, 30],
-          iconAnchor: [15, 15],
-          popupAnchor: [0, -16],
+          iconSize: [38, 38],
+          iconAnchor: [19, 19],
+          popupAnchor: [0, -20],
         });
 
-        const swissMarker = L.marker(swissGps, { icon: swissIcon }).addTo(map);
-        swissMarker.bindPopup(`
-          <div style="font-family: inherit; padding: 4px 6px;">
-            <strong style="color: #1c1917; font-size: 12px; font-weight: 800;">🇨🇭 Fruit Comestible Suisse</strong>
-            <div style="font-size: 11px; color: #57534e;">Zentrale Veredelung & Postversand</div>
-          </div>
-        `);
+        const swissMarker = L.marker(swissGps, { icon: swissPulseIcon }).addTo(map);
+        swissMarker
+          .bindPopup(
+            `
+            <div style="font-family: inherit; padding: 4px 6px; min-width: 190px;">
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 3px;">
+                <span style="font-size: 16px;">🇨🇭</span>
+                <strong style="color: #1c1917; font-size: 12px; font-weight: 800;">fruit-comestible.ch</strong>
+              </div>
+              <div style="font-size: 11px; color: #44403c; line-height: 1.35; font-weight: 600;">
+                Qualitätskontrolle & Veredelung in der Schweiz
+              </div>
+            </div>
+          `,
+            { closeButton: false }
+          )
+          .openPopup();
 
-        // Dashed connection polyline
-        L.polyline([origin.gps, swissGps], {
+        // 3. Animated dashed transport polyline to Switzerland
+        L.polyline([startCoordinates, swissGps], {
           color: '#e11d48',
           weight: 2.5,
-          dashArray: '6, 8',
+          dashArray: '7, 9',
           opacity: 0.85,
+          className: 'route-animated-line',
+          interactive: false,
         }).addTo(map);
+
+        // Frame both harvest region and Switzerland
+        map.fitBounds([startCoordinates, swissGps], {
+          padding: [45, 45],
+          maxZoom: 6,
+          animate: false,
+        });
+      } else {
+        // 100% Swiss Origin: Cultivation marker & Swiss focus
+        const swissGrowerIcon = L.divIcon({
+          className: 'swiss-grower-pulse',
+          html: `
+            <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;">
+              <div style="position: absolute; width: 46px; height: 46px; border-radius: 50%; background-color: rgba(16, 185, 129, 0.35); animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+              <div style="position: absolute; width: 34px; height: 34px; border-radius: 50%; background-color: rgba(16, 185, 129, 0.2);"></div>
+              <div style="position: relative; width: 34px; height: 34px; border-radius: 50%; background-color: #ffffff; border: 2.5px solid #059669; box-shadow: 0 4px 12px rgba(0,0,0,0.18); display: flex; align-items: center; justify-content: center; font-size: 16px;">
+                🇨🇭
+              </div>
+            </div>
+          `,
+          iconSize: [40, 40],
+          iconAnchor: [20, 20],
+          popupAnchor: [0, -22],
+        });
+
+        const swissMarker = L.marker(startCoordinates, { icon: swissGrowerIcon }).addTo(map);
+        swissMarker
+          .bindPopup(
+            `
+            <div style="font-family: inherit; padding: 4px 6px; min-width: 180px;">
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 3px;">
+                <span style="font-size: 16px;">🇨🇭</span>
+                <strong style="color: #065f46; font-size: 12px; font-weight: 800;">100% Schweizer Anbau</strong>
+              </div>
+              <div style="font-size: 11px; color: #1c1917; font-weight: 700;">${origin.region}</div>
+              <div style="font-size: 10px; color: #57534e; margin-top: 2px;">${origin.harvestMethod || 'Sorgfältige Handernte bei voller Reife'}</div>
+            </div>
+          `,
+            { closeButton: false }
+          )
+          .openPopup();
+
+        map.setView(startCoordinates, origin.zoomLevel || 7.5, { animate: false });
       }
 
-      // Invalidate map size after rendering to prevent grey tiles or misalignments
-      setTimeout(() => {
+      // Ensure proper sizing after DOM render
+      const resizeAndFit = () => {
         if (mapInstanceRef.current) {
           mapInstanceRef.current.invalidateSize();
+          if (!isSwissOrigin) {
+            mapInstanceRef.current.fitBounds([startCoordinates, swissGps], {
+              padding: [45, 45],
+              maxZoom: 6,
+              animate: false,
+            });
+          } else {
+            mapInstanceRef.current.setView(startCoordinates, origin.zoomLevel || 7.5, {
+              animate: false,
+            });
+          }
         }
-      }, 100);
-      setTimeout(() => {
-        if (mapInstanceRef.current) {
-          mapInstanceRef.current.invalidateSize();
-        }
-      }, 400);
+      };
 
-      // Observe container resize
+      setTimeout(resizeAndFit, 100);
+      setTimeout(resizeAndFit, 400);
+
+      // Handle container resizing
       if (typeof ResizeObserver !== 'undefined' && mapContainerRef.current) {
         resizeObserver = new ResizeObserver(() => {
-          if (mapInstanceRef.current) {
-            mapInstanceRef.current.invalidateSize();
-          }
+          resizeAndFit();
         });
         resizeObserver.observe(mapContainerRef.current);
       }
@@ -182,183 +246,52 @@ export default function OriginMapClient({
         mapInstanceRef.current = null;
       }
     };
-  }, [origin, isSwissOrigin]);
+  }, [origin, isSwissOrigin, fitRoute, swissGps, startCoordinates]);
 
-  // Handle Layer Toggle: OpenStreetMap vs OpenTopoMap (Both 100% Free & Open-Source)
-  const handleToggleLayer = async (layerType: 'osm' | 'topo') => {
-    if (!mapInstanceRef.current || !tileLayerRef.current) return;
-    const L = (await import('leaflet')).default;
-
-    mapInstanceRef.current.removeLayer(tileLayerRef.current);
-
-    if (layerType === 'topo') {
-      const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-        attribution:
-          '&copy; <a href="https://opentopomap.org" target="_blank" rel="noreferrer">OpenTopoMap</a> &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
-        subdomains: ['a', 'b', 'c'],
-        maxZoom: 17,
-      }).addTo(mapInstanceRef.current);
-      tileLayerRef.current = topoLayer;
-    } else {
-      const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> (QGIS Open-Source)',
-        subdomains: ['a', 'b', 'c'],
-        maxZoom: 19,
-      }).addTo(mapInstanceRef.current);
-      tileLayerRef.current = osmLayer;
-    }
-
-    setMapLayer(layerType);
-  };
-
-  // Map Navigation Actions
-  const handleFlyToOrigin = () => {
-    if (!mapInstanceRef.current) return;
-    mapInstanceRef.current.flyTo(origin.gps, origin.zoomLevel || 8, {
-      duration: 1.2,
-    });
-    setActiveView('origin');
-  };
-
-  const handleFlyToSwitzerland = () => {
-    if (!mapInstanceRef.current) return;
-    mapInstanceRef.current.flyTo([46.8182, 8.2275], 8, {
-      duration: 1.2,
-    });
-    setActiveView('switzerland');
-  };
-
-  const handleFitRoute = () => {
-    if (!mapInstanceRef.current) return;
-    if (mapInstanceRef.current.fitBounds) {
-      mapInstanceRef.current.fitBounds([origin.gps, swissGps], {
-        padding: [50, 50],
-        maxZoom: 7,
-      });
-      setActiveView('route');
-    }
-  };
-
-  const handleZoomIn = () => {
-    if (!mapInstanceRef.current) return;
-    mapInstanceRef.current.zoomIn();
-  };
-
-  const handleZoomOut = () => {
-    if (!mapInstanceRef.current) return;
-    mapInstanceRef.current.zoomOut();
+  const handleRouteClick = () => {
+    fitRoute(true);
   };
 
   return (
-    <div className="relative w-full aspect-16/11 sm:aspect-16/10 rounded-2xl overflow-hidden border border-stone-200/80 shadow-inner bg-stone-100">
-      {/* Real Leaflet Map Container with 100% Free OpenStreetMap / OpenTopoMap tiles */}
+    <div className="relative w-full aspect-16/11 sm:aspect-16/10 rounded-3xl border border-stone-200/90 overflow-hidden shadow-sm bg-stone-100">
+      <style jsx global>{`
+        @keyframes routeDash {
+          to {
+            stroke-dashoffset: -32;
+          }
+        }
+        .route-animated-line {
+          animation: routeDash 2.5s linear infinite !important;
+        }
+      `}</style>
+
+      {/* Static Stable Map */}
       <div ref={mapContainerRef} className="w-full h-full z-0" />
 
-      {/* Top Floating Controls Bar */}
-      <div className="absolute top-3 left-3 right-3 z-10 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
-        <div className="flex items-center gap-1.5 pointer-events-auto">
+      {/* Sole Action Button / Badge: "Route nach CH" or "100% Schweizer Anbau" */}
+      <div className="absolute top-3.5 left-3.5 z-10 flex items-center gap-2 pointer-events-none">
+        {!isSwissOrigin ? (
           <button
             type="button"
-            onClick={handleFlyToOrigin}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition shadow-xs flex items-center gap-1.5 cursor-pointer backdrop-blur-md ${
-              activeView === 'origin'
-                ? 'bg-stone-900 text-white shadow-sm'
-                : 'bg-white/95 text-stone-800 hover:bg-white border border-stone-200/80'
-            }`}
+            onClick={handleRouteClick}
+            className="pointer-events-auto px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/95 text-stone-900 border border-stone-200/90 shadow-sm flex items-center gap-1.5 backdrop-blur-md hover:bg-stone-50 transition-all cursor-pointer group"
+            title="Route nach Schweiz fokussieren"
           >
-            <span>{origin.flag}</span>
-            <span>{origin.country}</span>
+            <Navigation className="w-3.5 h-3.5 text-rose-600 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            <span>Route nach CH</span>
           </button>
-
-          {!isSwissOrigin && (
-            <button
-              type="button"
-              onClick={handleFitRoute}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold transition shadow-xs flex items-center gap-1.5 cursor-pointer backdrop-blur-md ${
-                activeView === 'route'
-                  ? 'bg-rose-700 text-white shadow-sm'
-                  : 'bg-white/95 text-stone-800 hover:bg-white border border-stone-200/80'
-              }`}
-            >
-              <Navigation className="w-3 h-3 text-rose-500" />
-              <span>Route nach CH</span>
-            </button>
-          )}
-
-          <button
-            type="button"
-            onClick={handleFlyToSwitzerland}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition shadow-xs flex items-center gap-1.5 cursor-pointer backdrop-blur-md ${
-              activeView === 'switzerland'
-                ? 'bg-stone-900 text-white shadow-sm'
-                : 'bg-white/95 text-stone-800 hover:bg-white border border-stone-200/80'
-            }`}
-          >
+        ) : (
+          <div className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/95 text-emerald-800 border border-emerald-200/80 shadow-sm flex items-center gap-1.5 backdrop-blur-md">
             <span>🇨🇭</span>
-            <span>Schweiz</span>
-          </button>
-        </div>
-
-        {/* Layer Selector (OSM Standard vs OpenTopoMap Relief) & Zoom */}
-        <div className="flex items-center gap-1.5 pointer-events-auto">
-          {/* Layer switcher: OSM vs Topo */}
-          <div className="flex items-center bg-white/95 backdrop-blur-md p-1 rounded-xl border border-stone-200/80 shadow-xs">
-            <button
-              type="button"
-              onClick={() => handleToggleLayer('osm')}
-              className={`px-2 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer ${
-                mapLayer === 'osm'
-                  ? 'bg-stone-900 text-white shadow-2xs'
-                  : 'text-stone-600 hover:text-stone-900'
-              }`}
-              title="Standard OpenStreetMap (QGIS-Standard)"
-            >
-              <Layers className="w-3 h-3" />
-              <span>OSM</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleToggleLayer('topo')}
-              className={`px-2 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer ${
-                mapLayer === 'topo'
-                  ? 'bg-stone-900 text-white shadow-2xs'
-                  : 'text-stone-600 hover:text-stone-900'
-              }`}
-              title="OpenTopoMap Reliefterrain (QGIS-Topografie)"
-            >
-              <Mountain className="w-3 h-3" />
-              <span>Topo</span>
-            </button>
+            <span>100% Schweizer Anbau</span>
           </div>
-
-          {/* Zoom In/Out */}
-          <div className="flex items-center gap-1 bg-white/95 backdrop-blur-md p-1 rounded-xl border border-stone-200/80 shadow-xs">
-            <button
-              type="button"
-              onClick={handleZoomIn}
-              aria-label="Vergrössern"
-              className="w-7 h-7 flex items-center justify-center rounded-lg text-stone-700 hover:bg-stone-100 transition cursor-pointer"
-            >
-              <ZoomIn className="w-3.5 h-3.5" />
-            </button>
-            <div className="w-px h-3.5 bg-stone-200" />
-            <button
-              type="button"
-              onClick={handleZoomOut}
-              aria-label="Verkleinern"
-              className="w-7 h-7 flex items-center justify-center rounded-lg text-stone-700 hover:bg-stone-100 transition cursor-pointer"
-            >
-              <ZoomOut className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
+        )}
       </div>
 
-      {/* Bottom Subtle Indicator: 100% Free Open-Source */}
-      <div className="absolute bottom-2.5 left-3 z-10 pointer-events-none">
-        <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-white/95 text-stone-700 backdrop-blur-md border border-stone-200/70 shadow-2xs">
-          🌿 100% Free & Open-Source Geodaten (OpenStreetMap / QGIS)
+      {/* Clean Corner Indicator */}
+      <div className="absolute bottom-3 left-3 z-10 pointer-events-none">
+        <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-white/90 text-stone-600 backdrop-blur-md border border-stone-200/70 shadow-2xs">
+          {isSwissOrigin ? `🇨🇭 ${origin.region}` : `${origin.flag || '📍'} ${origin.region} → 🇨🇭 CH`}
         </span>
       </div>
     </div>

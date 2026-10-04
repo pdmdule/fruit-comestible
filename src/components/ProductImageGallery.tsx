@@ -35,9 +35,9 @@ export default function ProductImageGallery({
   const currentImage = galleryImages[activeIndex] || galleryImages[0];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full">
       {/* Main Large Image with Subtle Hover Zoom */}
-      <div className="relative aspect-square sm:aspect-4/3 rounded-3xl overflow-hidden bg-stone-100 border border-stone-200 shadow-xs group">
+      <div className="relative aspect-square sm:aspect-4/3 w-full rounded-3xl overflow-hidden bg-stone-100 border border-stone-200 shadow-xs group">
         <Image
           src={currentImage}
           alt={`${title} - Ansicht ${activeIndex + 1}`}
@@ -49,16 +49,34 @@ export default function ProductImageGallery({
         />
 
         {/* Overlay Badges */}
-        <div className="absolute top-4 left-4 flex flex-wrap gap-2 pointer-events-none">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white/95 text-stone-800 backdrop-blur-md shadow-xs border border-stone-200/80">
-            <span className="text-sm">🇨🇭</span>
-            <span>Herkunft: {originCountry || 'Schweiz / Europa'}</span>
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white/95 text-emerald-800 backdrop-blur-md shadow-xs border border-emerald-200/80">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-            <span>100% Gefriergetrocknet</span>
-          </span>
-        </div>
+        {(() => {
+          const isSerbia = originCountry?.toLowerCase().includes('serbi') || originCountry?.toLowerCase().includes('srbij');
+          const countryFlag = isSerbia
+            ? '🇷🇸'
+            : originCountry?.toLowerCase().includes('peru')
+            ? '🇵🇪'
+            : originCountry?.toLowerCase().includes('ecuador')
+            ? '🇪🇨'
+            : originCountry?.toLowerCase().includes('span')
+            ? '🇪🇸'
+            : originCountry?.toLowerCase().includes('costa')
+            ? '🇨🇷'
+            : originCountry?.toLowerCase().includes('schweden')
+            ? '🇸🇪'
+            : '🇨🇭';
+          return (
+            <div className="absolute top-4 left-4 flex flex-wrap gap-2 pointer-events-none">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white/95 text-stone-800 backdrop-blur-md shadow-xs border border-stone-200/80">
+                <span className="text-sm">{countryFlag}</span>
+                <span>Herkunft: {originCountry || 'Schweiz'}</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white/95 text-emerald-800 backdrop-blur-md shadow-xs border border-emerald-200/80">
+                <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                <span>100% Gefriergetrocknet</span>
+              </span>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Thumbnail Switcher - prikazuje se isključivo ako proizvod ima 2 ili više slika */}
