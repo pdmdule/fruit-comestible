@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import ShopCatalog, { type ProductItem } from '@/components/ShopCatalog';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { getCategoryConfig } from '@/lib/categoryConfig';
 import { Sparkles, Truck, ShieldCheck, ArrowLeft } from 'lucide-react';
 
@@ -55,17 +56,11 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     <div className="min-h-screen bg-stone-50 text-stone-900 font-sans antialiased">
       {/* Top Banner / Breadcrumb */}
       <div className="border-b border-stone-200/80 bg-white">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 font-semibold text-stone-500 hover:text-stone-900 transition"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Zurück zur Startseite</span>
-          </Link>
-          <div className="flex items-center gap-2 text-emerald-800 font-medium">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <Breadcrumbs customItems={[{ label: 'Shop' }]} />
+          <div className="flex items-center gap-2 text-emerald-800 font-medium shrink-0">
             <Truck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Kostenloser Schweizer Post Versand ab CHF 60.–</span>
+            <span>Kostenloser Schweizer Post Versand ab CHF 80.–</span>
           </div>
         </div>
       </div>

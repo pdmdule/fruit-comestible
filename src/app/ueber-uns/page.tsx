@@ -12,6 +12,7 @@ import {
   Sparkles,
   CheckCircle2,
 } from 'lucide-react';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export const metadata: Metadata = {
   title: 'Über uns | Fruit Comestible Suisse',
@@ -25,14 +26,7 @@ export default function UeberUnsPage() {
       {/* Top Breadcrumb */}
       <div className="border-b border-stone-200/80 bg-white">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-3.5 flex items-center justify-between text-xs">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 font-semibold text-stone-500 hover:text-stone-900 transition"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Zurück zur Startseite</span>
-          </Link>
-          <span className="font-semibold text-stone-400">Über Fruit Comestible</span>
+          <Breadcrumbs customItems={[{ label: 'Über uns' }]} />
         </div>
       </div>
 
@@ -153,7 +147,7 @@ export default function UeberUnsPage() {
               </h4>
               <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
                 Klimaneutrale, blitzschnelle Zustellung direkt aus unserem Schweizer Lager
-                (kostenlos ab CHF 60.–).
+                (kostenlos ab CHF 80.–).
               </p>
             </div>
           </div>

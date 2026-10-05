@@ -34,8 +34,8 @@ export interface CartContextType {
   totalItems: number;
 }
 
-const FREE_SHIPPING_THRESHOLD = 60.0;
-const STANDARD_SHIPPING_CHF = 7.9;
+export const FREE_SHIPPING_THRESHOLD = 80;
+export const STANDARD_SHIPPING_CHF = 7.9;
 const CART_STORAGE_KEY = 'fruit_comestible_cart';
 
 const CartContext = createContext<CartContextType | undefined>(undefined);

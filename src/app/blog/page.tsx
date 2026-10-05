@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowLeft, BookOpen, Sparkles } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import BlogListing, { BlogPostItem } from '@/components/BlogListing';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,15 +30,8 @@ export default async function BlogPage() {
     <div className="min-h-screen bg-stone-50 text-stone-900 font-sans antialiased pb-24">
       {/* Top Breadcrumb Navigation */}
       <div className="border-b border-stone-200/80 bg-white">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-4 flex items-center justify-between text-xs">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 font-semibold text-stone-500 hover:text-stone-900 transition"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Zurück zur Startseite</span>
-          </Link>
-          <span className="font-semibold text-stone-400">Magazin & Rezepte</span>
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-3.5 flex items-center justify-between text-xs">
+          <Breadcrumbs customItems={[{ label: 'Magazin & Rezepte' }]} />
         </div>
       </div>
 

@@ -1,9 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/lib/supabase';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import {
   ShieldCheck,
   Truck,
@@ -49,6 +52,7 @@ const SWISS_CANTONS = [
 
 export default function CheckoutPage() {
   const { items, subtotal, shipping, total, vatIncluded, clearCart } = useCart();
+  const { user, profile } = useAuth();
 
   // Form State
   const [formData, setFormData] = useState({
@@ -62,6 +66,31 @@ export default function CheckoutPage() {
     canton: 'ZH',
     notes: '',
   });
+
+  // Auto-fill delivery address from profiles table / user data
+  useEffect(() => {
+    if (user || profile) {
+      setFormData((prev) => ({
+        ...prev,
+        email: prev.email || user?.email || '',
+        firstName:
+          prev.firstName ||
+          profile?.first_name ||
+          user?.user_metadata?.first_name ||
+          '',
+        lastName:
+          prev.lastName ||
+          profile?.last_name ||
+          user?.user_metadata?.last_name ||
+          '',
+        street: prev.street || profile?.street_address || '',
+        plz: prev.plz || profile?.postal_code || '',
+        city: prev.city || profile?.city || '',
+        canton: prev.canton !== 'ZH' ? prev.canton : profile?.canton || 'ZH',
+        phone: prev.phone || profile?.phone || '',
+      }));
+    }
+  }, [user, profile]);
 
   const [paymentMethod, setPaymentMethod] = useState<'twint' | 'card' | 'bill'>('twint');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -118,8 +147,74 @@ export default function CheckoutPage() {
 
     setIsSubmitting(true);
 
+    const orderNumber = `FC-CH-${Math.floor(100000 + Math.random() * 900000)}`;
+
+    const orderItems = items.map((item) => ({
+      name: item.name,
+      form: item.label || '',
+      quantity: item.quantity,
+      price: item.price,
+      image_url: item.image || '',
+    }));
+
+    const newOrder = {
+      order_number: orderNumber,
+      customer_name: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
+      customer_email: formData.email.trim(),
+      total_chf: total,
+      order_status: 'Eingegangen',
+      payment_status: paymentMethod === 'bill' ? 'Ausstehend' : 'paid',
+      payment_method: paymentMethod,
+      shipping_street: formData.street.trim(),
+      shipping_zip: formData.plz.trim(),
+      shipping_city: formData.city.trim(),
+      shipping_canton: formData.canton,
+      items: orderItems,
+      created_at: new Date().toISOString(),
+    };
+
+    // Save order in Supabase
+    supabase
+      .from('orders')
+      .insert([newOrder])
+      .then(({ error }: { error: any }) => {
+        if (error) {
+          console.warn('Notice saving order to Supabase orders table:', error);
+        }
+      });
+
+    // Also cache in local storage so orders immediately appear in user dashboard
+    try {
+      const existingRaw = localStorage.getItem('fc_user_orders');
+      const existingList = existingRaw ? JSON.parse(existingRaw) : [];
+      existingList.unshift(newOrder);
+      localStorage.setItem('fc_user_orders', JSON.stringify(existingList));
+    } catch (err) {
+      console.warn('LocalStorage order caching notice:', err);
+    }
+
+    // If logged in, also update profile with address if empty
+    if (user) {
+      supabase
+        .from('profiles')
+        .upsert(
+          {
+            id: user.id,
+            first_name: formData.firstName.trim(),
+            last_name: formData.lastName.trim(),
+            street_address: formData.street.trim(),
+            postal_code: formData.plz.trim(),
+            city: formData.city.trim(),
+            canton: formData.canton,
+            country: 'Schweiz',
+            phone: formData.phone.trim(),
+          },
+          { onConflict: 'id' }
+        )
+        .then(() => {});
+    }
+
     setTimeout(() => {
-      const orderNumber = `FC-CH-${Math.floor(100000 + Math.random() * 900000)}`;
       setOrderComplete(orderNumber);
       clearCart();
       setIsSubmitting(false);
@@ -224,14 +319,22 @@ export default function CheckoutPage() {
     <div className="min-h-screen bg-stone-50 text-stone-900 font-sans antialiased py-10 sm:py-14 px-4 sm:px-6 lg:px-8 xl:px-12">
       <div className="max-w-[1600px] mx-auto">
         {/* Navigation Breadcrumb */}
-        <div className="mb-8 space-y-1">
-          <Link
-            href="/shop"
-            className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-stone-500 hover:text-stone-900 transition"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Zurück zum Sortiment</span>
-          </Link>
+        <div className="mb-8 space-y-3">
+          <div className="flex items-center justify-between gap-4">
+            <Breadcrumbs
+              customItems={[
+                { label: 'Shop', href: '/shop' },
+                { label: 'Kasse' },
+              ]}
+            />
+            <Link
+              href="/shop"
+              className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-stone-500 hover:text-stone-900 transition shrink-0"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Zurück zum Sortiment</span>
+            </Link>
+          </div>
           <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-stone-900">
             Kasse & Bestellung
           </h1>
@@ -246,13 +349,28 @@ export default function CheckoutPage() {
             <div className="lg:col-span-7 space-y-6">
               {/* Card 1: Contact Information */}
               <div className="bg-white rounded-2xl p-6 sm:p-8 border border-stone-200 shadow-sm space-y-5">
-                <div className="border-b border-stone-100 pb-4">
-                  <span className="text-xs font-extrabold uppercase tracking-wider text-rose-700">
-                    Schritt 1
-                  </span>
-                  <h2 className="text-lg font-black text-stone-900 mt-0.5">
-                    Kontaktinformationen
-                  </h2>
+                <div className="border-b border-stone-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <span className="text-xs font-extrabold uppercase tracking-wider text-rose-700">
+                      Schritt 1
+                    </span>
+                    <h2 className="text-lg font-black text-stone-900 mt-0.5">
+                      Kontaktinformationen
+                    </h2>
+                  </div>
+                  {user ? (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Automatisch ausgefüllt</span>
+                    </span>
+                  ) : (
+                    <Link
+                      href="/login?redirect=/checkout"
+                      className="text-xs font-bold text-stone-700 hover:text-stone-900 hover:underline"
+                    >
+                      Bereits ein Konto? Anmelden
+                    </Link>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

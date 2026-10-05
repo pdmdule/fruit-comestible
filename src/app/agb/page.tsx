@@ -23,6 +23,7 @@ import {
   HelpCircle,
   Clock,
 } from 'lucide-react';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export const metadata: Metadata = {
   title: 'AGB & Datenschutz | fruit-Comestible Schweiz',
@@ -81,15 +82,9 @@ export default function AgbPage() {
     <div className="min-h-screen bg-stone-50 text-stone-900 font-sans antialiased selection:bg-rose-100 selection:text-rose-900">
       {/* Top Breadcrumb Header Bar */}
       <div className="border-b border-stone-200/80 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between text-xs">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 font-semibold text-stone-500 hover:text-stone-900 transition"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Zurück zur Startseite</span>
-          </Link>
-          <div className="flex items-center gap-2 text-stone-500">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-3.5 flex items-center justify-between gap-4 text-xs">
+          <Breadcrumbs customItems={[{ label: 'AGB & Datenschutz' }]} />
+          <div className="hidden sm:flex items-center gap-2 text-stone-500 shrink-0">
             <span>🇨🇭 Schweiz</span>
             <span>•</span>
             <span className="font-medium text-stone-800">Rechtliche Hinweise</span>

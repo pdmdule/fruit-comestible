@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import RecipeBox, { RecipeData } from '@/components/RecipeBox';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -96,16 +97,17 @@ export default async function BlogPostPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 font-sans antialiased pb-24">
       {/* Top Breadcrumb Header */}
-      <div className="border-b border-stone-200/80 bg-white sticky top-16 z-20 backdrop-blur-md bg-white/90">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between text-xs">
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-1.5 font-bold text-stone-600 hover:text-stone-900 transition"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Zurück zum Magazin</span>
-          </Link>
-          <div className="flex items-center gap-2">
+      <div className="border-b border-stone-200/80 bg-white sticky top-18 sm:top-20 z-20 backdrop-blur-md bg-white/95">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-3.5 flex items-center justify-between gap-4 text-xs">
+          <div className="flex-1 min-w-0">
+            <Breadcrumbs
+              customItems={[
+                { label: 'Magazin & Rezepte', href: '/blog' },
+                { label: post.title_de },
+              ]}
+            />
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
             <span
               className={`px-2.5 py-0.5 rounded-full font-bold text-[11px] ${
                 isRecipe

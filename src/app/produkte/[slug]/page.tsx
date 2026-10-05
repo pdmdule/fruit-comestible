@@ -19,6 +19,7 @@ import {
   type ProductOriginData,
 } from '@/data/productOrigins';
 import { getFruitFamilyInfo } from '@/lib/productForms';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import {
   ArrowLeft,
   Check,
@@ -230,23 +231,61 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
   const primaryImage = product.images?.[0];
 
+  // Dynamic category and form mapping for breadcrumbs
+  const formValue = (rawProduct.form || familyInfo?.activeForm?.form || '').toLowerCase();
+  const catValue = (rawProduct.category || '').toLowerCase();
+  const slugLower = slug.toLowerCase();
+
+  let categoryLabel = 'Früchte & Beeren';
+  let categoryHref = '/shop/beeren';
+
+  if (catValue.includes('schokolade') || slugLower.includes('schokolade')) {
+    categoryLabel = 'Schokolade';
+    categoryHref = '/shop/schokolade';
+  } else if (catValue.includes('geschenk') || catValue.includes('box') || slugLower.includes('box')) {
+    categoryLabel = 'Geschenkboxen';
+    categoryHref = '/shop/geschenkboxen';
+  } else if (
+    catValue.includes('snack') ||
+    catValue.includes('mix') ||
+    slugLower.includes('snack') ||
+    slugLower.includes('probier') ||
+    slugLower.includes('booster')
+  ) {
+    categoryLabel = 'Snacks & Mixes';
+    categoryHref = '/shop/mixes';
+  } else if (formValue === 'pulver' || slugLower.includes('pulver') || catValue.includes('pulver')) {
+    categoryLabel = 'Fruchtpulver';
+    categoryHref = '/shop/fruchtpulver';
+  } else if (formValue === 'granulat' || slugLower.includes('granulat') || catValue.includes('granulat') || catValue.includes('crunch')) {
+    categoryLabel = 'Granulat & Crunch';
+    categoryHref = '/shop/granulat';
+  } else {
+    categoryLabel = 'Ganze Früchte';
+    categoryHref = '/shop/beeren';
+  }
+
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 font-sans antialiased">
       {/* Top minimal breadcrumb / back bar */}
-      <nav className="border-b border-stone-200/80 bg-white/90 backdrop-blur-md sticky top-18 z-20">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 h-14 flex items-center justify-between">
+      <nav className="border-b border-stone-200/80 bg-white/95 backdrop-blur-md sticky top-18 sm:top-20 z-20">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-3.5 flex items-center justify-between gap-4 text-xs">
+          <div className="flex-1 min-w-0">
+            <Breadcrumbs
+              customItems={[
+                { label: 'Shop', href: '/shop' },
+                { label: categoryLabel, href: categoryHref },
+                { label: product.name_de },
+              ]}
+            />
+          </div>
           <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-stone-500 hover:text-stone-900 transition"
+            href={categoryHref || '/shop'}
+            className="hidden md:inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-500 hover:text-stone-900 transition shrink-0"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Zurück zur Übersicht</span>
           </Link>
-          <div className="flex items-center gap-2 text-xs font-medium text-stone-400">
-            <span>Shop</span>
-            <span>/</span>
-            <span className="text-stone-800 font-semibold">{product.name_de}</span>
-          </div>
         </div>
       </nav>
 
