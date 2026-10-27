@@ -17,6 +17,20 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/datenschutz',
+        destination: '/agb#datenschutz',
+        permanent: true,
+      },
+      {
+        source: '/about',
+        destination: '/ueber-uns',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

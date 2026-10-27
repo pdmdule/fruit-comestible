@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronRight, Home } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Home } from 'lucide-react';
 import { getCategoryConfig } from '@/lib/categoryConfig';
 
 export interface BreadcrumbItem {
@@ -90,6 +90,24 @@ export function Breadcrumbs({
     return null;
   }
 
+  // Calculate previous item for mobile compact back navigation
+  const previousItem = (() => {
+    if (resolvedItems.length >= 2) {
+      const prev = resolvedItems[resolvedItems.length - 2];
+      return {
+        label: prev.label,
+        href: prev.href || (prev.label.toLowerCase() === 'shop' ? '/shop' : '/'),
+      };
+    }
+    if (resolvedItems.length === 1) {
+      return {
+        label: 'Home',
+        href: '/',
+      };
+    }
+    return null;
+  })();
+
   // Schema.org BreadcrumbList for rich snippets
   const jsonLd = showJsonLd
     ? {
@@ -123,55 +141,79 @@ export function Breadcrumbs({
 
       <nav
         aria-label="Breadcrumb"
-        className={`overflow-x-auto whitespace-nowrap no-scrollbar scrollbar-none py-1 ${className}`}
+        className={`py-1 ${className}`}
       >
-        <ol className="flex items-center gap-1.5 sm:gap-2 text-xs">
-          {/* 1. Root: Home */}
-          <li className="inline-flex items-center shrink-0">
+        {/* Mobilni prikaz: kompaktan gumb za povratak */}
+        <div className="flex items-center md:hidden">
+          {previousItem ? (
             <Link
-              href="/"
-              aria-label="Fruit Comestible Startseite"
-              className="inline-flex items-center gap-1.5 text-stone-500 hover:text-stone-900 transition-colors font-medium group"
+              href={previousItem.href || '/shop'}
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-stone-600 dark:text-stone-400 hover:text-stone-900 transition-colors"
             >
-              <Home className="w-3.5 h-3.5 text-stone-400 group-hover:text-stone-700 transition-colors" />
-              <span>Home</span>
+              <ChevronLeft className="w-4 h-4" />
+              <span>Zurück zu {previousItem.label}</span>
             </Link>
-          </li>
+          ) : (
+            <Link
+              href="/shop"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-stone-600 dark:text-stone-400 hover:text-stone-900 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              <span>Zurück zum Shop</span>
+            </Link>
+          )}
+        </div>
 
-          {/* 2. Trailing Breadcrumbs */}
-          {resolvedItems.map((item, index) => {
-            const isLast = index === resolvedItems.length - 1;
-            return (
-              <React.Fragment key={`${item.label}-${index}`}>
-                <li
-                  className="inline-flex items-center shrink-0 text-stone-300"
-                  aria-hidden="true"
-                >
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </li>
+        {/* Desktop prikaz: standardni puni lanac */}
+        <div className="hidden md:flex items-center overflow-x-auto whitespace-nowrap no-scrollbar scrollbar-none">
+          <ol className="flex items-center gap-1.5 sm:gap-2 text-xs text-stone-500">
+            {/* 1. Root: Home */}
+            <li className="inline-flex items-center shrink-0">
+              <Link
+                href="/"
+                aria-label="Fruit Comestible Startseite"
+                className="inline-flex items-center gap-1.5 text-stone-500 hover:text-stone-900 transition-colors font-medium group"
+              >
+                <Home className="w-3.5 h-3.5 text-stone-400 group-hover:text-stone-700 transition-colors" />
+                <span>Home</span>
+              </Link>
+            </li>
 
-                <li className="inline-flex items-center min-w-0">
-                  {item.href && !isLast ? (
-                    <Link
-                      href={item.href}
-                      className="text-stone-500 hover:text-stone-900 transition-colors font-medium hover:underline underline-offset-4 shrink-0"
-                    >
-                      {item.label}
-                    </Link>
-                  ) : (
-                    <span
-                      className="font-bold text-stone-900 truncate max-w-[200px] sm:max-w-xs md:max-w-md lg:max-w-none"
-                      aria-current="page"
-                      title={item.label}
-                    >
-                      {item.label}
-                    </span>
-                  )}
-                </li>
-              </React.Fragment>
-            );
-          })}
-        </ol>
+            {/* 2. Trailing Breadcrumbs */}
+            {resolvedItems.map((item, index) => {
+              const isLast = index === resolvedItems.length - 1;
+              return (
+                <React.Fragment key={`${item.label}-${index}`}>
+                  <li
+                    className="inline-flex items-center shrink-0 text-stone-300"
+                    aria-hidden="true"
+                  >
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </li>
+
+                  <li className="inline-flex items-center min-w-0">
+                    {item.href && !isLast ? (
+                      <Link
+                        href={item.href}
+                        className="text-stone-500 hover:text-stone-900 transition-colors font-medium hover:underline underline-offset-4 shrink-0"
+                      >
+                        {item.label}
+                      </Link>
+                    ) : (
+                      <span
+                        className="font-bold text-stone-900 truncate max-w-[200px] sm:max-w-xs md:max-w-md lg:max-w-none"
+                        aria-current="page"
+                        title={item.label}
+                      >
+                        {item.label}
+                      </span>
+                    )}
+                  </li>
+                </React.Fragment>
+              );
+            })}
+          </ol>
+        </div>
       </nav>
     </>
   );

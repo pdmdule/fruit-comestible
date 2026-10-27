@@ -12,13 +12,14 @@ import ProductNutritionChart, {
 } from '@/components/ProductNutritionChart';
 import ProductFaq, { type FaqItem } from '@/components/ProductFaq';
 import ProductOriginMap from '@/components/ProductOriginMap';
+import SuggestedProducts from '@/components/SuggestedProducts';
 import {
   PRODUCT_ORIGINS,
   getProductOrigin,
   getProductDisplayOrigin,
   type ProductOriginData,
 } from '@/data/productOrigins';
-import { getFruitFamilyInfo } from '@/lib/productForms';
+import { getFruitFamilyInfo, expandProductsForCatalog } from '@/lib/productForms';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import {
   ArrowLeft,
@@ -151,11 +152,20 @@ export default async function ProductDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const familyInfo = getFruitFamilyInfo(slug);
 
-  let { data, error } = await supabase
-    .from('products')
-    .select('*, product_variants(*)')
-    .eq('slug', slug)
-    .maybeSingle();
+  const [productRes, allProductsRes] = await Promise.all([
+    supabase
+      .from('products')
+      .select('*, product_variants(*)')
+      .eq('slug', slug)
+      .maybeSingle(),
+    supabase
+      .from('products')
+      .select('*, product_variants(*)')
+      .order('created_at', { ascending: false }),
+  ]);
+
+  let data = productRes.data;
+  let error = productRes.error;
 
   if (!data && familyInfo?.dbSlugToFetch) {
     const fallbackRes = await supabase
@@ -171,6 +181,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  const catalogProducts = expandProductsForCatalog(allProductsRes.data || []);
   const rawProduct = data as ProductRecord;
 
   // Sibling forms cross-linking:
@@ -461,6 +472,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
             originData={currentOrigin}
           />
         </section>
+
+        {/* Suggested Products Section: Das könnte dir auch gefallen */}
+        <SuggestedProducts
+          currentSlug={slug}
+          allProducts={catalogProducts}
+        />
       </main>
     </div>
   );

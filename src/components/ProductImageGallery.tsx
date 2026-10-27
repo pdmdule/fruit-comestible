@@ -27,26 +27,107 @@ export default function ProductImageGallery({
 
   const [activeIndex, setActiveIndex] = useState(0);
 
+  // Touch Swipe & Animation State
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchCurrentX, setTouchCurrentX] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const minSwipeDistance = 45; // minimalna udaljenost u pikselima za registriranje swipe-a
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    if (galleryImages.length <= 1) return;
+    setTouchStartX(e.targetTouches[0].clientX);
+    setTouchCurrentX(e.targetTouches[0].clientX);
+    setIsDragging(true);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || touchStartX === null) return;
+    setTouchCurrentX(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!isDragging || touchStartX === null || touchCurrentX === null) {
+      setIsDragging(false);
+      setTouchStartX(null);
+      setTouchCurrentX(null);
+      return;
+    }
+
+    const distance = touchStartX - touchCurrentX;
+    if (distance > minSwipeDistance && activeIndex < galleryImages.length - 1) {
+      setActiveIndex((prev) => prev + 1); // Sljedeća slika
+    } else if (distance < -minSwipeDistance && activeIndex > 0) {
+      setActiveIndex((prev) => prev - 1); // Prethodna slika
+    }
+
+    setIsDragging(false);
+    setTouchStartX(null);
+    setTouchCurrentX(null);
+  };
+
   // Automatski resetuj na prvu sliku ako se promene slike (npr. pri prelasku na drugi oblik voća)
   useEffect(() => {
     setActiveIndex(0);
+    setIsDragging(false);
+    setTouchStartX(null);
+    setTouchCurrentX(null);
   }, [images]);
 
-  const currentImage = galleryImages[activeIndex] || galleryImages[0];
+  // Real-time touch drag offset za responzivnu swipe animaciju
+  let dragOffset = 0;
+  if (isDragging && touchStartX !== null && touchCurrentX !== null) {
+    dragOffset = touchCurrentX - touchStartX;
+    // Otpor na krajevima (boundary resistance)
+    if (
+      (activeIndex === 0 && dragOffset > 0) ||
+      (activeIndex === galleryImages.length - 1 && dragOffset < 0)
+    ) {
+      dragOffset = dragOffset * 0.3;
+    }
+  }
 
   return (
     <div className="space-y-4 w-full">
-      {/* Main Large Image with Subtle Hover Zoom */}
-      <div className="relative aspect-square sm:aspect-4/3 w-full rounded-3xl overflow-hidden bg-stone-100 border border-stone-200 shadow-xs group">
-        <Image
-          src={currentImage}
-          alt={`${title} - Ansicht ${activeIndex + 1}`}
-          fill
-          priority
-          unoptimized
-          sizes="(max-width: 1024px) 100vw, 55vw"
-          className="object-cover transition-transform duration-700 ease-out group-hover:scale-108"
-        />
+      {/* Main Large Image with Smooth Swipe Animation Track */}
+      <div
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        className="relative touch-pan-y select-none aspect-square sm:aspect-4/3 w-full rounded-3xl overflow-hidden bg-stone-100 border border-stone-200 shadow-xs group cursor-grab active:cursor-grabbing"
+      >
+        {/* Animated Carousel Slides Track */}
+        <div
+          className="flex h-full w-full will-change-transform"
+          style={{
+            transform:
+              dragOffset !== 0
+                ? `translateX(calc(-${activeIndex * 100}% + ${dragOffset}px))`
+                : `translateX(-${activeIndex * 100}%)`,
+            transition: isDragging
+              ? 'none'
+              : 'transform 320ms cubic-bezier(0.25, 1, 0.5, 1)',
+          }}
+        >
+          {galleryImages.map((img, idx) => (
+            <div
+              key={idx}
+              className="relative w-full h-full shrink-0 flex-none select-none overflow-hidden"
+            >
+              <Image
+                src={img}
+                alt={`${title} - Ansicht ${idx + 1}`}
+                fill
+                priority={idx === 0}
+                unoptimized
+                sizes="(max-width: 1024px) 100vw, 55vw"
+                className={`object-cover transition-transform duration-700 ease-out pointer-events-none select-none ${
+                  idx === activeIndex ? 'lg:group-hover:scale-105' : ''
+                }`}
+              />
+            </div>
+          ))}
+        </div>
 
         {/* Overlay Badges */}
         {(() => {
@@ -65,7 +146,7 @@ export default function ProductImageGallery({
             ? '🇸🇪'
             : '🇨🇭';
           return (
-            <div className="absolute top-4 left-4 flex flex-wrap gap-2 pointer-events-none">
+            <div className="absolute top-4 left-4 flex flex-wrap gap-2 pointer-events-none z-10">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white/95 text-stone-800 backdrop-blur-md shadow-xs border border-stone-200/80">
                 <span className="text-sm">{countryFlag}</span>
                 <span>Herkunft: {originCountry || 'Schweiz'}</span>
@@ -79,11 +160,30 @@ export default function ProductImageGallery({
         })()}
       </div>
 
-      {/* Thumbnail Switcher - prikazuje se isključivo ako proizvod ima 2 ili više slika */}
+      {/* Dots Pagination na mobilnim uređajima */}
       {galleryImages.length > 1 && (
-        <div className="flex items-center gap-3 overflow-x-auto pb-1 pt-1">
+        <div className="flex justify-center items-center gap-1.5 mt-2 lg:hidden">
+          {galleryImages.map((_, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => setActiveIndex(idx)}
+              aria-label={`Zu Bild ${idx + 1} wechseln`}
+              className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                activeIndex === idx
+                  ? 'w-6 bg-stone-900 dark:bg-stone-100'
+                  : 'w-1.5 bg-stone-300 dark:bg-stone-600 hover:bg-stone-400'
+              }`}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Thumbnail Switcher - vraćen na lijevu stranu sa 5px paddingom */}
+      {galleryImages.length > 1 && (
+        <div className="flex items-center justify-start gap-2.5 sm:gap-3 mt-3 pl-[5px] pr-2 overflow-x-auto scrollbar-none no-scrollbar w-full pb-1 pt-1">
           {galleryImages.map((img, idx) => {
-            const isSelected = idx === activeIndex;
+            const isSelected = activeIndex === idx;
             return (
               <button
                 key={idx}
@@ -102,7 +202,7 @@ export default function ProductImageGallery({
                   fill
                   unoptimized
                   sizes="96px"
-                  className="object-cover"
+                  className="object-cover pointer-events-none"
                 />
               </button>
             );
@@ -112,3 +212,7 @@ export default function ProductImageGallery({
     </div>
   );
 }
+
+export { ProductImageGallery, type ProductImageGalleryProps };
+export const ProductGallery = ProductImageGallery;
+export type ProductGalleryProps = ProductImageGalleryProps;

@@ -6,10 +6,9 @@ import { ArrowRight, Compass } from 'lucide-react';
 interface CategoryGuideCard {
   id: string;
   title: string;
-  badge: string;
-  description: string;
-  href: string;
+  tag: string;
   targetName: string;
+  href: string;
   image: string;
 }
 
@@ -17,44 +16,36 @@ const CATEGORY_GUIDES: CategoryGuideCard[] = [
   {
     id: 'muesli-crunch',
     title: 'Müsli & Crunch',
-    badge: 'Granulat',
-    description:
-      'Herrlich knuspriges Fruchtgranulat für den perfekten morgendlichen Crunch in Porridge, Müsli & Joghurt.',
-    href: '/shop/granulat',
+    tag: 'Granulat',
     targetName: 'Granulat & Crunch',
+    href: '/shop/granulat',
     image:
-      'https://images.unsplash.com/photo-1517673400267-0251440c45dc?q=80&w=900&auto=format&fit=crop',
+      'https://loinzvvygklupiomoisu.supabase.co/storage/v1/object/public/hero/IMG_9625.webp',
   },
   {
     id: 'smoothies-backen',
     title: 'Smoothies & Backen',
-    badge: 'Fruchtpulver',
-    description:
-      '100% reines Fruchtpulver ohne Zusätze für intensive Vitaminkicks in Smoothies, Shakes, Bowls & feiner Pâtisserie.',
-    href: '/shop/fruchtpulver',
+    tag: 'Fruchtpulver',
     targetName: 'Fruchtpulver',
+    href: '/shop/fruchtpulver',
     image:
       'https://images.unsplash.com/photo-1553530666-ba11a7da3888?q=80&w=900&auto=format&fit=crop',
   },
   {
     id: 'buero-unterwegs',
     title: 'Büro & Unterwegs',
-    badge: 'Ganze Früchte',
-    description:
-      'Ganze, sonnengereifte Beeren als sauberer Snack ohne klebrige Hände – pure natürliche Energie für Fokus und Alltag.',
-    href: '/shop/beeren',
+    tag: 'Ganze Früchte',
     targetName: 'Früchte & Beeren',
+    href: '/shop/beeren',
     image:
       'https://images.unsplash.com/photo-1543528176-61b239494933?q=80&w=900&auto=format&fit=crop',
   },
   {
     id: 'snacks-probieren',
     title: 'Snacks & Probieren',
-    badge: 'Snacks & Mixes',
-    description:
-      'Bunte Fruchtmischungen, Booster-Mixes und Probiersäckli für maximale Abwechslung oder zum gemeinsamen Teilen.',
-    href: '/shop/mixes',
+    tag: 'Snacks & Mixes',
     targetName: 'Snacks & Mixes',
+    href: '/shop/mixes',
     image:
       'https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?q=80&w=900&auto=format&fit=crop',
   },
@@ -62,7 +53,7 @@ const CATEGORY_GUIDES: CategoryGuideCard[] = [
 
 export default function VisualCategoryGuide() {
   return (
-    <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 pt-4 pb-8 sm:pt-6 sm:pb-12 lg:py-16 space-y-6 sm:space-y-8 lg:space-y-10 !mt-0 lg:!mt-24 xl:!mt-32">
+    <section id="kategorien" className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 space-y-6 sm:space-y-8 lg:space-y-10 scroll-mt-24">
       {/* Header with Title and Link to Shop */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div className="space-y-2 max-w-2xl">
@@ -88,55 +79,31 @@ export default function VisualCategoryGuide() {
         </Link>
       </div>
 
-      {/* 4 Visual Category Cards in 2x2 on Mobile/Tablet (< lg) and 4 columns on Desktop */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
-        {CATEGORY_GUIDES.map((card) => (
+      {/* 4 Minimalist Category Cards: Split grid 2 cols on mobile, 4 cols on desktop */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-6 lg:gap-8">
+        {CATEGORY_GUIDES.map((cat) => (
           <Link
-            key={card.id}
-            href={card.href}
-            className="group relative flex flex-col justify-between h-full min-h-[230px] sm:min-h-[290px] lg:h-[460px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xs hover:shadow-xl border border-stone-200/60 p-3 sm:p-5 lg:p-7 transition-all duration-500 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-600"
+            key={cat.href}
+            href={cat.href}
+            className="group relative flex flex-col justify-end overflow-hidden rounded-2xl sm:rounded-3xl h-72 sm:h-80 lg:h-96 p-4 sm:p-6 border border-stone-200/80 shadow-sm transition-all duration-500 hover:shadow-xl hover:-translate-y-1"
           >
-            {/* Background Image */}
+            {/* Pozadinska slika */}
             <Image
-              src={card.image}
-              alt={card.title}
+              src={cat.image}
+              alt={cat.title}
               fill
-              unoptimized
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
-              className="object-cover transition-transform duration-700 ease-out group-hover:scale-108"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             />
 
-            {/* Dark Gradient Overlay for contrast and readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-stone-950/95 via-stone-950/50 to-stone-900/15 transition-opacity duration-300 group-hover:from-stone-950 group-hover:via-stone-950/60" />
-
-            {/* Top Badge */}
-            <div className="relative z-10 flex items-center justify-between">
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wide uppercase bg-white/20 text-white backdrop-blur-md border border-white/25 shadow-xs">
-                {card.badge}
-              </span>
-            </div>
-
-            {/* Bottom Content Area */}
-            <div className="relative z-10 space-y-2 sm:space-y-3">
-              {/* Title & Arrow in Circle */}
-              <div className="flex items-center justify-between gap-2">
-                <h3 className="text-sm sm:text-base lg:text-2xl font-semibold lg:font-black tracking-tight text-white group-hover:text-rose-200 transition-colors duration-200">
-                  {card.title}
-                </h3>
-                <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 rounded-full bg-white/20 group-hover:bg-white text-white group-hover:text-stone-950 backdrop-blur-md border border-white/30 flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110 shadow-xs">
-                  <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-                </div>
-              </div>
-
-              {/* Short attractive description (2 lines max on mobile, up to 3 on desktop) */}
-              <p className="text-xs sm:text-sm text-stone-200/90 leading-relaxed line-clamp-2 sm:line-clamp-3">
-                {card.description}
-              </p>
-
-              {/* Sub-link cue */}
-              <div className="pt-0.5 sm:pt-1 hidden sm:flex items-center gap-1.5 text-xs font-bold text-rose-300 group-hover:text-white transition-colors duration-200">
-                <span>Zu {card.targetName}</span>
-                <ArrowRight className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-1" />
+            {/* Donji dio: Krupni naslov i link ka kategoriji sa strelicom */}
+            <div className="relative z-10 space-y-1 sm:space-y-1.5">
+              <h3 className="text-base sm:text-xl lg:text-2xl font-bold tracking-tight text-white drop-shadow-md group-hover:text-emerald-300 transition-colors">
+                {cat.title}
+              </h3>
+              <div className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-white drop-shadow-md group-hover:text-emerald-300 transition-colors">
+                <span>Zu {cat.targetName}</span>
+                <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
               </div>
             </div>
           </Link>

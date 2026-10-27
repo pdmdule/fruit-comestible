@@ -199,7 +199,7 @@ export default function ProductPurchaseSection({
             </span>
           )}
         </div>
-        <p className="text-xs text-stone-500">
+        <p className="hidden sm:block text-xs text-stone-500">
           Kostenloser Versand mit Schweizer Post ab CHF 80.– Bestellwert.
         </p>
       </div>

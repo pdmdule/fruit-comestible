@@ -200,6 +200,19 @@ export default function ShopCatalog({
     updateFruitParams(fruitId);
   };
 
+  const handleCategorySelectChange = (newCategorySlug: string) => {
+    const targetTab =
+      SHOP_NAV_TABS.find((t) => t.slug === newCategorySlug) || SHOP_NAV_TABS[0];
+    const params = new URLSearchParams(searchParams.toString());
+    const queryString = params.toString();
+    const targetUrl = queryString
+      ? `${targetTab.href}?${queryString}`
+      : targetTab.href;
+    startTransition(() => {
+      router.push(targetUrl, { scroll: false });
+    });
+  };
+
   const handleResetFilters = () => {
     setSelectedSort('bestseller');
     setSelectedFruit('all');
@@ -308,10 +321,66 @@ export default function ShopCatalog({
         </div>
       )}
 
-      {/* 2. Navigation Tabs & Controls Bar (Sticky on Mobile) */}
-      <div className="sticky top-[72px] sm:top-[80px] md:static z-30 -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 bg-stone-50/95 md:bg-transparent backdrop-blur-md md:backdrop-blur-none pt-2 pb-2 md:pt-0 md:pb-0 border-b border-stone-200/80 md:border-b-0 space-y-2 md:space-y-3 transition-all">
-        {/* Category Navigation Tabs */}
-        <div className="relative">
+      {/* 2. Navigation Tabs & Controls Bar */}
+      <div className="space-y-4">
+        {/* Responsive Mobile/Tablet Dropdown Menus (< 1025px) */}
+        <div className="block min-[1025px]:hidden w-full mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* 1. Kategorie wählen */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-stone-500 uppercase tracking-wider">
+                Kategorie wählen
+              </label>
+              <div className="relative">
+                <select
+                  value={currentCategorySlug}
+                  onChange={(e) => handleCategorySelectChange(e.target.value)}
+                  aria-label="Kategorie wählen"
+                  className="w-full text-xs sm:text-sm font-semibold py-2.5 sm:py-3 pl-3.5 pr-10 rounded-2xl border border-stone-200 bg-white text-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-900/10 focus:border-stone-900 shadow-2xs appearance-none cursor-pointer truncate"
+                >
+                  {SHOP_NAV_TABS.map((tab) => (
+                    <option key={tab.slug} value={tab.slug}>
+                      {tab.label}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-stone-400">
+                  <ChevronDown className="w-4 h-4" />
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Fruchtart filtern */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-stone-500 uppercase tracking-wider">
+                Fruchtart filtern
+              </label>
+              <div className="relative">
+                <select
+                  value={selectedFruit}
+                  onChange={(e) => handleFruitChange(e.target.value)}
+                  aria-label="Fruchtart filtern"
+                  className="w-full text-xs sm:text-sm font-semibold py-2.5 sm:py-3 pl-3.5 pr-10 rounded-2xl border border-stone-200 bg-white text-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-900/10 focus:border-stone-900 shadow-2xs appearance-none cursor-pointer truncate"
+                >
+                  {FRUCHT_FILTER.map((f) => {
+                    const fruitKey = getFruitFilterKey(f);
+                    return (
+                      <option key={fruitKey} value={fruitKey}>
+                        {f.icon ? `${f.icon} ${f.label}` : f.label}
+                      </option>
+                    );
+                  })}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-stone-400">
+                  <ChevronDown className="w-4 h-4" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Category Navigation Tabs (Desktop only: hidden below 1025px) */}
+        <div className="hidden min-[1025px]:block relative">
           <div
             className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar flex-nowrap pb-0.5"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
@@ -340,53 +409,51 @@ export default function ShopCatalog({
           </div>
         </div>
 
-        {/* Horizontal Fruit Filter Chips (Desktop/Tablet only: hidden on mobile, 2 rows on >= 1500px) */}
-        <div className="hidden md:flex items-start gap-2.5">
+        {/* Horizontal Fruit Filter Chips (Desktop >= 1025px only: two rows) */}
+        <div className="hidden min-[1025px]:flex items-start gap-2.5">
           <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider shrink-0 mt-2">
             Frucht:
           </span>
-          <div
-            className="fruit-filter-2rows flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar flex-nowrap py-1"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            {FRUCHT_FILTER.map((fruit, idx) => {
-              const fruitKey = getFruitFilterKey(fruit);
-              const isFruitActive = selectedFruit === fruitKey;
-              return (
-                <React.Fragment key={fruitKey}>
-                  {idx === 7 && <div className="fruit-filter-break hidden" />}
-                  <button
-                    key={fruitKey}
-                    type="button"
-                    onClick={() => handleFruitChange(fruitKey)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-medium shrink-0 transition-all duration-150 inline-flex items-center gap-1.5 cursor-pointer border ${
-                      isFruitActive
-                        ? 'bg-rose-50 border-rose-300 text-rose-800 font-semibold shadow-2xs'
-                        : 'bg-white border-stone-200/90 text-stone-700 hover:border-stone-300 hover:bg-stone-50'
-                    }`}
-                  >
-                    <span>{fruit.icon}</span>
-                    <span>{fruit.label}</span>
-                    {isFruitActive && fruitKey !== 'all' && (
-                      <span
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleFruitChange('all');
-                        }}
-                        className="ml-0.5 hover:text-rose-950 font-bold"
-                        title="Filter aufheben"
-                      >
-                        ×
-                      </span>
-                    )}
-                  </button>
-                </React.Fragment>
-              );
-            })}
+          <div className="flex flex-col gap-2">
+            {[FRUCHT_FILTER.slice(0, 7), FRUCHT_FILTER.slice(7)].map((row, rowIdx) => (
+              <div key={rowIdx} className="flex items-center gap-2 flex-wrap">
+                {row.map((fruit) => {
+                  const fruitKey = getFruitFilterKey(fruit);
+                  const isFruitActive = selectedFruit === fruitKey;
+                  return (
+                    <button
+                      key={fruitKey}
+                      type="button"
+                      onClick={() => handleFruitChange(fruitKey)}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-medium shrink-0 transition-all duration-150 inline-flex items-center gap-1.5 cursor-pointer border ${
+                        isFruitActive
+                          ? 'bg-rose-50 border-rose-300 text-rose-800 font-semibold shadow-2xs'
+                          : 'bg-white border-stone-200/90 text-stone-700 hover:border-stone-300 hover:bg-stone-50'
+                      }`}
+                    >
+                      <span>{fruit.icon}</span>
+                      <span>{fruit.label}</span>
+                      {isFruitActive && fruitKey !== 'all' && (
+                        <span
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleFruitChange('all');
+                          }}
+                          className="ml-0.5 hover:text-rose-950 font-bold"
+                          title="Filter aufheben"
+                        >
+                          ×
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Controls Bar: Counter (Left) + Fruit & Sorting Selectors (Right) */}
+        {/* Controls Bar: Counter (Left) + Sorting Selector (Right) */}
         <div className="flex items-center justify-between gap-2 py-2 sm:py-3.5 border-y border-stone-200/80 bg-white/80 sm:bg-stone-50/50 rounded-xl sm:rounded-2xl px-3 sm:px-5">
           {/* Left: Product Counter & Active Badge */}
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap min-w-0">
@@ -443,56 +510,26 @@ export default function ShopCatalog({
             )}
           </div>
 
-          {/* Right: Fruit Dropdown + Sorting Dropdown */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-            {/* Fruit Dropdown */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs font-medium text-stone-500 hidden md:inline">
-                Frucht:
-              </span>
-              <div className="relative">
-                <select
-                  value={selectedFruit}
-                  onChange={(e) => handleFruitChange(e.target.value)}
-                  aria-label="Fruchtfilter"
-                  className="text-xs font-semibold py-1.5 sm:py-2 pl-2.5 sm:pl-3 pr-6 sm:pr-7 rounded-lg sm:rounded-xl border border-stone-200 bg-white text-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-900/10 focus:border-stone-900 shadow-2xs appearance-none cursor-pointer max-w-[125px] sm:max-w-none truncate"
-                >
-                  {FRUCHT_FILTER.map((f) => {
-                    const fruitKey = getFruitFilterKey(f);
-                    return (
-                      <option key={fruitKey} value={fruitKey}>
-                        {f.icon ? `${f.icon} ${f.label}` : f.label}
-                      </option>
-                    );
-                  })}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 sm:px-2 text-stone-400">
-                  <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                </div>
-              </div>
-            </div>
-
-            {/* Sorting Dropdown */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs font-medium text-stone-500 hidden md:inline">
-                Sortierung:
-              </span>
-              <div className="relative">
-                <select
-                  value={selectedSort}
-                  onChange={(e) => handleSortChange(e.target.value)}
-                  aria-label="Produktsortierung"
-                  className="text-xs font-semibold py-1.5 sm:py-2 pl-2.5 sm:pl-3 pr-6 sm:pr-8 rounded-lg sm:rounded-xl border border-stone-200 bg-white text-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-900/10 focus:border-stone-900 shadow-2xs appearance-none cursor-pointer max-w-[120px] sm:max-w-none truncate"
-                >
-                  {SORT_OPTIONS.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 sm:px-2 text-stone-400">
-                  <ArrowUpDown className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                </div>
+          {/* Right: Sorting Dropdown */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="text-xs font-medium text-stone-500 hidden sm:inline">
+              Sortierung:
+            </span>
+            <div className="relative">
+              <select
+                value={selectedSort}
+                onChange={(e) => handleSortChange(e.target.value)}
+                aria-label="Produktsortierung"
+                className="text-xs font-semibold py-1.5 sm:py-2 pl-2.5 sm:pl-3 pr-6 sm:pr-8 rounded-lg sm:rounded-xl border border-stone-200 bg-white text-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-900/10 focus:border-stone-900 shadow-2xs appearance-none cursor-pointer max-w-[130px] sm:max-w-none truncate"
+              >
+                {SORT_OPTIONS.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 sm:px-2 text-stone-400">
+                <ArrowUpDown className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               </div>
             </div>
           </div>

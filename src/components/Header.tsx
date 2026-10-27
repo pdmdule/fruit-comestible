@@ -23,6 +23,7 @@ import {
   LogOut,
 } from 'lucide-react';
 import QuickSearch from './QuickSearch';
+import AnnouncementBar from './AnnouncementBar';
 
 export default function Header() {
   const pathname = usePathname();
@@ -75,26 +76,7 @@ export default function Header() {
   return (
     <>
       {/* 1. Top Announcement Bar */}
-      <div className="bg-stone-900 text-stone-200 text-xs py-2 px-4 border-b border-stone-800">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 flex items-center justify-between sm:justify-center gap-6 sm:gap-10 text-[11px] sm:text-xs font-medium">
-          <div className="flex items-center gap-2">
-            <span>🇨🇭</span>
-            <span>Kostenloser Versand ab CHF 80.– innerhalb der Schweiz</span>
-          </div>
-          <div className="hidden sm:flex items-center gap-2 text-stone-400">
-            <span>•</span>
-            <span className="text-stone-300">
-              🌿 100% reine Frucht – Ohne Zuckerzusatz
-            </span>
-          </div>
-          <div className="hidden lg:flex items-center gap-2 text-stone-400">
-            <span>•</span>
-            <span className="text-emerald-400 font-semibold">
-              ✓ Schweizer Manufaktur seit 2019
-            </span>
-          </div>
-        </div>
-      </div>
+      <AnnouncementBar />
 
       {/* 2. Main Header */}
       <header className="sticky top-0 z-40 w-full border-b border-stone-200 bg-white/95 backdrop-blur-md transition-all">

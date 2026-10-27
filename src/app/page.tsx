@@ -174,79 +174,8 @@ export default async function HomePage() {
       {/* 1. Interactive Showcase Hero Slider */}
       <Hero />
 
-      {/* 2. Visual Category Guide (Nach Verwendung wählen) */}
-      <VisualCategoryGuide />
-
-      {/* 3. USPs (4 Icons in a row) */}
-      {/* 3. USPs / Features (4 Icons in a row / 2x2 on mobile & tablet) */}
-      <section className="border-y border-stone-200/80 bg-white">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 pt-4 pb-8 sm:pt-6 sm:pb-12 lg:py-16">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-10">
-            {/* USP 1 */}
-            <div className="p-3 sm:p-5 lg:p-6 rounded-2xl bg-stone-50/70 border border-stone-200/80 h-full flex flex-col justify-between">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 mb-3 sm:mb-4">
-                <Leaf className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 stroke-[2.2]" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-semibold text-stone-900 text-sm sm:text-base lg:text-lg">
-                  100% Natürlich
-                </h3>
-                <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 line-clamp-2 leading-relaxed">
-                  Ohne Zuckerzusatz, rein pflanzlich, vegan und von Natur aus glutenfrei.
-                </p>
-              </div>
-            </div>
-
-            {/* USP 2 */}
-            <div className="p-3 sm:p-5 lg:p-6 rounded-2xl bg-stone-50/70 border border-stone-200/80 h-full flex flex-col justify-between">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 mb-3 sm:mb-4">
-                <Microscope className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 stroke-[2.2]" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-semibold text-stone-900 text-sm sm:text-base lg:text-lg">
-                  Schonend gefriergetrocknet
-                </h3>
-                <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 line-clamp-2 leading-relaxed">
-                  Bis zu 95% der Vitamine & Mineralstoffe bleiben erhalten.
-                </p>
-              </div>
-            </div>
-
-            {/* USP 3 */}
-            <div className="p-3 sm:p-5 lg:p-6 rounded-2xl bg-stone-50/70 border border-stone-200/80 h-full flex flex-col justify-between">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-red-100 text-red-700 flex items-center justify-center shrink-0 mb-3 sm:mb-4">
-                <Truck className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 stroke-[2.2]" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-semibold text-stone-900 text-sm sm:text-base lg:text-lg">
-                  Schweizer Standard
-                </h3>
-                <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 line-clamp-2 leading-relaxed">
-                  Schneller, klimaneutraler Versand mit der Schweizer Post.
-                </p>
-              </div>
-            </div>
-
-            {/* USP 4 */}
-            <div className="p-3 sm:p-5 lg:p-6 rounded-2xl bg-stone-50/70 border border-stone-200/80 h-full flex flex-col justify-between">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 mb-3 sm:mb-4">
-                <Zap className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 stroke-[2.2]" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-semibold text-stone-900 text-sm sm:text-base lg:text-lg">
-                  Vielseitig geniessbar
-                </h3>
-                <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 line-clamp-2 leading-relaxed">
-                  Perfekt für Müsli, Porridge, Smoothies oder einfach pur als Snack.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. Beliebte Bestseller Section */}
-      <section id="bestseller" className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 space-y-10 scroll-mt-24">
+      {/* 2. Beliebte Bestseller Section */}
+      <section id="bestseller" className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 space-y-10 scroll-mt-24 !mt-6 sm:!mt-10">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div className="space-y-2">
             <span className="text-xs font-extrabold tracking-widest uppercase text-rose-700">
@@ -363,6 +292,76 @@ export default async function HomePage() {
           })}
         </div>
       </section>
+
+      {/* 3. USPs / Features (4 Icons in a row / 2x2 on mobile & tablet) */}
+      <section className="border-y border-stone-200/80 bg-white">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 pt-4 pb-8 sm:pt-6 sm:pb-12 lg:py-16">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-10">
+            {/* USP 1 */}
+            <div className="p-3 sm:p-5 lg:p-6 rounded-2xl bg-stone-50/70 border border-stone-200/80 h-full flex flex-col justify-between">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 mb-3 sm:mb-4">
+                <Leaf className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 stroke-[2.2]" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-semibold text-stone-900 text-sm sm:text-base lg:text-lg">
+                  100% Natürlich
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 line-clamp-2 leading-relaxed">
+                  Ohne Zuckerzusatz, rein pflanzlich, vegan und von Natur aus glutenfrei.
+                </p>
+              </div>
+            </div>
+
+            {/* USP 2 */}
+            <div className="p-3 sm:p-5 lg:p-6 rounded-2xl bg-stone-50/70 border border-stone-200/80 h-full flex flex-col justify-between">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 mb-3 sm:mb-4">
+                <Microscope className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 stroke-[2.2]" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-semibold text-stone-900 text-sm sm:text-base lg:text-lg">
+                  Schonend gefriergetrocknet
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 line-clamp-2 leading-relaxed">
+                  Bis zu 95% der Vitamine & Mineralstoffe bleiben erhalten.
+                </p>
+              </div>
+            </div>
+
+            {/* USP 3 */}
+            <div className="p-3 sm:p-5 lg:p-6 rounded-2xl bg-stone-50/70 border border-stone-200/80 h-full flex flex-col justify-between">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-red-100 text-red-700 flex items-center justify-center shrink-0 mb-3 sm:mb-4">
+                <Truck className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 stroke-[2.2]" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-semibold text-stone-900 text-sm sm:text-base lg:text-lg">
+                  Schweizer Standard
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 line-clamp-2 leading-relaxed">
+                  Schneller, klimaneutraler Versand mit der Schweizer Post.
+                </p>
+              </div>
+            </div>
+
+            {/* USP 4 */}
+            <div className="p-3 sm:p-5 lg:p-6 rounded-2xl bg-stone-50/70 border border-stone-200/80 h-full flex flex-col justify-between">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 mb-3 sm:mb-4">
+                <Zap className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 stroke-[2.2]" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-semibold text-stone-900 text-sm sm:text-base lg:text-lg">
+                  Vielseitig geniessbar
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 line-clamp-2 leading-relaxed">
+                  Perfekt für Müsli, Porridge, Smoothies oder einfach pur als Snack.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Visual Category Guide (Nach Verwendung wählen) */}
+      <VisualCategoryGuide />
 
       {/* 4. Interactive Frucht & Snack Finder & Daily Recipe */}
       <section
