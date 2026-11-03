@@ -17,6 +17,7 @@ import {
   type DailyRecipe,
 } from '@/lib/dailyRecipes';
 import { getProductDisplayOrigin } from '@/lib/productOrigins';
+import { getProductDisplayImage } from '@/lib/utils';
 import {
   ArrowRight,
   Leaf,
@@ -41,27 +42,61 @@ interface ProductVariant {
   id: string;
   weight_grams?: number;
   label_de?: string;
+  title?: string;
   form_de?: string;
+  form?: string;
   price_chf: number;
+  compare_at_price_chf?: number | null;
+  sku?: string;
+  stock_quantity?: number;
+  image_url?: string | null;
+  images?: string[] | null;
 }
 
 interface ProductItem {
   id: string;
   slug: string;
+  name?: string;
   name_de: string;
   subtitle_de?: string;
   description_de?: string;
   origin_country?: string;
   images?: string[];
+  image_url?: string | null;
+  price_chf?: number | null;
   is_featured?: boolean;
+  form?: string;
+  category?: string;
+  variants?: ProductVariant[];
   product_variants?: ProductVariant[];
 }
 
 export default async function HomePage() {
   const { data: productsData } = await supabase
     .from('products')
-    .select('*, product_variants(*)')
+    .select(`
+      *,
+      variants:product_variants (
+        id,
+        title:label_de,
+        label_de,
+        form:form_de,
+        form_de,
+        price_chf,
+        image_url,
+        images,
+        weight_grams
+      )
+    `)
+    .order('price_chf', { referencedTable: 'product_variants', ascending: true })
     .order('created_at', { ascending: true });
+
+  const rawProducts = (productsData || []) as any[];
+  rawProducts.forEach((p) => {
+    p.product_variants = p.variants || p.product_variants || [];
+    p.variants = p.variants || p.product_variants || [];
+  });
+  const products = rawProducts as ProductItem[];
 
   const { data: blogPostsData } = await supabase
     .from('blog_posts')
@@ -77,8 +112,6 @@ export default async function HomePage() {
       'id, slug, title_de, summary_de, category, recipe_data, image_url, cover_image_url'
     )
     .ilike('category', '%rezept%');
-
-  const products = (productsData || []) as ProductItem[];
 
   // Bestsellers: 6 items (5 on desktop, 6 on mobile/tablet)
   const featuredProducts = products.filter((p) => p.is_featured);
@@ -201,12 +234,17 @@ export default async function HomePage() {
         {/* Product Cards: 5 in a single row on desktop, 6 on mobile & tablet */}
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6 lg:gap-5 xl:gap-6">
           {bestsellerList.slice(0, 6).map((product, index) => {
-            const variants = product.product_variants || [];
-            const prices = variants.map((v) => Number(v.price_chf)).filter(Boolean);
-            const minPrice = prices.length > 0 ? Math.min(...prices) : 15.9;
-            const primaryImage =
-              product.images?.[0] ||
-              'https://images.unsplash.com/photo-1543528176-61b239494933?q=80&w=800&auto=format&fit=crop';
+            const variants = product.variants || product.product_variants || [];
+            const prices = variants
+              .map((v) => Number(v.price_chf))
+              .filter((p) => !isNaN(p) && p > 0);
+            const minPrice =
+              prices.length > 0
+                ? Math.min(...prices)
+                : product.price_chf && !isNaN(Number(product.price_chf))
+                ? Number(product.price_chf)
+                : 15.9;
+            const displayImage = getProductDisplayImage(product);
 
             // Available pack sizes
             const weights = Array.from(
@@ -221,22 +259,43 @@ export default async function HomePage() {
                 ? `Erhältlich in ${weights.map((w) => `${w}g`).join(' & ')}`
                 : '100% reine Frucht';
 
+            // Determine variant & form for target link
+            const cardForm = product.form || variants[0]?.form || variants[0]?.form_de;
+            const cardVariant =
+              variants.find(
+                (v) =>
+                  cardForm &&
+                  (v.form || v.form_de)?.toLowerCase() === cardForm.toLowerCase()
+              ) || variants[0];
+
+            const queryParams = new URLSearchParams();
+            if (cardForm) {
+              queryParams.set('form', cardForm);
+            }
+            if (cardVariant?.id) {
+              queryParams.set('variant', cardVariant.id);
+            }
+            const queryString = queryParams.toString();
+            const productHref = queryString
+              ? `/produkte/${product.slug}?${queryString}`
+              : `/produkte/${product.slug}`;
+
             return (
               <Link
                 key={product.id}
-                href={`/produkte/${product.slug}`}
+                href={productHref}
                 className={`group flex flex-col bg-white border border-stone-200/90 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xs hover:shadow-md hover:border-stone-300 transition-all duration-300 h-full ${
                   index >= 5 ? 'lg:hidden' : ''
                 }`}
               >
                 <div className="relative aspect-square w-full overflow-hidden bg-stone-100">
                   <Image
-                    src={primaryImage}
-                    alt={product.name_de}
+                    src={displayImage}
+                    alt={product.name_de || product.name || 'Produkt'}
                     fill
                     unoptimized
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-106"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   {(() => {
                     const { country: displayCountry, flag: displayFlag } = getProductDisplayOrigin(product);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { getProductDisplayImage } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,9 +17,20 @@ export async function GET(request: NextRequest) {
       // 1. Query products
       supabase
         .from('products')
-        .select(
-          'id, slug, name_de, subtitle_de, description_de, images, product_variants(price_chf)'
-        )
+        .select(`
+          id, slug, name_de, subtitle_de, description_de, images,
+          variants:product_variants (
+            id,
+            title:label_de,
+            label_de,
+            form:form_de,
+            form_de,
+            price_chf,
+            image_url,
+            images
+          )
+        `)
+        .order('price_chf', { referencedTable: 'product_variants', ascending: true })
         .or(
           `name_de.ilike.%${q}%,subtitle_de.ilike.%${q}%,description_de.ilike.%${q}%`
         )
@@ -45,15 +57,12 @@ export async function GET(request: NextRequest) {
 
     // Format products
     const products = (productsRes.data || []).map((p: any) => {
-      const variants = p.product_variants || [];
+      const variants = p.variants || p.product_variants || [];
       const prices = variants
         .map((v: any) => Number(v.price_chf))
         .filter((price: number) => !isNaN(price) && price > 0);
       const minPrice = prices.length > 0 ? Math.min(...prices) : null;
-      const image =
-        Array.isArray(p.images) && p.images.length > 0
-          ? p.images[0]
-          : '/logo.webp';
+      const image = getProductDisplayImage(p);
 
       return {
         id: p.id,

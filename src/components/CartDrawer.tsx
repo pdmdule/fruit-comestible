@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
+import { getProductDisplayImage } from '@/lib/utils';
 import {
   X,
   Plus,
@@ -161,19 +162,13 @@ export default function CartDrawer() {
                 >
                   {/* Thumbnail */}
                   <div className="w-18 h-18 rounded-xl bg-white border border-stone-200/80 overflow-hidden shrink-0 relative">
-                    {item.image ? (
-                      <Image
-                        src={item.image}
-                        alt={item.name}
-                        fill
-                        className="object-cover"
-                        sizes="72px"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-stone-300">
-                        <ShoppingBag className="w-6 h-6 stroke-1" />
-                      </div>
-                    )}
+                    <Image
+                      src={item.image || getProductDisplayImage(item)}
+                      alt={item.name}
+                      fill
+                      className="object-cover"
+                      sizes="72px"
+                    />
                   </div>
 
                   {/* Info */}

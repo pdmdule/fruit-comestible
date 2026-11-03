@@ -3,10 +3,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { supabase } from '@/lib/supabase';
-import ProductImageGallery from '@/components/ProductImageGallery';
-import ProductPurchaseSection, {
-  type ProductVariant,
-} from '@/components/ProductPurchaseSection';
+import ProductDetails from '@/components/ProductDetails';
+import { type ProductVariant } from '@/components/ProductPurchaseSection';
 import ProductNutritionChart, {
   type MacroItem,
 } from '@/components/ProductNutritionChart';
@@ -21,35 +19,31 @@ import {
 } from '@/data/productOrigins';
 import { getFruitFamilyInfo, expandProductsForCatalog } from '@/lib/productForms';
 import Breadcrumbs from '@/components/Breadcrumbs';
-import {
-  ArrowLeft,
-  Check,
-  ShieldCheck,
-  Utensils,
-  Leaf,
-  Clock,
-  Sparkles,
-} from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 interface ProductRecord {
   id: string;
   slug: string;
+  name?: string;
   name_de: string;
   subtitle_de?: string;
   description_de?: string;
   origin_country?: string;
   ingredients_de?: string;
   images?: string[];
+  image_url?: string | null;
   form?: string;
   category?: string;
   macro_distribution?: MacroItem[];
   faq?: FaqItem[];
+  variants?: ProductVariant[];
   product_variants?: ProductVariant[];
 }
 
@@ -59,14 +53,50 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   let { data: product } = await supabase
     .from('products')
-    .select('name_de, subtitle_de, description_de, form, images, product_variants(*)')
+    .select(`
+      name_de,
+      subtitle_de,
+      description_de,
+      form,
+      images,
+      variants:product_variants (
+        id,
+        weight_grams,
+        price_chf,
+        stock_quantity,
+        form:form_de,
+        form_de,
+        label_de,
+        sku,
+        image_url,
+        images
+      )
+    `)
     .eq('slug', slug)
     .maybeSingle();
 
   if (!product && familyInfo?.dbSlugToFetch) {
     const fallback = await supabase
       .from('products')
-      .select('name_de, subtitle_de, description_de, form, images, product_variants(*)')
+      .select(`
+        name_de,
+        subtitle_de,
+        description_de,
+        form,
+        images,
+        variants:product_variants (
+          id,
+          weight_grams,
+          price_chf,
+          stock_quantity,
+          form:form_de,
+          form_de,
+          label_de,
+          sku,
+          image_url,
+          images
+        )
+      `)
       .eq('slug', familyInfo.dbSlugToFetch)
       .maybeSingle();
     product = fallback.data;
@@ -85,7 +115,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   // Weight packaging string from variants (e.g. "100g / 200g")
-  const variants = (product?.product_variants || []).filter(
+  const rawMetadataVariants = ((product as any)?.variants || (product as any)?.product_variants || []);
+  const variants = rawMetadataVariants.filter(
     (v: any) => v.weight_grams === 100 || v.weight_grams === 200
   );
   const weights = Array.from(new Set(variants.map((v: any) => v.weight_grams))).sort(
@@ -148,19 +179,57 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function ProductDetailPage({ params }: PageProps) {
+export default async function ProductDetailPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
+  const resolvedSearchParams = searchParams ? await searchParams : {};
+  const initialForm =
+    typeof resolvedSearchParams.form === 'string'
+      ? resolvedSearchParams.form
+      : undefined;
+  const initialVariantId =
+    typeof resolvedSearchParams.variant === 'string'
+      ? resolvedSearchParams.variant
+      : undefined;
+
   const familyInfo = getFruitFamilyInfo(slug);
 
   const [productRes, allProductsRes] = await Promise.all([
     supabase
       .from('products')
-      .select('*, product_variants(*)')
+      .select(`
+        *,
+        variants:product_variants (
+          id,
+          weight_grams,
+          price_chf,
+          stock_quantity,
+          form:form_de,
+          form_de,
+          label_de,
+          sku,
+          image_url,
+          images
+        )
+      `)
       .eq('slug', slug)
       .maybeSingle(),
     supabase
       .from('products')
-      .select('*, product_variants(*)')
+      .select(`
+        *,
+        variants:product_variants (
+          id,
+          weight_grams,
+          price_chf,
+          stock_quantity,
+          form:form_de,
+          form_de,
+          label_de,
+          sku,
+          image_url,
+          images
+        )
+      `)
       .order('created_at', { ascending: false }),
   ]);
 
@@ -170,7 +239,21 @@ export default async function ProductDetailPage({ params }: PageProps) {
   if (!data && familyInfo?.dbSlugToFetch) {
     const fallbackRes = await supabase
       .from('products')
-      .select('*, product_variants(*)')
+      .select(`
+        *,
+        variants:product_variants (
+          id,
+          weight_grams,
+          price_chf,
+          stock_quantity,
+          form:form_de,
+          form_de,
+          label_de,
+          sku,
+          image_url,
+          images
+        )
+      `)
       .eq('slug', familyInfo.dbSlugToFetch)
       .maybeSingle();
     data = fallbackRes.data;
@@ -181,8 +264,16 @@ export default async function ProductDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const catalogProducts = expandProductsForCatalog(allProductsRes.data || []);
   const rawProduct = data as ProductRecord;
+  rawProduct.product_variants = rawProduct.variants || rawProduct.product_variants || [];
+  rawProduct.variants = rawProduct.variants || rawProduct.product_variants || [];
+
+  (allProductsRes.data || []).forEach((p: any) => {
+    p.product_variants = p.variants || p.product_variants || [];
+    p.variants = p.variants || p.product_variants || [];
+  });
+
+  const catalogProducts = expandProductsForCatalog(allProductsRes.data || []);
 
   // Sibling forms cross-linking:
   let availableForms = familyInfo?.siblingLinks
@@ -197,28 +288,91 @@ export default async function ProductDetailPage({ params }: PageProps) {
       }))
     : [];
 
-  // Weight variants: 100g and 200g
-  let variants = (rawProduct.product_variants || []).slice();
+  // Weight & Form variants: include all variants from this product
+  let rawVariants: ProductVariant[] = (rawProduct.variants || []).map((v: any) => {
+    const vForm = v.form || v.form_de || rawProduct.form || 'Ganz';
+    const formDef = familyInfo?.family?.forms.find(
+      (f) => f.form.toLowerCase() === vForm.toLowerCase()
+    );
+    return {
+      ...v,
+      form: vForm,
+      form_de: v.form_de || vForm,
+      title: v.title || formDef?.name || rawProduct.name_de,
+      name_de: formDef?.name || rawProduct.name_de,
+      name: formDef?.name || rawProduct.name_de,
+      subtitle: v.subtitle || formDef?.subtitle || rawProduct.subtitle_de,
+      subtitle_de: v.subtitle_de || formDef?.subtitle || rawProduct.subtitle_de,
+      description: v.description || rawProduct.description_de,
+      description_de: v.description_de || rawProduct.description_de,
+      ingredients_de: rawProduct.ingredients_de,
+    };
+  });
 
-  // If variants have multiple forms from legacy db rows, filter only those matching this product's form
-  if (rawProduct.form) {
-    const matched = variants.filter(
-      (v) => !v.form_de || v.form_de.toLowerCase() === rawProduct.form?.toLowerCase()
-    );
-    if (matched.length > 0) {
-      variants = matched;
-    }
-  } else if (familyInfo) {
-    const formMatched = variants.filter((v) =>
-      familyInfo.activeForm.variantMatch(v.form_de, v.label_de)
-    );
-    if (formMatched.length > 0) {
-      variants = formMatched;
-    }
+  // If the product belongs to a fruit family with sibling forms, augment with sibling variants for instant switching
+  const distinctProductForms = new Set(
+    rawVariants.map((v) => (v.form || v.form_de)?.toLowerCase()).filter(Boolean)
+  );
+  if (distinctProductForms.size <= 1 && familyInfo?.siblingLinks) {
+    familyInfo.siblingLinks.forEach((siblingLink) => {
+      const siblingSlug = siblingLink.href.replace('/produkte/', '');
+      if (siblingSlug !== slug) {
+        const siblingProduct = (allProductsRes.data || []).find(
+          (p: any) => p.slug === siblingSlug
+        );
+        const siblingDef = familyInfo?.family?.forms.find(
+          (f) => f.slug === siblingSlug || f.form.toLowerCase() === siblingLink.form.toLowerCase()
+        );
+        if (siblingProduct?.variants && siblingProduct.variants.length > 0) {
+          siblingProduct.variants.forEach((sv: any) => {
+            const exists = rawVariants.some((v) => v.id === sv.id);
+            if (!exists) {
+              const vForm = sv.form || sv.form_de || siblingLink.form;
+              rawVariants.push({
+                ...sv,
+                form: vForm,
+                form_de: sv.form_de || vForm,
+                image_url: sv.image_url || siblingProduct.images?.[0] || null,
+                images:
+                  sv.images && sv.images.length > 0
+                    ? sv.images
+                    : (siblingProduct.images || []),
+                title: sv.title || siblingProduct.name_de || siblingDef?.name,
+                name_de: siblingProduct.name_de || siblingDef?.name,
+                name: siblingProduct.name_de || siblingDef?.name,
+                subtitle: sv.subtitle || siblingProduct.subtitle_de || siblingDef?.subtitle,
+                subtitle_de: sv.subtitle_de || siblingProduct.subtitle_de || siblingDef?.subtitle,
+                description: sv.description || siblingProduct.description_de || rawProduct.description_de,
+                description_de: sv.description_de || siblingProduct.description_de || rawProduct.description_de,
+                ingredients_de: siblingProduct.ingredients_de || rawProduct.ingredients_de,
+              });
+            }
+          });
+        }
+      }
+    });
   }
 
-  // Sort weight variants: 100g first, then 200g
-  variants.sort((a, b) => (a.weight_grams || 0) - (b.weight_grams || 0));
+  let variants = rawVariants;
+  const targetFormName = (
+    initialForm ||
+    rawProduct.form ||
+    familyInfo?.activeForm?.form ||
+    'Ganz'
+  ).toLowerCase();
+
+  // Sort variants: matching target form first, then by weight_grams ascending
+  variants.sort((a, b) => {
+    const aForm = (a.form || a.form_de || '').toLowerCase();
+    const bForm = (b.form || b.form_de || '').toLowerCase();
+    const aMatches = aForm === targetFormName;
+    const bMatches = bForm === targetFormName;
+
+    if (aMatches && !bMatches) return -1;
+    if (!aMatches && bMatches) return 1;
+
+    return (a.weight_grams || 0) - (b.weight_grams || 0);
+  });
 
   // Authentic product origin strictly mapped per product slug (no category generalization)
   const currentOrigin: ProductOriginData =
@@ -301,126 +455,17 @@ export default async function ProductDetailPage({ params }: PageProps) {
       </nav>
 
       <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-10 sm:py-16 space-y-20">
-        {/* Main 2-Column Product Layout with Generous Whitespace */}
-        <div className="flex flex-col w-full items-stretch lg:grid lg:grid-cols-12 gap-8 lg:gap-16 lg:items-start">
-          {/* Left Column: Image Gallery & Rich Product Story */}
-          <div className="contents lg:block lg:col-span-7 lg:space-y-10">
-            {/* 1. Gallery with Zoom & Thumbnails (order-1 on mobile) */}
-            <div className="order-1 lg:order-none w-full">
-              <ProductImageGallery
-                images={product.images}
-                title={product.name_de}
-                originCountry={product.origin_country}
-              />
-            </div>
-
-            {/* 2. Product Title, Subtitle and Description (order-2 on mobile) */}
-            <div className="order-2 lg:order-none w-full space-y-4 pt-2">
-              <span className="text-xs font-extrabold tracking-widest uppercase text-rose-600">
-                100% Natürliche Beeren & Früchte
-              </span>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-stone-900 leading-tight">
-                {product.name_de}
-              </h1>
-              {product.subtitle_de && (
-                <p className="text-lg sm:text-xl text-stone-600 font-medium leading-snug">
-                  {product.subtitle_de}
-                </p>
-              )}
-
-              {product.description_de && (
-                <div className="pt-3 text-stone-600 text-base leading-relaxed space-y-3">
-                  <p>{product.description_de}</p>
-                </div>
-              )}
-            </div>
-
-            {/* 4. Premium Quality Highlights (order-4 on mobile) */}
-            <div className="order-4 lg:order-none w-full grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
-              <div className="p-4 rounded-3xl bg-stone-50 border border-stone-200/80 space-y-1.5">
-                <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center mb-1">
-                  <Leaf className="w-4 h-4 stroke-[2.5]" />
-                </div>
-                <h3 className="text-sm font-bold text-stone-900">
-                  100% Frucht & Vegan
-                </h3>
-                <p className="text-xs text-stone-500 leading-relaxed">
-                  Frei von Industriezucker, künstlichen Aromen und Zusätzen.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-3xl bg-stone-50 border border-stone-200/80 space-y-1.5">
-                <div className="w-8 h-8 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center mb-1">
-                  <Sparkles className="w-4 h-4 stroke-[2.5]" />
-                </div>
-                <h3 className="text-sm font-bold text-stone-900">
-                  Schonendes Vakuum
-                </h3>
-                <p className="text-xs text-stone-500 leading-relaxed">
-                  Liofilisation bewahrt bis zu 95% der Vitamine & Struktur.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-3xl bg-stone-50 border border-stone-200/80 space-y-1.5">
-                <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-1">
-                  <ShieldCheck className="w-4 h-4 stroke-[2.5]" />
-                </div>
-                <h3 className="text-sm font-bold text-stone-900">
-                  Schweizer Standard
-                </h3>
-                <p className="text-xs text-stone-500 leading-relaxed">
-                  Streng kontrollierte Rohstoffe und höchste Reinheit.
-                </p>
-              </div>
-            </div>
-
-            {/* 5. Ingredients & Specification Details Box (order-5 on mobile) */}
-            <div className="order-5 lg:order-none w-full p-7 rounded-3xl bg-stone-50/70 border border-stone-200/90 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-stone-400">
-                Produktspezifikation
-              </h3>
-              <dl className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm">
-                <div>
-                  <dt className="text-xs font-medium text-stone-500">Zutaten</dt>
-                  <dd className="font-bold text-stone-900 mt-1">
-                    {product.ingredients_de || '100% gefriergetrocknete Früchte'}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-xs font-medium text-stone-500">Herkunftsland</dt>
-                  <dd className="font-bold text-stone-900 mt-1">
-                    {product.origin_country || 'Schweiz / Europa'}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-xs font-medium text-stone-500">Lagerung</dt>
-                  <dd className="font-bold text-stone-900 mt-1">
-                    Kühl, trocken und lichtgeschützt
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-xs font-medium text-stone-500">Besonderheit</dt>
-                  <dd className="font-bold text-stone-900 mt-1">
-                    Ohne Gentechnik (GVO-frei) & glutenfrei
-                  </dd>
-                </div>
-              </dl>
-            </div>
-          </div>
-
-          {/* Right Column: Sticky Purchase Selector (order-3 on mobile) */}
-          <div className="contents lg:block lg:col-span-5 lg:sticky lg:top-28">
-            <div className="order-3 lg:order-none w-full">
-              <ProductPurchaseSection
-                variants={variants}
-                productName={product.name_de}
-                productId={product.id}
-                image={primaryImage}
-                availableForms={availableForms}
-              />
-            </div>
-          </div>
-        </div>
+        {/* Main 2-Column Product Layout with Dynamic Gallery & Purchase Section */}
+        <React.Suspense fallback={<div className="min-h-[500px]" />}>
+          <ProductDetails
+            product={product}
+            variants={variants}
+            availableForms={availableForms}
+            primaryImage={primaryImage}
+            initialForm={initialForm}
+            initialVariantId={initialVariantId}
+          />
+        </React.Suspense>
 
         {/* Lower Section: Nutrition Donut Chart & FAQ Accordion */}
         <div className="pt-16 border-t border-stone-200 space-y-12">

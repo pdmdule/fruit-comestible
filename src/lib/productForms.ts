@@ -592,17 +592,18 @@ export function expandProductsForCatalog(products: any[]) {
       (f) => f.dbSlug === pSlug || f.forms.some((form) => form.aliases.includes(pSlug))
     );
 
-    if (family && product.product_variants && product.product_variants.length > 0) {
+    const rawVariants = product.variants || product.product_variants || [];
+    if (family && rawVariants && rawVariants.length > 0) {
       // Create a separate catalog card for each form that has variants or is defined in family
       for (const formDef of family.forms) {
         // Filter variants belonging to this form
-        const matchingVariants = product.product_variants.filter((v: any) =>
-          formDef.variantMatch(v.form_de, v.label_de)
+        const matchingVariants = rawVariants.filter((v: any) =>
+          formDef.variantMatch(v.form || v.form_de, v.label_de || v.title)
         );
 
         // If no matching variants found, fallback to 100g and 200g of base variants
         const variantsForThisForm =
-          matchingVariants.length > 0 ? matchingVariants : product.product_variants;
+          matchingVariants.length > 0 ? matchingVariants : rawVariants;
 
         const expandedItem = {
           ...product,
@@ -612,6 +613,7 @@ export function expandProductsForCatalog(products: any[]) {
           subtitle_de: formDef.subtitle || product.subtitle_de,
           category: formDef.category,
           form: formDef.form,
+          variants: variantsForThisForm,
           product_variants: variantsForThisForm,
         };
 
@@ -638,6 +640,8 @@ export function expandProductsForCatalog(products: any[]) {
         ...product,
         category: cat,
         form: form,
+        variants: product.variants || product.product_variants || [],
+        product_variants: product.variants || product.product_variants || [],
       });
       processedSlugs.add(product.slug);
     }

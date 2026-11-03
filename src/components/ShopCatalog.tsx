@@ -19,29 +19,38 @@ import {
   getCategoryDescription,
 } from '@/data/categoryDescriptions';
 import { getProductDisplayOrigin } from '@/lib/productOrigins';
+import { getProductDisplayImage } from '@/lib/utils';
 
 export interface ProductVariant {
   id: string;
   weight_grams?: number;
   label_de?: string;
+  title?: string;
   form_de?: string;
+  form?: string;
   price_chf: number;
   compare_at_price_chf?: number | null;
   sku?: string;
   stock_quantity?: number;
+  image_url?: string | null;
+  images?: string[] | null;
 }
 
 export interface ProductItem {
   id: string;
   slug: string;
+  name?: string;
   name_de: string;
   subtitle_de?: string;
   description_de?: string;
   origin_country?: string;
   images?: string[];
+  image_url?: string | null;
+  price_chf?: number | null;
   is_featured?: boolean;
   category?: string;
   form?: string;
+  variants?: ProductVariant[];
   product_variants?: ProductVariant[];
 }
 
@@ -277,12 +286,15 @@ export default function ShopCatalog({
       })
       .sort((a, b) => {
         const getMinPrice = (p: ProductItem) => {
-          const prices = (p.product_variants || [])
+          const variants = p.variants || p.product_variants || [];
+          const prices = variants
             .map((v) => Number(v.price_chf))
-            .filter(Boolean);
-          const variant100g = p.product_variants?.find((v) => v.weight_grams === 100);
-          if (variant100g) return Number(variant100g.price_chf);
-          return prices.length > 0 ? Math.min(...prices) : 9.9;
+            .filter((price) => !isNaN(price) && price > 0);
+          if (prices.length > 0) return Math.min(...prices);
+          if (p.price_chf && !isNaN(Number(p.price_chf))) {
+            return Number(p.price_chf);
+          }
+          return 9.9;
         };
 
         if (selectedSort === 'price_asc') {
@@ -564,17 +576,17 @@ export default function ShopCatalog({
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {filteredProducts.map((product) => {
-            const variants = product.product_variants || [];
-            const prices = variants.map((v) => Number(v.price_chf)).filter(Boolean);
-            const variant100g = variants.find((v) => v.weight_grams === 100);
-            const minPrice = variant100g
-              ? Number(variant100g.price_chf)
-              : prices.length > 0
-              ? Math.min(...prices)
-              : 9.9;
-            const primaryImage =
-              product.images?.[0] ||
-              'https://images.unsplash.com/photo-1543528176-61b239494933?q=80&w=800&auto=format&fit=crop';
+            const variants = product.variants || product.product_variants || [];
+            const prices = variants
+              .map((v) => Number(v.price_chf))
+              .filter((p) => !isNaN(p) && p > 0);
+            const minPrice =
+              prices.length > 0
+                ? Math.min(...prices)
+                : product.price_chf && !isNaN(Number(product.price_chf))
+                ? Number(product.price_chf)
+                : 9.9;
+            const displayImage = getProductDisplayImage(product);
 
             // Available pack sizes
             const weights = Array.from(
@@ -591,17 +603,38 @@ export default function ShopCatalog({
 
             const { country: displayCountry, flag: displayFlag } = getProductDisplayOrigin(product);
 
+            // Determine variant & form for target link
+            const cardForm = product.form || variants[0]?.form || variants[0]?.form_de;
+            const cardVariant =
+              variants.find(
+                (v) =>
+                  cardForm &&
+                  (v.form || v.form_de)?.toLowerCase() === cardForm.toLowerCase()
+              ) || variants[0];
+
+            const queryParams = new URLSearchParams();
+            if (cardForm) {
+              queryParams.set('form', cardForm);
+            }
+            if (cardVariant?.id) {
+              queryParams.set('variant', cardVariant.id);
+            }
+            const queryString = queryParams.toString();
+            const productHref = queryString
+              ? `/produkte/${product.slug}?${queryString}`
+              : `/produkte/${product.slug}`;
+
             return (
               <Link
                 key={product.id}
-                href={`/produkte/${product.slug}`}
+                href={productHref}
                 className="group flex flex-col bg-white border border-stone-200/90 rounded-3xl overflow-hidden shadow-2xs hover:shadow-md hover:border-stone-300 transition-all duration-300 h-full"
               >
                 {/* Image Container with Smooth Zoom */}
                 <div className="relative aspect-square w-full overflow-hidden bg-stone-100">
                   <Image
-                    src={primaryImage}
-                    alt={product.name_de}
+                    src={displayImage}
+                    alt={product.name_de || product.name || 'Produkt'}
                     fill
                     unoptimized
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"

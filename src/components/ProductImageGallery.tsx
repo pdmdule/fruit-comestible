@@ -4,18 +4,24 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Sparkles } from 'lucide-react';
 
-interface ProductImageGalleryProps {
+export interface ProductImageGalleryProps {
   images?: string[];
-  title: string;
+  title?: string;
+  productName?: string;
   originCountry?: string;
+  variantId?: string;
 }
 
 export default function ProductImageGallery({
   images,
   title,
+  productName,
   originCountry,
+  variantId,
 }: ProductImageGalleryProps) {
-  // Prikazuj isključivo slike iz trenutno učitanog proizvoda (product.images)
+  const displayTitle = productName || title || 'Frucht';
+
+  // Prikazuj isključivo slike iz trenutno odabrane varijante / proizvoda
   const validImages = Array.isArray(images)
     ? images.filter((img): img is string => Boolean(img && typeof img === 'string' && img.trim()))
     : [];
@@ -66,13 +72,14 @@ export default function ProductImageGallery({
     setTouchCurrentX(null);
   };
 
-  // Automatski resetuj na prvu sliku ako se promene slike (npr. pri prelasku na drugi oblik voća)
+  // Automatski resetuj na prvu sliku (activeIndex = 0) ako se promeni varijanta ili lista slika
+  const imagesKey = galleryImages.join('|');
   useEffect(() => {
     setActiveIndex(0);
     setIsDragging(false);
     setTouchStartX(null);
     setTouchCurrentX(null);
-  }, [images]);
+  }, [imagesKey, variantId]);
 
   // Real-time touch drag offset za responzivnu swipe animaciju
   let dragOffset = 0;
@@ -116,7 +123,7 @@ export default function ProductImageGallery({
             >
               <Image
                 src={img}
-                alt={`${title} - Ansicht ${idx + 1}`}
+                alt={`${displayTitle} - Ansicht ${idx + 1}`}
                 fill
                 priority={idx === 0}
                 unoptimized
@@ -186,7 +193,7 @@ export default function ProductImageGallery({
             const isSelected = activeIndex === idx;
             return (
               <button
-                key={idx}
+                key={`${img}-${idx}`}
                 type="button"
                 onClick={() => setActiveIndex(idx)}
                 aria-label={`Bild ${idx + 1} auswählen`}
@@ -198,7 +205,7 @@ export default function ProductImageGallery({
               >
                 <Image
                   src={img}
-                  alt={`${title} Thumbnail ${idx + 1}`}
+                  alt={`${displayTitle} Thumbnail ${idx + 1}`}
                   fill
                   unoptimized
                   sizes="96px"
@@ -213,6 +220,6 @@ export default function ProductImageGallery({
   );
 }
 
-export { ProductImageGallery, type ProductImageGalleryProps };
+export { ProductImageGallery };
 export const ProductGallery = ProductImageGallery;
 export type ProductGalleryProps = ProductImageGalleryProps;

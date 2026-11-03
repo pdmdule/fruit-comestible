@@ -29,7 +29,7 @@ const CATEGORY_GUIDES: CategoryGuideCard[] = [
     targetName: 'Fruchtpulver',
     href: '/shop/fruchtpulver',
     image:
-      'https://images.unsplash.com/photo-1553530666-ba11a7da3888?q=80&w=900&auto=format&fit=crop',
+      'https://loinzvvygklupiomoisu.supabase.co/storage/v1/object/public/hero/IMG_9758-1.webp',
   },
   {
     id: 'buero-unterwegs',
@@ -38,7 +38,7 @@ const CATEGORY_GUIDES: CategoryGuideCard[] = [
     targetName: 'Früchte & Beeren',
     href: '/shop/beeren',
     image:
-      'https://images.unsplash.com/photo-1543528176-61b239494933?q=80&w=900&auto=format&fit=crop',
+      'https://loinzvvygklupiomoisu.supabase.co/storage/v1/object/public/hero/IMG_9962.webp',
   },
   {
     id: 'snacks-probieren',
@@ -47,7 +47,7 @@ const CATEGORY_GUIDES: CategoryGuideCard[] = [
     targetName: 'Snacks & Mixes',
     href: '/shop/mixes',
     image:
-      'https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?q=80&w=900&auto=format&fit=crop',
+      'https://loinzvvygklupiomoisu.supabase.co/storage/v1/object/public/hero/IMG_9781.webp',
   },
 ];
 

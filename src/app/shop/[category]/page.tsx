@@ -67,10 +67,29 @@ export default async function CategoryPage({ params }: PageProps) {
 
   const { data } = await supabase
     .from('products')
-    .select('*, product_variants(*)')
-    .order('created_at', { ascending: false });
+    .select(`
+      *,
+      variants:product_variants (
+        id,
+        title:label_de,
+        label_de,
+        form:form_de,
+        form_de,
+        price_chf,
+        image_url,
+        images,
+        weight_grams
+      )
+    `)
+    .order('created_at', { ascending: false })
+    .order('price_chf', { referencedTable: 'product_variants', ascending: true });
 
-  const products = (data || []) as ProductItem[];
+  const rawProducts = (data || []) as any[];
+  rawProducts.forEach((p) => {
+    p.product_variants = p.variants || p.product_variants || [];
+    p.variants = p.variants || p.product_variants || [];
+  });
+  const products = rawProducts as ProductItem[];
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 font-sans antialiased">

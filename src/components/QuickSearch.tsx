@@ -33,7 +33,7 @@ interface BlogResult {
   image: string;
 }
 
-interface QuickSearchProps {
+export interface QuickSearchProps {
   isOpen: boolean;
   onClose: () => void;
 }

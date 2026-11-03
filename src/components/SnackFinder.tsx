@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import { getProductDisplayOrigin } from '@/lib/productOrigins';
+import { getProductDisplayImage } from '@/lib/utils';
 import {
   Coffee,
   Briefcase,
@@ -501,9 +502,10 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
               const currentVariant = variants.find((v) => v.id === activeVariantId) || item.preferredVariant || variants[0];
               const isAdded = addedVariantId === currentVariant?.id;
 
-              const primaryImage =
-                product.images?.[0] ||
-                'https://images.unsplash.com/photo-1543528176-61b239494933?q=80&w=800&auto=format&fit=crop';
+              const primaryImage = getProductDisplayImage({
+                ...product,
+                variants: currentVariant ? [currentVariant, ...variants] : variants,
+              });
 
               return (
                 <div

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
@@ -22,11 +22,26 @@ export interface ProductVariant {
   product_id?: string;
   weight_grams?: number;
   label_de?: string;
+  title?: string;
+  name?: string;
+  name_de?: string;
+  subtitle?: string;
+  subtitle_de?: string;
+  description?: string;
+  description_de?: string;
+  ingredients_de?: string;
+  usage?: string;
+  features?: string[];
+  usage_tips?: string[];
   form_de?: string;
+  form?: string;
   price_chf: number;
   compare_at_price_chf?: number | null;
   sku?: string;
   stock_quantity?: number;
+  image_url?: string | null;
+  images?: string[] | null;
+  bowl_image_url?: string | null;
 }
 
 export interface FormLink {
@@ -42,6 +57,8 @@ interface ProductPurchaseSectionProps {
   productId?: string;
   image?: string;
   availableForms?: FormLink[];
+  selectedVariant?: ProductVariant;
+  onVariantChange?: (variant: ProductVariant) => void;
 }
 
 export default function ProductPurchaseSection({
@@ -50,22 +67,21 @@ export default function ProductPurchaseSection({
   productId,
   image,
   availableForms = [],
+  selectedVariant,
+  onVariantChange,
 }: ProductPurchaseSectionProps) {
   const { addItem, openCart } = useCart();
 
-  // Selected Variant State
-  const [selectedVariantId, setSelectedVariantId] = useState<string>(() => {
-    const inStock = variants.find((v) => (v.stock_quantity ?? 0) > 0);
-    return inStock?.id || variants[0]?.id || '';
-  });
+  // Single source of truth: selectedVariant prop (or fallback to first in-stock variant)
+  const currentVariant =
+    (selectedVariant && variants.find((v) => v.id === selectedVariant.id)) ||
+    selectedVariant ||
+    variants.find((v) => (v.stock_quantity ?? 0) > 0) ||
+    variants[0];
 
-  // Sync selected variant when variants prop changes
-  useEffect(() => {
-    if (!variants.some((v) => v.id === selectedVariantId)) {
-      const inStock = variants.find((v) => (v.stock_quantity ?? 0) > 0);
-      setSelectedVariantId(inStock?.id || variants[0]?.id || '');
-    }
-  }, [variants, selectedVariantId]);
+  const handleSelectVariant = (v: ProductVariant) => {
+    onVariantChange?.(v);
+  };
 
   const [quantity, setQuantity] = useState<number>(1);
   const [isAdded, setIsAdded] = useState<boolean>(false);
@@ -101,10 +117,6 @@ export default function ProductPurchaseSection({
     };
   }, []);
 
-  // Current active variant
-  const currentVariant =
-    variants.find((v) => v.id === selectedVariantId) || variants[0];
-
   // Dynamic Fresh Fruit Calculator ("Frische-Frucht-Rechner")
   // Ratio 1:10 (Liofilisation removes ~90% water)
   const weightGrams =
@@ -135,12 +147,19 @@ export default function ProductPurchaseSection({
     setQuantity((prev) => Math.min(maxStock, prev + 1));
   };
 
-  const isOutOfStock = (currentVariant?.stock_quantity ?? 0) <= 0;
+  const isOutOfStock =
+    currentVariant?.stock_quantity !== undefined &&
+    currentVariant?.stock_quantity !== null &&
+    currentVariant.stock_quantity <= 0;
 
   const handleAddToCart = () => {
     if (!currentVariant || isOutOfStock) return;
 
-    const baseName = productName || 'Gefriergetrocknete Früchte';
+    const baseName =
+      productName ||
+      currentVariant.title ||
+      currentVariant.name_de ||
+      'Gefriergetrocknete Früchte';
 
     addItem({
       productId: currentVariant.product_id || productId || 'fruit-prod',
@@ -152,7 +171,7 @@ export default function ProductPurchaseSection({
       weight_grams: currentVariant.weight_grams,
       price: Number(currentVariant.price_chf),
       quantity,
-      image,
+      image: currentVariant.image_url || image,
       sku: currentVariant.sku,
     });
 
@@ -171,6 +190,118 @@ export default function ProductPurchaseSection({
       </div>
     );
   }
+
+  // Active form name (e.g. "Ganz", "Granulat", "Pulver")
+  const activeFormName = (
+    currentVariant?.form ||
+    currentVariant?.form_de ||
+    availableForms.find((f) => f.isActive)?.form ||
+    ''
+  ).toLowerCase();
+
+  // Distinct forms in variants
+  const distinctVariantForms = Array.from(
+    new Set(variants.map((v) => (v.form || v.form_de)?.trim()).filter(Boolean))
+  ) as string[];
+
+  interface FormButtonItem {
+    form: string;
+    label: string;
+    href?: string;
+    isActive: boolean;
+    matchingVariant?: ProductVariant;
+  }
+
+  // Form buttons list
+  const formButtons: FormButtonItem[] = useMemo(() => {
+    if (availableForms && availableForms.length > 0) {
+      return availableForms.map((item: FormLink): FormButtonItem => {
+        const itemFormLower = item.form.toLowerCase();
+        const isActive =
+          activeFormName === itemFormLower ||
+          (!activeFormName && item.isActive);
+
+        const currentWeight = currentVariant?.weight_grams;
+        const matchingVariant =
+          variants.find(
+            (v) =>
+              (v.form || v.form_de)?.toLowerCase() === itemFormLower &&
+              v.weight_grams === currentWeight
+          ) ||
+          variants.find(
+            (v) => (v.form || v.form_de)?.toLowerCase() === itemFormLower
+          );
+
+        return {
+          form: item.form,
+          label: item.label,
+          href: item.href,
+          isActive,
+          matchingVariant,
+        };
+      });
+    }
+
+    if (distinctVariantForms.length > 1) {
+      return distinctVariantForms.map((fName: string): FormButtonItem => {
+        const fLower = fName.toLowerCase();
+        const isActive = activeFormName === fLower;
+        const label =
+          fLower === 'ganz'
+            ? 'Ganze Früchte'
+            : fLower === 'granulat'
+            ? 'Granulat'
+            : fLower === 'pulver'
+            ? 'Fruchtpulver'
+            : fName;
+
+        const currentWeight = currentVariant?.weight_grams;
+        const matchingVariant =
+          variants.find(
+            (v) =>
+              (v.form || v.form_de)?.toLowerCase() === fLower &&
+              v.weight_grams === currentWeight
+          ) ||
+          variants.find(
+            (v) => (v.form || v.form_de)?.toLowerCase() === fLower
+          );
+
+        return {
+          form: fName,
+          label,
+          href: '',
+          isActive,
+          matchingVariant,
+        };
+      });
+    }
+
+    return [];
+  }, [availableForms, distinctVariantForms, activeFormName, currentVariant, variants]);
+
+  const activeFormDisplayLabel =
+    formButtons.find((f: FormButtonItem) => f.isActive)?.label ||
+    (activeFormName === 'ganz'
+      ? 'Ganze Früchte'
+      : activeFormName === 'granulat'
+      ? 'Granulat'
+      : activeFormName === 'pulver'
+      ? 'Fruchtpulver'
+      : currentVariant?.form || currentVariant?.form_de || '');
+
+  // If variants have multiple forms, show weights for the active form
+  const formMatchedVariants = activeFormName
+    ? variants.filter((v) => {
+        const vf = (v.form || v.form_de || '').toLowerCase();
+        return !vf || vf === activeFormName;
+      })
+    : variants;
+
+  const displayVariants = (
+    formMatchedVariants.length > 0 ? formMatchedVariants : variants
+  )
+    .filter((v) => v.weight_grams === 100 || v.weight_grams === 200 || !v.weight_grams)
+    .sort((a, b) => (a.weight_grams || 0) - (b.weight_grams || 0));
 
   const unitPrice = Number(currentVariant?.price_chf || 0);
   const totalPrice = unitPrice * quantity;
@@ -264,35 +395,35 @@ export default function ProductPurchaseSection({
       {/* Forms & Size Selection (order-2 on mobile, order-3 on desktop) */}
       <div className="order-2 lg:order-3 space-y-6 pt-1">
         {/* Cross-linking block: "Form / Konsistenz" */}
-        {availableForms && availableForms.length > 1 && (
+        {((availableForms && availableForms.length > 1) || distinctVariantForms.length > 1) && (
           <div className="space-y-2.5">
             <div className="flex items-center justify-between text-xs font-semibold tracking-wider uppercase text-stone-500">
               <span className="text-stone-900 font-bold">Form / Konsistenz:</span>
               <span className="text-rose-600 font-bold normal-case">
-                {availableForms.find((f) => f.isActive)?.label || ''}
+                {activeFormDisplayLabel}
               </span>
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {availableForms.map((item) => {
-                if (item.isActive) {
-                  return (
-                    <span
-                      key={item.form}
-                      className="px-4 py-2.5 rounded-2xl bg-stone-900 text-white font-medium text-sm shadow-xs select-none inline-flex items-center cursor-default"
-                    >
-                      {item.label}
-                    </span>
-                  );
-                }
+              {formButtons.map((item) => {
+                const isSelected = item.isActive;
                 return (
-                  <Link
+                  <button
                     key={item.form}
-                    href={item.href}
-                    className="px-4 py-2.5 rounded-2xl border border-stone-200 bg-white text-stone-700 hover:border-stone-900 hover:text-stone-900 hover:bg-stone-50 font-medium text-sm transition-all duration-200 inline-flex items-center cursor-pointer"
+                    type="button"
+                    onClick={() => {
+                      if (item.matchingVariant) {
+                        handleSelectVariant(item.matchingVariant);
+                      }
+                    }}
+                    className={`px-4 py-2.5 rounded-2xl text-sm font-semibold border transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-stone-900 text-white border-stone-900 shadow-xs'
+                        : 'bg-white text-stone-700 border-stone-200 hover:border-stone-900 hover:text-stone-900 hover:bg-stone-50'
+                    }`}
                   >
                     {item.label}
-                  </Link>
+                  </button>
                 );
               })}
             </div>
@@ -309,10 +440,7 @@ export default function ProductPurchaseSection({
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            {variants
-              .filter((v) => v.weight_grams === 100 || v.weight_grams === 200 || !v.weight_grams)
-              .sort((a, b) => (a.weight_grams || 0) - (b.weight_grams || 0))
-              .map((v) => {
+            {displayVariants.map((v) => {
               const isSelected = v.id === currentVariant?.id;
               const isVariantOutOfStock = (v.stock_quantity ?? 0) <= 0;
               const weightLabel = v.label_de || (v.weight_grams ? `${v.weight_grams}g` : 'Standard');
@@ -323,7 +451,7 @@ export default function ProductPurchaseSection({
                   type="button"
                   disabled={isVariantOutOfStock}
                   onClick={() => {
-                    setSelectedVariantId(v.id);
+                    handleSelectVariant(v);
                     setQuantity(1);
                   }}
                   className={`relative flex flex-col p-4 rounded-2xl border text-left transition-all ${
