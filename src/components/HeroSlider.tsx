@@ -224,14 +224,25 @@ export default function HeroSlider() {
 
                   {/* Main Heading */}
                   <div className="space-y-3 sm:space-y-4">
-                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-stone-900 leading-[1.08]">
-                      {slide.title}{' '}
-                      {slide.titleHighlight && (
-                        <span className="text-rose-700 block sm:inline">
-                          {slide.titleHighlight}
-                        </span>
-                      )}
-                    </h1>
+                    {index === 0 ? (
+                      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-stone-900 leading-[1.08]">
+                        {slide.title}{' '}
+                        {slide.titleHighlight && (
+                          <span className="text-rose-700 block sm:inline">
+                            {slide.titleHighlight}
+                          </span>
+                        )}
+                      </h1>
+                    ) : (
+                      <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-stone-900 leading-[1.08]">
+                        {slide.title}{' '}
+                        {slide.titleHighlight && (
+                          <span className="text-rose-700 block sm:inline">
+                            {slide.titleHighlight}
+                          </span>
+                        )}
+                      </h2>
+                    )}
                     <p className="text-base sm:text-lg lg:text-xl text-stone-600 leading-relaxed font-normal max-w-xl">
                       {slide.description}
                     </p>

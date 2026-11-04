@@ -62,11 +62,10 @@ export default function VisualCategoryGuide() {
             <span>Nach Verwendung wählen</span>
           </div>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-stone-900">
-            Wofür suchst du deine Früchte?
+            Finde die passenden Früchte für deinen Genussmoment
           </h2>
           <p className="text-xs sm:text-sm lg:text-base text-stone-600 leading-relaxed">
-            Ob knuspriges Frühstücks-Topping, feines Fruchtpulver zum Backen oder
-            gesunder Snack für unterwegs – finde sofort die passende Form für deinen Moment.
+            Ob knuspriges Topping, feines Fruchtpulver zum Backen oder purer Genuss – wähle sofort die ideale Form für deine Bedürfnisse.
           </p>
         </div>
 

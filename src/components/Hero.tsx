@@ -3,61 +3,82 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export interface HeroSlideData {
-  id: string;
+  id: string | number;
   kicker: string;
   title: string;
   description: string;
-  ctaText: string;
-  ctaLink: string;
+  ctaText?: string;
+  buttonText?: string;
+  ctaLink?: string;
+  href?: string;
   image: string;
   imageAlt: string;
+  // Boja pozadine lijeve strane sa sadržajem:
+  bgClass: string;
+  // HEX kod za 100% siguran inline stil:
+  bgColor: string;
 }
+
+export type HeroSlide = HeroSlideData;
 
 export const HERO_SLIDES: HeroSlideData[] = [
   {
     id: 'premium-fruits',
-    kicker: 'PREMIUM QUALITÄT FÜR FEINSCHMECKER',
-    title: 'Gefriergetrocknete Schweizer Früchte',
+    kicker: 'PREMIUM QUALITÄT AUS DER SCHWEIZ',
+    title: 'Gefriergetrocknete Früchte aus der Schweiz',
     description:
-      'Schonend gefriergetrocknete Beeren und Früchte in Spitzenqualität. Intensives Aroma, 100 % Naturprodukt ohne Zuckerzusatz – ideal für Müsli, Bowls und feine Rezepte.',
-    ctaText: 'JETZT ENTDECKEN',
+      'Schonend gefriergetrocknete Beeren und Früchte in Premium-Qualität. Intensives Aroma, 100 % Naturprodukt ohne Zuckerzusatz – dein perfekter Begleiter für einen bewussten Lebensstil.',
+    ctaText: 'Jetzt entdecken',
     ctaLink: '/shop',
     image:
-      'https://loinzvvygklupiomoisu.supabase.co/storage/v1/object/public/hero/IMG_9625.webp',
+      'https://loinzvvygklupiomoisu.supabase.co/storage/v1/object/public/hero/glavni%20hero.webp',
     imageAlt: 'Schale mit gefriergetrockneten Früchten und Beeren auf einem Holztisch',
+    // 1. Topla prirodna krem/bež nijansa
+    bgClass: 'bg-[#F4EFE6]',
+    bgColor: '#F4EFE6',
   },
   {
-    id: 'pure-crunch',
-    kicker: '100% NATURPRODUKT',
-    title: 'Pure Frucht. Intensiver Crunch.',
+    id: 'erdbeeren-bestseller',
+    kicker: 'DER BESTSELLER',
+    title: 'Gefriergetrocknete Erdbeeren',
     description:
-      'Bis zu 95 % aller Vitamine und das volle Naturaroma bleiben erhalten. Natürlich süss, knackig und reich an wertvollen Antioxidantien.',
-    ctaText: 'SORTIMENT ERKUNDEN',
-    ctaLink: '/shop',
+      'Knusprige Erdbeerhälften voller Geschmack. 100 % pure Frucht, ideal als gesunder Snack für zwischendurch oder für dein perfektes Frühstück.',
+    ctaText: 'Erdbeeren entdecken',
+    ctaLink: '/shop?category=erdbeeren',
     image:
-      'https://images.unsplash.com/photo-1517673400267-0251440c45dc?q=85&w=1600&auto=format&fit=crop',
+      'https://loinzvvygklupiomoisu.supabase.co/storage/v1/object/public/hero/Musli%20mix%20hero-new.webp',
     imageAlt: 'Gesunde Frühstücks-Bowl garniert mit gefriergetrockneten Beeren',
+    // 2. Nježna bobičasta / jagoda roze nijansa (jasno uočljiva razlika)
+    bgClass: 'bg-[#FCE7E7]',
+    bgColor: '#FCE7E7',
   },
   {
-    id: 'swiss-variety',
-    kicker: 'SCHWEIZER MANUFAKTUR SEIT 2019',
-    title: 'Edle Beeren für höchste Ansprüche',
+    id: 'muesli-crunch',
+    kicker: 'FRUCHTIGER CRUNCH',
+    title: 'Fruchtiger Crunch für dein Schweizer Müesli',
     description:
-      'Handverlesene Erdbeeren, Himbeeren und wilde Waldheidelbeeren. Höchste Reinheit ohne künstliche Aromen oder Konservierungsstoffe.',
-    ctaText: 'BESTSELLER PROBIEREN',
-    ctaLink: '/shop',
+      'Starte voller Energie in den Tag. Unser beliebter Müslimix und feines Fruchtgranulat ohne Zuckerzusatz machen jede Bowl zu einem echten Erlebnis.',
+    ctaText: 'Müslimix shoppen',
+    ctaLink: '/shop?category=mixes',
     image:
-      'https://images.unsplash.com/photo-1553530666-ba11a7da3888?q=85&w=1600&auto=format&fit=crop',
+      'https://loinzvvygklupiomoisu.supabase.co/storage/v1/object/public/hero/Musli%20mix%20hero-new.webp',
     imageAlt: 'Köstliche Auswahl an gefriergetrocknetem Frucht-Granulat und ganzen Beeren',
+    // 3. Topla zlatno-zobena / medena nijansa za müesli (jasno uočljiva razlika)
+    bgClass: 'bg-[#F6EEDB]',
+    bgColor: '#F6EEDB',
   },
 ];
+
+const headingClasses =
+  'text-3xl sm:text-4xl lg:text-5xl font-extrabold text-stone-900 tracking-tight leading-tight mb-4';
 
 export function Hero() {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Optional automatic slide progression every 7 seconds
+  // Automatska rotacija slajdova svakih 7 sekundi
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % HERO_SLIDES.length);
@@ -66,52 +87,91 @@ export function Hero() {
   }, []);
 
   const currentSlide = HERO_SLIDES[activeIndex];
+  const isFirstSlide = activeIndex === 0;
 
   return (
     <section className="w-full lg:h-[75vh] lg:min-h-[580px] lg:max-h-[780px] grid grid-cols-1 lg:grid-cols-2 overflow-hidden mb-0">
-      {/* 1. LIJEVA STRANA (TEKST I CTA) */}
-      <div className="order-2 lg:order-1 bg-[#F4EFE6] dark:bg-[#1E1B18] flex items-center justify-center p-8 sm:p-12 lg:p-16">
+      {/* 1. LIJEVA STRANA (TEKST I CTA S DINAMIČKOM POZADINSKOM BOJOM) */}
+      <div
+        style={{
+          backgroundColor: currentSlide.bgColor,
+          transition: 'background-color 700ms ease-in-out',
+        }}
+        className={`order-2 lg:order-1 flex items-center justify-center p-8 sm:p-12 lg:p-16 transition-colors duration-700 ease-in-out ${currentSlide.bgClass}`}
+      >
         <div className="max-w-xl mx-auto lg:mx-0 text-left w-full">
           {/* Nadnaslov (Kicker) */}
-          <span className="text-xs font-bold tracking-widest text-stone-700 dark:text-stone-300 uppercase mb-3 sm:mb-4 block">
+          <span className="text-xs font-bold tracking-widest text-stone-700 uppercase mb-3 sm:mb-4 block">
             {currentSlide.kicker}
           </span>
 
-          {/* Glavni naslov (H1) */}
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-stone-900 dark:text-stone-100 tracking-tight leading-tight mb-4">
-            {currentSlide.title}
-          </h1>
+          {/* Dinamički tag prema SEO pravilu: prvi je H1, ostali su H2 */}
+          {isFirstSlide ? (
+            <h1 className={headingClasses}>
+              {currentSlide.title}
+            </h1>
+          ) : (
+            <h2 className={headingClasses}>
+              {currentSlide.title}
+            </h2>
+          )}
 
           {/* Opisni tekst */}
-          <p className="text-sm sm:text-base text-stone-600 dark:text-stone-400 leading-relaxed mb-6 sm:mb-8 max-w-md">
+          <p className="text-sm sm:text-base text-stone-600 leading-relaxed mb-6 sm:mb-8 max-w-md">
             {currentSlide.description}
           </p>
 
           {/* CTA dugme */}
           <div>
             <Link
-              href={currentSlide.ctaLink}
-              className="inline-block px-7 py-3.5 bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 text-xs sm:text-sm font-bold uppercase tracking-wider rounded-md hover:bg-stone-800 dark:hover:bg-white transition-all shadow-sm"
+              href={currentSlide.ctaLink || currentSlide.href || '/shop'}
+              className="inline-block px-7 py-3.5 bg-stone-900 text-white text-xs sm:text-sm font-bold uppercase tracking-wider rounded-md hover:bg-stone-800 transition-all shadow-sm"
             >
-              {currentSlide.ctaText}
+              {currentSlide.ctaText || currentSlide.buttonText || 'Jetzt entdecken'}
             </Link>
           </div>
 
-          {/* Slider indikatori (Pagination Dots) */}
-          <div className="flex items-center gap-2 mt-8">
-            {HERO_SLIDES.map((slide, idx) => (
-              <button
-                key={slide.id}
-                type="button"
-                onClick={() => setActiveIndex(idx)}
-                aria-label={`Gehe zu Folie ${idx + 1}`}
-                className={`transition-all duration-300 cursor-pointer ${
-                  activeIndex === idx
-                    ? 'w-6 h-2 rounded-full bg-stone-900 dark:bg-stone-100'
-                    : 'w-2 h-2 rounded-full border border-stone-500/80 bg-transparent hover:bg-stone-500/40 dark:border-stone-400 dark:hover:bg-stone-400/40'
-                }`}
-              />
-            ))}
+          {/* Slider indikatori (Pagination Dots & Navigacija) */}
+          <div className="flex items-center gap-3 mt-8">
+            <button
+              type="button"
+              onClick={() =>
+                setActiveIndex((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length)
+              }
+              aria-label="Vorherige Folie"
+              className="p-1.5 rounded-full text-stone-600 hover:text-stone-900 hover:bg-black/5 transition cursor-pointer"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-1.5">
+              {HERO_SLIDES.map((slide, idx) => (
+                <button
+                  key={slide.id}
+                  type="button"
+                  onClick={() => setActiveIndex(idx)}
+                  aria-label={`Gehe zu Folie ${idx + 1}`}
+                  className="p-1.5 cursor-pointer flex items-center justify-center"
+                >
+                  <span
+                    className={`block transition-all duration-300 ${
+                      activeIndex === idx
+                        ? 'w-6 h-2 rounded-full bg-stone-900'
+                        : 'w-2 h-2 rounded-full border border-stone-500/80 bg-transparent hover:bg-stone-500/40'
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setActiveIndex((prev) => (prev + 1) % HERO_SLIDES.length)}
+              aria-label="Nächste Folie"
+              className="p-1.5 rounded-full text-stone-600 hover:text-stone-900 hover:bg-black/5 transition cursor-pointer"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </div>
@@ -120,7 +180,7 @@ export function Hero() {
       <div className="order-1 lg:order-2 relative w-full h-[360px] sm:h-[450px] lg:h-full overflow-hidden bg-stone-200">
         <Image
           src={currentSlide.image}
-          alt={currentSlide.imageAlt}
+          alt={currentSlide.imageAlt || currentSlide.title}
           fill
           priority
           sizes="(max-width: 1024px) 100vw, 50vw"

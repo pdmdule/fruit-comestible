@@ -8,6 +8,8 @@ import HomeBlogPreview from '@/components/HomeBlogPreview';
 import NewsletterSection from '@/components/NewsletterSection';
 import Hero from '@/components/Hero';
 import VisualCategoryGuide from '@/components/VisualCategoryGuide';
+import ValuesSection from '@/components/ValuesSection';
+import SeoContentSection from '@/components/SeoContentSection';
 import BenefitSpotlightCarousel from '@/components/BenefitSpotlightCarousel';
 import SnackFinder from '@/components/SnackFinder';
 import DailyRecipeCard from '@/components/DailyRecipeCard';
@@ -33,9 +35,16 @@ import {
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Fruit Comestible Suisse | 100% Pure Frucht. Knusprig. Intensiv.',
+  title: 'Gefriergetrocknete Früchte Schweiz | Fruit-Comestible',
   description:
-    'Schonend gefriergetrocknete Beeren und Früchte voller Vitamine und Aroma – ohne Zuckerzusatz, ohne Konservierungsstoffe. Schneller Schweizer Post Versand.',
+    'Premium gefriergetrocknete Früchte aus der Schweiz. 100% Naturprodukt ohne Zuckerzusatz & ultimativer Crunch. Entdecke gesunde Snacks für deinen Alltag!',
+  openGraph: {
+    title: 'Gefriergetrocknete Früchte Schweiz | Fruit-Comestible',
+    description:
+      'Premium gefriergetrocknete Früchte aus der Schweiz. 100% Naturprodukt ohne Zuckerzusatz & ultimativer Crunch.',
+    type: 'website',
+    locale: 'de_CH',
+  },
 };
 
 interface ProductVariant {
@@ -215,11 +224,11 @@ export default async function HomePage() {
               Von Kunden geschätzt
             </span>
             <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-stone-900">
-              Beliebte Bestseller
+              Unsere Bestseller: Beliebte Fruchtsnacks
             </h2>
             <p className="text-sm sm:text-base text-stone-600 max-w-xl">
-              Entdecken Sie unsere gefragtesten gefriergetrockneten Früchte für den
-              perfekten Schweizer Frühstückstisch.
+              Entdecke unsere gefragtesten gefriergetrockneten Früchte für den
+              perfekten Schweizer Frühstückstisch oder als natürliche Energiequelle.
             </p>
           </div>
           <Link
@@ -352,72 +361,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 3. USPs / Features (4 Icons in a row / 2x2 on mobile & tablet) */}
-      <section className="border-y border-stone-200/80 bg-white">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 pt-4 pb-8 sm:pt-6 sm:pb-12 lg:py-16">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-10">
-            {/* USP 1 */}
-            <div className="p-3 sm:p-5 lg:p-6 rounded-2xl bg-stone-50/70 border border-stone-200/80 h-full flex flex-col justify-between">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 mb-3 sm:mb-4">
-                <Leaf className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 stroke-[2.2]" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-semibold text-stone-900 text-sm sm:text-base lg:text-lg">
-                  100% Natürlich
-                </h3>
-                <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 line-clamp-2 leading-relaxed">
-                  Ohne Zuckerzusatz, rein pflanzlich, vegan und von Natur aus glutenfrei.
-                </p>
-              </div>
-            </div>
-
-            {/* USP 2 */}
-            <div className="p-3 sm:p-5 lg:p-6 rounded-2xl bg-stone-50/70 border border-stone-200/80 h-full flex flex-col justify-between">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 mb-3 sm:mb-4">
-                <Microscope className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 stroke-[2.2]" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-semibold text-stone-900 text-sm sm:text-base lg:text-lg">
-                  Schonend gefriergetrocknet
-                </h3>
-                <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 line-clamp-2 leading-relaxed">
-                  Bis zu 95% der Vitamine & Mineralstoffe bleiben erhalten.
-                </p>
-              </div>
-            </div>
-
-            {/* USP 3 */}
-            <div className="p-3 sm:p-5 lg:p-6 rounded-2xl bg-stone-50/70 border border-stone-200/80 h-full flex flex-col justify-between">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-red-100 text-red-700 flex items-center justify-center shrink-0 mb-3 sm:mb-4">
-                <Truck className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 stroke-[2.2]" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-semibold text-stone-900 text-sm sm:text-base lg:text-lg">
-                  Schweizer Standard
-                </h3>
-                <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 line-clamp-2 leading-relaxed">
-                  Schneller, klimaneutraler Versand mit der Schweizer Post.
-                </p>
-              </div>
-            </div>
-
-            {/* USP 4 */}
-            <div className="p-3 sm:p-5 lg:p-6 rounded-2xl bg-stone-50/70 border border-stone-200/80 h-full flex flex-col justify-between">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 mb-3 sm:mb-4">
-                <Zap className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 stroke-[2.2]" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-semibold text-stone-900 text-sm sm:text-base lg:text-lg">
-                  Vielseitig geniessbar
-                </h3>
-                <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 line-clamp-2 leading-relaxed">
-                  Perfekt für Müsli, Porridge, Smoothies oder einfach pur als Snack.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* 3. Values Section (Warum Fruit-Comestible? Schweizer Qualität & echter Geschmack) */}
+      <ValuesSection />
 
       {/* 4. Visual Category Guide (Nach Verwendung wählen) */}
       <VisualCategoryGuide />
@@ -567,6 +512,9 @@ export default async function HomePage() {
       <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
         <NewsletterSection />
       </section>
+
+      {/* 8. SEO Content Section (Vor dem Footer) */}
+      <SeoContentSection />
     </div>
   );
 }

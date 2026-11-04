@@ -65,7 +65,7 @@ export default function Footer() {
           {/* Column 1: Brand & Mission (lg:col-span-4) */}
           <div className="lg:col-span-4 space-y-4">
             <Link href="/" className="inline-flex items-center gap-3 group">
-              <div className="relative w-11 h-11 shrink-0 transition-transform duration-300 group-hover:scale-105">
+              <div className="relative w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 shrink-0 transition-transform duration-300 group-hover:scale-105">
                 <Image
                   src="/logo.webp"
                   alt="Fruit Comestible Logo"

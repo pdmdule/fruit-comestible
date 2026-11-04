@@ -95,7 +95,7 @@ export default function Header() {
                 height={120}
                 priority
                 unoptimized
-                className="h-10 sm:h-11 w-auto object-contain"
+                className="h-8 sm:h-8.5 md:h-9 lg:h-11 w-auto object-contain transition-all"
               />
             </Link>
           </div>
@@ -294,7 +294,7 @@ export default function Header() {
                   height={100}
                   priority
                   unoptimized
-                  className="h-10 w-auto object-contain"
+                  className="h-8 sm:h-9 w-auto object-contain"
                 />
               </Link>
             </div>
