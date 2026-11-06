@@ -226,7 +226,7 @@ export default async function HomePage() {
             <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-stone-900">
               Unsere Bestseller: Beliebte Fruchtsnacks
             </h2>
-            <p className="text-sm sm:text-base text-stone-600 max-w-xl">
+            <p className="text-sm sm:text-base text-stone-700 max-w-xl">
               Entdecke unsere gefragtesten gefriergetrockneten Früchte für den
               perfekten Schweizer Frühstückstisch oder als natürliche Energiequelle.
             </p>
@@ -309,12 +309,18 @@ export default async function HomePage() {
                   {(() => {
                     const { country: displayCountry, flag: displayFlag } = getProductDisplayOrigin(product);
                     return (
-                      <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 flex flex-wrap gap-1 sm:gap-1.5 pointer-events-none">
-                        <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold bg-white/95 text-stone-800 backdrop-blur-md border border-stone-200/80 shadow-2xs">
-                          {displayFlag} {displayCountry}
+                      <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 flex flex-wrap items-center gap-1 sm:gap-1.5 pointer-events-none">
+                        <span className="inline-flex items-center justify-center gap-1 h-5 px-2 rounded-full text-[10px] font-bold leading-none bg-white/95 text-stone-800 backdrop-blur-md border border-stone-200/80 shadow-2xs">
+                          <span className="leading-none">{displayFlag}</span>
+                          <span className="leading-none">{displayCountry}</span>
                         </span>
-                        <span className="px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold bg-rose-700 text-white shadow-2xs">
-                          Bestseller
+                        {(cardForm || product.form) && (cardForm || product.form) !== 'Mix' && (cardForm || product.form) !== 'Box' && (
+                          <span className="inline-flex items-center justify-center h-5 px-2 rounded-full text-[10px] font-semibold leading-none bg-stone-900/90 text-white backdrop-blur-md shadow-2xs">
+                            <span className="leading-none">{cardForm || product.form}</span>
+                          </span>
+                        )}
+                        <span className="inline-flex items-center justify-center h-5 px-2 rounded-full text-[10px] font-extrabold leading-none bg-rose-700 text-white shadow-2xs">
+                          <span className="leading-none">Bestseller</span>
                         </span>
                       </div>
                     );
@@ -329,21 +335,21 @@ export default async function HomePage() {
                     <h3 className="text-sm sm:text-base md:text-lg font-semibold text-stone-900 leading-snug line-clamp-2 min-h-[2.5rem] sm:min-h-[2.75rem] md:min-h-[3rem] group-hover:text-rose-700 transition">
                       {product.name_de}
                     </h3>
-                    <p className="text-xs sm:text-sm text-stone-600 line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] leading-relaxed">
+                    <p className="text-xs sm:text-sm text-stone-700 line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] leading-relaxed">
                       {product.subtitle_de || product.description_de || 'Schonend gefriergetrocknete Schweizer Früchte.'}
                     </p>
                   </div>
 
                   <div className="pt-2.5 sm:pt-3 border-t border-stone-100 space-y-2 sm:space-y-3 mt-auto">
                     <div className="flex flex-col">
-                      <span className="text-xs sm:text-sm text-stone-500 font-medium truncate">
+                      <span className="text-xs sm:text-sm text-stone-700 font-medium truncate">
                         {packSizesText}
                       </span>
                       <div className="flex items-baseline gap-1 sm:gap-1.5 mt-0.5">
                         <span className="text-sm sm:text-base font-bold text-stone-900 font-sans">
                           Ab CHF {minPrice.toFixed(2)}
                         </span>
-                        <span className="text-[9px] sm:text-[10px] text-stone-400">
+                        <span className="text-[9px] sm:text-[10px] text-stone-500 font-medium">
                           (inkl. 2.6% MwSt.)
                         </span>
                       </div>
@@ -379,7 +385,7 @@ export default async function HomePage() {
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-stone-900">
             Nicht sicher, was am besten passt?
           </h2>
-          <p className="text-sm sm:text-base text-stone-600">
+          <p className="text-sm sm:text-base text-stone-700">
             Finde in 3 kurzen Fragen deine perfekten Knusperfrüchte oder entdecke unser frisches Rezept des Tages.
           </p>
         </div>
@@ -411,7 +417,7 @@ export default async function HomePage() {
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-stone-900">
             Was ist Gefriertrocknung (Liofilisation)?
           </h2>
-          <p className="text-base sm:text-lg text-stone-600 leading-relaxed">
+          <p className="text-base sm:text-lg text-stone-700 leading-relaxed">
             Die Gefriertrocknung ist die schonendste Methode zur Haltbarmachung von
             Lebensmitteln. Dabei wird den Früchten das Wasser im Vakuum durch
             direkte Sublimation entzogen – von Eis direkt zu Dampf, ohne flüssige
@@ -431,7 +437,7 @@ export default async function HomePage() {
               <h3 className="text-2xl font-extrabold text-stone-900">
                 Schonende Vakuum-Gefriertrocknung
               </h3>
-              <p className="text-sm text-stone-600 leading-relaxed">
+              <p className="text-sm text-stone-700 leading-relaxed">
                 Tiefgefroren bei minus 40 Grad wird das Wasser im Hochvakuum sanft
                 abgesaugt. Zellstruktur, Vitamine und Aromastoffe bleiben
                 vollständig unbeschädigt.
@@ -471,12 +477,12 @@ export default async function HomePage() {
               <h3 className="text-2xl font-extrabold text-stone-700">
                 Konventionelle Heisslufttrocknung
               </h3>
-              <p className="text-sm text-stone-500 leading-relaxed">
+              <p className="text-sm text-stone-700 leading-relaxed">
                 Früchte werden über Stunden mit heisser Luft (60–80°C) dehydriert.
                 Hitze und Sauerstoff zerstören empfindliche Nährstoffe und Aromen.
               </p>
 
-              <ul className="space-y-3 pt-2 text-sm text-stone-600">
+              <ul className="space-y-3 pt-2 text-sm text-stone-700">
                 <li className="flex items-center gap-2.5">
                   <XCircle className="w-5 h-5 text-rose-400 shrink-0" />
                   <span><strong>Hoher Vitaminverlust:</strong> Hitzeempfindliche Vitamine zerstört</span>
@@ -496,7 +502,7 @@ export default async function HomePage() {
               </ul>
             </div>
 
-            <div className="p-4 rounded-2xl bg-stone-100 text-xs text-stone-600 font-medium">
+            <div className="p-4 rounded-2xl bg-stone-100 text-xs text-stone-700 font-medium">
               Herkömmliche Trockenfrüchte kleben oft an den Zähnen und enthalten meist versteckte Zuckerzusätze.
             </div>
           </div>

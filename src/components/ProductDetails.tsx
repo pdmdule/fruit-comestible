@@ -289,8 +289,8 @@ export default function ProductDetails({
             <span className="text-xs font-extrabold tracking-widest uppercase text-rose-600">
               100% Natürliche Beeren & Früchte
             </span>
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-stone-900 text-white shadow-2xs">
-              {activeFormDisplayLabel}
+            <span className="inline-flex items-center justify-center px-2.5 py-1 rounded-full text-[11px] font-bold leading-none bg-stone-900 text-white shadow-2xs">
+              <span className="leading-none">{activeFormDisplayLabel}</span>
             </span>
           </div>
 
@@ -299,13 +299,13 @@ export default function ProductDetails({
           </h1>
 
           {displaySubtitle && (
-            <p className="text-lg sm:text-xl text-stone-600 font-medium leading-snug">
+            <p className="text-lg sm:text-xl text-stone-700 font-medium leading-snug">
               {displaySubtitle}
             </p>
           )}
 
           {displayDescription && (
-            <div className="pt-2 text-stone-600 text-base leading-relaxed space-y-3">
+            <div className="pt-2 text-stone-700 text-base leading-relaxed space-y-3">
               <p>{displayDescription}</p>
             </div>
           )}
@@ -348,7 +348,7 @@ export default function ProductDetails({
             <h3 className="text-sm font-bold text-stone-900">
               100% Frucht & Vegan
             </h3>
-            <p className="text-xs text-stone-500 leading-relaxed">
+            <p className="text-xs text-stone-700 leading-relaxed">
               Frei von Industriezucker, künstlichen Aromen und Zusätzen.
             </p>
           </div>
@@ -364,7 +364,7 @@ export default function ProductDetails({
                 ? 'Feine Vermahlung'
                 : 'Schonendes Vakuum'}
             </h3>
-            <p className="text-xs text-stone-500 leading-relaxed">
+            <p className="text-xs text-stone-700 leading-relaxed">
               {formLower === 'granulat'
                 ? 'Intensiver Biss für Bowls, Porridge und knusprige Desserts.'
                 : formLower === 'pulver'
@@ -380,7 +380,7 @@ export default function ProductDetails({
             <h3 className="text-sm font-bold text-stone-900">
               Schweizer Standard
             </h3>
-            <p className="text-xs text-stone-500 leading-relaxed">
+            <p className="text-xs text-stone-700 leading-relaxed">
               Streng kontrollierte Rohstoffe und höchste Reinheit.
             </p>
           </div>
@@ -388,36 +388,36 @@ export default function ProductDetails({
 
         {/* 5. Ingredients & Specification Details Box (order-5 on mobile) */}
         <div className="order-5 lg:order-none w-full p-7 rounded-3xl bg-stone-50/70 border border-stone-200/90 space-y-4">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-stone-400">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-stone-700">
             Produktspezifikation
           </h3>
           <dl className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm">
             <div>
-              <dt className="text-xs font-medium text-stone-500">Zutaten</dt>
+              <dt className="text-xs font-medium text-stone-600">Zutaten</dt>
               <dd className="font-bold text-stone-900 mt-1">
                 {displayIngredients}
               </dd>
             </div>
             <div>
-              <dt className="text-xs font-medium text-stone-500">Form / Konsistenz</dt>
+              <dt className="text-xs font-medium text-stone-600">Form / Konsistenz</dt>
               <dd className="font-bold text-stone-900 mt-1">
                 {activeFormDisplayLabel}
               </dd>
             </div>
             <div>
-              <dt className="text-xs font-medium text-stone-500">Herkunftsland</dt>
+              <dt className="text-xs font-medium text-stone-600">Herkunftsland</dt>
               <dd className="font-bold text-stone-900 mt-1">
                 {product.origin_country || 'Schweiz / Europa'}
               </dd>
             </div>
             <div>
-              <dt className="text-xs font-medium text-stone-500">Lagerung</dt>
+              <dt className="text-xs font-medium text-stone-600">Lagerung</dt>
               <dd className="font-bold text-stone-900 mt-1">
                 Kühl, trocken und lichtgeschützt
               </dd>
             </div>
             <div>
-              <dt className="text-xs font-medium text-stone-500">Besonderheit</dt>
+              <dt className="text-xs font-medium text-stone-600">Besonderheit</dt>
               <dd className="font-bold text-stone-900 mt-1">
                 Ohne Gentechnik (GVO-frei) & glutenfrei
               </dd>

@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import { HelpCircle, ChevronDown } from 'lucide-react';
 
 export interface FaqItem {
@@ -12,9 +14,17 @@ interface ProductFaqProps {
 }
 
 export default function ProductFaq({ faq, productName }: ProductFaqProps) {
+  // Sva pitanja su zatvorena prema zadanim postavkama (početno stanje je null)
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
   if (!faq || faq.length === 0) {
     return null;
   }
+
+  // Funkcija za otvaranje i zatvaranje na klik (Toggle)
+  const toggleFaq = (index: number) => {
+    setOpenIndex((prevIndex) => (prevIndex === index ? null : index));
+  };
 
   return (
     <section className="bg-white border border-stone-200/90 rounded-3xl p-6 sm:p-8 shadow-xs">
@@ -33,24 +43,40 @@ export default function ProductFaq({ faq, productName }: ProductFaqProps) {
       </div>
 
       <div className="space-y-3">
-        {faq.map((item, index) => (
-          <details
-            key={index}
-            name="product-faq"
-            className="group rounded-2xl border border-stone-200/80 bg-stone-50/50 overflow-hidden transition-colors hover:bg-stone-50 open:bg-white open:border-stone-300 open:shadow-xs"
-            open={index === 0}
-          >
-            <summary className="flex items-center justify-between p-5 cursor-pointer list-none select-none text-left font-medium text-stone-900 focus:outline-hidden">
-              <span className="text-base font-bold pr-4 text-stone-900">
-                {item.question}
-              </span>
-              <ChevronDown className="w-5 h-5 text-stone-400 shrink-0 transition-transform duration-200 group-open:rotate-180" />
-            </summary>
-            <div className="px-5 pb-5 pt-1 text-sm text-stone-600 leading-relaxed border-t border-stone-100 mt-1">
-              <p>{item.answer}</p>
+        {faq.map((item, index) => {
+          const isOpen = openIndex === index;
+          return (
+            <div
+              key={index}
+              className={`rounded-2xl border transition-colors overflow-hidden ${
+                isOpen
+                  ? 'bg-white border-stone-300 shadow-xs'
+                  : 'border-stone-200/80 bg-stone-50/50 hover:bg-stone-50'
+              }`}
+            >
+              <button
+                type="button"
+                onClick={() => toggleFaq(index)}
+                className="w-full flex items-center justify-between p-5 cursor-pointer select-none text-left font-medium text-stone-900 focus:outline-hidden"
+                aria-expanded={isOpen}
+              >
+                <span className="text-base font-bold pr-4 text-stone-900">
+                  {item.question}
+                </span>
+                <ChevronDown
+                  className={`w-5 h-5 text-stone-400 shrink-0 transition-transform duration-200 ${
+                    isOpen ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+              {isOpen && (
+                <div className="px-5 pb-5 pt-1 text-sm text-stone-700 leading-relaxed border-t border-stone-100 mt-1 animate-in fade-in duration-200">
+                  <p>{item.answer}</p>
+                </div>
+              )}
             </div>
-          </details>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

@@ -56,7 +56,7 @@ export default function HomeReviews() {
         <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-stone-900">
           Das sagen unsere Kunden in der Schweiz
         </h2>
-        <p className="text-sm sm:text-base text-stone-600 leading-relaxed">
+        <p className="text-sm sm:text-base text-stone-700 leading-relaxed">
           Über 1&apos;200 zufriedene Kunden geniessen unsere puren Früchte im Müsli,
           Joghurt oder als gesunden Snack.
         </p>
@@ -90,7 +90,7 @@ export default function HomeReviews() {
                 <span className="font-bold text-sm text-stone-900">
                   {r.name}
                 </span>
-                <span className="text-[11px] text-stone-400">
+                <span className="text-[11px] text-stone-600 font-medium">
                   {r.location}
                 </span>
               </div>
@@ -99,7 +99,7 @@ export default function HomeReviews() {
                 <span>Verifizierter Käufer 🇨🇭</span>
               </div>
               {r.product && (
-                <p className="text-[11px] text-stone-400 truncate pt-0.5">
+                <p className="text-[11px] text-stone-600 truncate pt-0.5">
                   Gekauft: {r.product}
                 </p>
               )}

@@ -42,6 +42,7 @@ interface ProductRecord {
   form?: string;
   category?: string;
   macro_distribution?: MacroItem[];
+  nutritional_values?: MacroItem[];
   faq?: FaqItem[];
   variants?: ProductVariant[];
   product_variants?: ProductVariant[];
@@ -482,7 +483,7 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
             {/* Recharts Macronutrient Breakdown */}
             <div className="lg:col-span-6">
               <ProductNutritionChart
-                macroDistribution={product.macro_distribution}
+                macroDistribution={product.macro_distribution || product.nutritional_values}
               />
             </div>
 

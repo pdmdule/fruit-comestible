@@ -100,7 +100,7 @@ export default function DailyRecipeCard({ recipe }: DailyRecipeCardProps) {
           <h3 className="text-xl sm:text-2xl font-black text-stone-900 tracking-tight leading-snug group-hover:text-rose-700 transition-colors">
             <Link href={`/blog/${currentRecipe.slug}`}>{currentRecipe.title}</Link>
           </h3>
-          <p className="text-xs sm:text-sm text-stone-600 line-clamp-3 leading-relaxed">
+          <p className="text-xs sm:text-sm text-stone-700 line-clamp-3 leading-relaxed">
             {currentRecipe.description}
           </p>
         </div>

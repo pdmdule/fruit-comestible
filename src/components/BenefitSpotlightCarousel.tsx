@@ -231,7 +231,7 @@ export default function BenefitSpotlightCarousel() {
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-stone-900">
             Was steckt in deiner Frucht?
           </h2>
-          <p className="text-sm sm:text-base text-stone-600 leading-relaxed">
+          <p className="text-sm sm:text-base text-stone-700 leading-relaxed">
             100% reine Frucht, vollgepackt mit bioverfügbaren Vitaminen, Antioxidantien und
             intensivem Knusper-Aroma – komplett ohne Zusätze.
           </p>

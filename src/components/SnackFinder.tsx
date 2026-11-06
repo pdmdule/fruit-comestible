@@ -358,7 +358,7 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
             <h3 className="text-base sm:text-lg lg:text-2xl xl:text-3xl font-bold lg:font-black text-stone-900 tracking-tight">
               Wofür suchst du deine Früchte?
             </h3>
-            <p className="text-xs sm:text-sm lg:text-base text-stone-600 dark:text-stone-300 leading-relaxed">
+            <p className="text-xs sm:text-sm lg:text-base text-stone-700 leading-relaxed">
               Wähle den primären Verwendungszweck, damit wir die passende Konsistenz und Sorte für dich abstimmen.
             </p>
           </div>
@@ -382,7 +382,7 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
                     <h4 className="text-xs sm:text-sm lg:text-base font-semibold lg:font-bold text-center lg:text-left text-stone-900 group-hover:text-rose-700 transition-colors leading-tight sm:leading-snug">
                       {opt.title}
                     </h4>
-                    <p className="hidden lg:block text-xs text-stone-600 leading-relaxed mt-1">
+                    <p className="hidden lg:block text-xs text-stone-700 leading-relaxed mt-1">
                       {opt.description}
                     </p>
                   </div>
@@ -400,7 +400,7 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
             <h3 className="text-base sm:text-lg lg:text-2xl xl:text-3xl font-bold lg:font-black text-stone-900 tracking-tight">
               Welches Geschmacksprofil liebst du?
             </h3>
-            <p className="text-xs sm:text-sm lg:text-base text-stone-600 dark:text-stone-300 leading-relaxed">
+            <p className="text-xs sm:text-sm lg:text-base text-stone-700 leading-relaxed">
               Ob mild-süss, herb-frisch oder tropisch-belebend – was trifft deinen Gaumen am besten?
             </p>
           </div>
@@ -424,7 +424,7 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
                     <h4 className="text-xs sm:text-sm lg:text-base font-semibold lg:font-bold text-center lg:text-left text-stone-900 group-hover:text-rose-700 transition-colors leading-tight sm:leading-snug">
                       {opt.title}
                     </h4>
-                    <p className="hidden lg:block text-xs text-stone-600 leading-relaxed mt-1">
+                    <p className="hidden lg:block text-xs text-stone-700 leading-relaxed mt-1">
                       {opt.description}
                     </p>
                   </div>
@@ -442,7 +442,7 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
             <h3 className="text-base sm:text-lg lg:text-2xl xl:text-3xl font-bold lg:font-black text-stone-900 tracking-tight">
               Welche Textur bevorzugst du?
             </h3>
-            <p className="text-xs sm:text-sm lg:text-base text-stone-600 dark:text-stone-300 leading-relaxed">
+            <p className="text-xs sm:text-sm lg:text-base text-stone-700 leading-relaxed">
               Entscheide, wie du deine schonend gefriergetrockneten Früchte am liebsten portionierst.
             </p>
           </div>
@@ -466,7 +466,7 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
                     <h4 className="text-xs sm:text-sm lg:text-base font-semibold lg:font-bold text-center lg:text-left text-stone-900 group-hover:text-rose-700 transition-colors leading-tight sm:leading-snug">
                       {opt.title}
                     </h4>
-                    <p className="hidden lg:block text-xs text-stone-600 leading-relaxed mt-1">
+                    <p className="hidden lg:block text-xs text-stone-700 leading-relaxed mt-1">
                       {opt.description}
                     </p>
                   </div>
@@ -488,7 +488,7 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
             <h3 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
               Deine idealen Knusper-Matches
             </h3>
-            <p className="text-sm text-stone-600">
+            <p className="text-sm text-stone-700">
               Basierend auf deinen Antworten sind das unsere 3 besten Empfehlungen für dich:
             </p>
           </div>
@@ -523,15 +523,16 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
                       className="object-cover"
                     />
                     <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-                      <span className="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-rose-700 text-white shadow-xs flex items-center gap-1">
+                      <span className="inline-flex items-center justify-center gap-1 h-5 px-2.5 rounded-full text-[10px] font-extrabold leading-none bg-rose-700 text-white shadow-xs">
                         <Sparkles className="w-3 h-3" />
-                        <span>{item.matchPercentage} Match</span>
+                        <span className="leading-none">{item.matchPercentage} Match</span>
                       </span>
                       {(() => {
                         const { country: displayCountry, flag: displayFlag } = getProductDisplayOrigin(product);
                         return (
-                          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/95 text-stone-800 backdrop-blur-md border border-stone-200/80 shadow-2xs">
-                            {displayFlag} {displayCountry}
+                          <span className="inline-flex items-center justify-center gap-1 h-5 px-2 rounded-full text-[10px] font-bold leading-none bg-white/95 text-stone-800 backdrop-blur-md border border-stone-200/80 shadow-2xs">
+                            <span className="leading-none">{displayFlag}</span>
+                            <span className="leading-none">{displayCountry}</span>
                           </span>
                         );
                       })()}
@@ -544,14 +545,14 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
                       <h4 className="text-base font-bold text-stone-900 leading-snug line-clamp-2">
                         {product.name_de}
                       </h4>
-                      <p className="text-xs text-stone-600 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-stone-700 line-clamp-2 leading-relaxed">
                         {product.subtitle_de || product.description_de || 'Schonend gefriergetrocknete Schweizer Früchte.'}
                       </p>
 
                       {/* Variant Selector if multiple exist */}
                       {variants.length > 1 ? (
                         <div className="pt-2">
-                          <label className="text-[11px] font-bold text-stone-500 uppercase tracking-wider block mb-1.5">
+                          <label className="text-[11px] font-bold text-stone-700 uppercase tracking-wider block mb-1.5">
                             Variante wählen:
                           </label>
                           <select

@@ -69,7 +69,7 @@ export default function HomeBlogPreview({
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-stone-900">
             Wissenswertes & Rezepte aus unserem Magazin
           </h2>
-          <p className="text-sm sm:text-base text-stone-600 leading-relaxed">
+          <p className="text-sm sm:text-base text-stone-700 leading-relaxed">
             Erfahren Sie mehr über Clean Food, gesunde Ernährung, Vitamine und
             kreative Rezeptideen mit unseren Schweizer Knusperfrüchten.
           </p>
@@ -134,14 +134,14 @@ export default function HomeBlogPreview({
               {/* Content */}
               <div className="flex-1 p-6 flex flex-col justify-between space-y-4">
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-xs text-stone-400">
+                  <div className="flex items-center gap-2 text-xs text-stone-600 font-medium">
                     <Clock className="w-3.5 h-3.5" />
                     <span>{post.read_time || '4 Min. Lesezeit'}</span>
                   </div>
                   <h3 className="font-extrabold text-stone-900 text-base sm:text-lg group-hover:text-rose-700 transition leading-snug line-clamp-2">
                     {post.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-stone-600 line-clamp-3 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-stone-700 line-clamp-3 leading-relaxed">
                     {post.excerpt}
                   </p>
                 </div>

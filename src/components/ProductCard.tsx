@@ -111,18 +111,19 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
         />
 
         {/* Badges */}
-        <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 flex flex-wrap gap-1 sm:gap-1.5 pointer-events-none">
-          <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold bg-white/95 text-stone-800 backdrop-blur-md border border-stone-200/80 shadow-2xs">
-            {displayFlag} {displayCountry}
+        <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 flex flex-wrap items-center gap-1 sm:gap-1.5 pointer-events-none">
+          <span className="inline-flex items-center justify-center gap-1 h-5 px-2 rounded-full text-[10px] font-bold leading-none bg-white/95 text-stone-800 backdrop-blur-md border border-stone-200/80 shadow-2xs">
+            <span className="leading-none">{displayFlag}</span>
+            <span className="leading-none">{displayCountry}</span>
           </span>
-          {product.form && product.form !== 'Mix' && product.form !== 'Box' && (
-            <span className="px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold bg-stone-900/90 text-white backdrop-blur-md shadow-2xs">
-              {product.form}
+          {(cardForm || product.form) && (cardForm || product.form) !== 'Mix' && (cardForm || product.form) !== 'Box' && (
+            <span className="inline-flex items-center justify-center h-5 px-2 rounded-full text-[10px] font-semibold leading-none bg-stone-900/90 text-white backdrop-blur-md shadow-2xs">
+              <span className="leading-none">{cardForm || product.form}</span>
             </span>
           )}
           {product.is_featured && (
-            <span className="px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold bg-rose-700 text-white shadow-2xs">
-              Bestseller
+            <span className="inline-flex items-center justify-center h-5 px-2 rounded-full text-[10px] font-extrabold leading-none bg-rose-700 text-white shadow-2xs">
+              <span className="leading-none">Bestseller</span>
             </span>
           )}
         </div>
@@ -137,7 +138,7 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
           <h3 className="text-sm sm:text-base md:text-lg font-semibold text-stone-900 leading-snug line-clamp-2 min-h-[2.5rem] sm:min-h-[2.75rem] md:min-h-[3rem] group-hover:text-rose-700 transition">
             {product.name_de}
           </h3>
-          <p className="text-xs sm:text-sm text-stone-600 line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] leading-relaxed">
+          <p className="text-xs sm:text-sm text-stone-700 line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] leading-relaxed">
             {product.subtitle_de || product.description_de || 'Schonend gefriergetrocknete Schweizer Früchte.'}
           </p>
         </div>
@@ -145,14 +146,14 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
         <div className="pt-2.5 sm:pt-3 border-t border-stone-100 space-y-2 sm:space-y-3 mt-auto">
           {/* Sizes and Price */}
           <div className="flex flex-col">
-            <span className="text-xs sm:text-sm text-stone-500 font-medium truncate">
+            <span className="text-xs sm:text-sm text-stone-700 font-medium truncate">
               {packSizesText}
             </span>
             <div className="flex items-baseline gap-1 sm:gap-1.5 mt-0.5">
               <span className="text-sm sm:text-base font-bold text-stone-900 font-sans">
                 Ab CHF {minPrice.toFixed(2)}
               </span>
-              <span className="text-[9px] sm:text-[10px] text-stone-400">
+              <span className="text-[9px] sm:text-[10px] text-stone-500 font-medium">
                 (inkl. 2.6% MwSt.)
               </span>
             </div>

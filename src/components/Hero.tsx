@@ -49,7 +49,7 @@ export const HERO_SLIDES: HeroSlideData[] = [
     ctaText: 'Erdbeeren entdecken',
     ctaLink: '/shop?category=erdbeeren',
     image:
-      'https://loinzvvygklupiomoisu.supabase.co/storage/v1/object/public/hero/Musli%20mix%20hero-new.webp',
+      'https://loinzvvygklupiomoisu.supabase.co/storage/v1/object/public/hero/NOVE%20HERO%201.webp',
     imageAlt: 'Gesunde Frühstücks-Bowl garniert mit gefriergetrockneten Beeren',
     // 2. Nježna bobičasta / jagoda roze nijansa (jasno uočljiva razlika)
     bgClass: 'bg-[#FCE7E7]',
@@ -101,7 +101,7 @@ export function Hero() {
       >
         <div className="max-w-xl mx-auto lg:mx-0 text-left w-full">
           {/* Nadnaslov (Kicker) */}
-          <span className="text-xs font-bold tracking-widest text-stone-700 uppercase mb-3 sm:mb-4 block">
+          <span className="text-xs font-bold tracking-widest text-stone-800 uppercase mb-3 sm:mb-4 block">
             {currentSlide.kicker}
           </span>
 
@@ -117,7 +117,7 @@ export function Hero() {
           )}
 
           {/* Opisni tekst */}
-          <p className="text-sm sm:text-base text-stone-600 leading-relaxed mb-6 sm:mb-8 max-w-md">
+          <p className="text-sm sm:text-base text-stone-700 leading-relaxed mb-6 sm:mb-8 max-w-md font-medium">
             {currentSlide.description}
           </p>
 

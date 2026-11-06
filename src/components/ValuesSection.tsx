@@ -75,7 +75,7 @@ export default function ValuesSection() {
                   <h3 className="font-bold text-stone-900 text-base sm:text-lg mb-2">
                     {val.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-stone-700 leading-relaxed">
                     {val.text}
                   </p>
                 </div>

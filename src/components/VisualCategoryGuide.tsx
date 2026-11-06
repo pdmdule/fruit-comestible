@@ -64,7 +64,7 @@ export default function VisualCategoryGuide() {
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-stone-900">
             Finde die passenden Früchte für deinen Genussmoment
           </h2>
-          <p className="text-xs sm:text-sm lg:text-base text-stone-600 leading-relaxed">
+          <p className="text-xs sm:text-sm lg:text-base text-stone-700 leading-relaxed">
             Ob knuspriges Topping, feines Fruchtpulver zum Backen oder purer Genuss – wähle sofort die ideale Form für deine Bedürfnisse.
           </p>
         </div>

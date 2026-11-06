@@ -153,14 +153,14 @@ export default function ProductImageGallery({
             ? '🇸🇪'
             : '🇨🇭';
           return (
-            <div className="absolute top-4 left-4 flex flex-wrap gap-2 pointer-events-none z-10">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white/95 text-stone-800 backdrop-blur-md shadow-xs border border-stone-200/80">
-                <span className="text-sm">{countryFlag}</span>
-                <span>Herkunft: {originCountry || 'Schweiz'}</span>
+            <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2 pointer-events-none z-10">
+              <span className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold leading-none bg-white/95 text-stone-800 backdrop-blur-md shadow-xs border border-stone-200/80">
+                <span className="text-sm leading-none">{countryFlag}</span>
+                <span className="leading-none">Herkunft: {originCountry || 'Schweiz'}</span>
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white/95 text-emerald-800 backdrop-blur-md shadow-xs border border-emerald-200/80">
+              <span className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold leading-none bg-white/95 text-emerald-800 backdrop-blur-md shadow-xs border border-emerald-200/80">
                 <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                <span>100% Gefriergetrocknet</span>
+                <span className="leading-none">100% Gefriergetrocknet</span>
               </span>
             </div>
           );

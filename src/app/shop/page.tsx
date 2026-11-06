@@ -93,7 +93,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-stone-900">
             Unser Fruchtsortiment
           </h1>
-          <p className="text-base sm:text-lg text-stone-600 leading-relaxed">
+          <p className="text-base sm:text-lg text-stone-700 leading-relaxed">
             Schonend gefriergetrocknete Früchte in kompromissloser Schweizer
             Premium-Qualität. 100% naturbelassen, herrlich knusprig und intensiv im
             Aroma – frei von jeglichem Zuckerzusatz oder Konservierungsstoffen.
@@ -101,7 +101,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         </div>
 
         {/* Catalog Grid with Category Filter */}
-        <Suspense fallback={<div className="min-h-96 flex items-center justify-center text-stone-400 text-sm">Sortiment wird geladen...</div>}>
+        <Suspense fallback={<div className="min-h-96 flex items-center justify-center text-stone-500 text-sm">Sortiment wird geladen...</div>}>
           <ShopCatalog products={products} activeCategorySlug="all" />
         </Suspense>
 
@@ -113,7 +113,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
               <h4 className="font-bold text-stone-900 text-sm">
                 Schweizer Qualität & Versand
               </h4>
-              <p className="text-xs text-stone-500 leading-relaxed">
+              <p className="text-xs text-stone-700 leading-relaxed">
                 Schneller A-Post & B-Post Versand direkt aus unserem Schweizer Lager.
               </p>
             </div>
@@ -123,7 +123,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
               <h4 className="font-bold text-stone-900 text-sm">
                 100% Frucht – Nichts sonst
               </h4>
-              <p className="text-xs text-stone-500 leading-relaxed">
+              <p className="text-xs text-stone-700 leading-relaxed">
                 Kein raffinierter Zucker, keine Schwefelung, 100% vegan und glutenfrei.
               </p>
             </div>
@@ -133,7 +133,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
               <h4 className="font-bold text-stone-900 text-sm">
                 Bequeme & sichere Bezahlung
               </h4>
-              <p className="text-xs text-stone-500 leading-relaxed">
+              <p className="text-xs text-stone-700 leading-relaxed">
                 TWINT, Kreditkarten und Schweizer QR-Rechnung mit 30 Tagen Zahlungsziel.
               </p>
             </div>
