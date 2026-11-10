@@ -61,30 +61,40 @@ export const SORT_OPTIONS = [
 ];
 
 export interface FruitFilterItem {
+  id: string;
   label: string;
+  matches: string[];
   value?: string;
   values?: string[];
-  icon: string;
+  icon?: string;
 }
 
 export const FRUCHT_FILTER: FruitFilterItem[] = [
-  { label: 'Alle Früchte', value: 'all', icon: '🍓' },
-  { label: 'Erdbeeren', value: 'erdbeer', icon: '🍓' },
-  { label: 'Himbeeren', value: 'himbeer', icon: '🫐' },
-  { label: 'Heidelbeeren', value: 'heidelbeer', icon: '🫐' },
-  { label: 'Aprikosen', value: 'aprikose', icon: '🍑' },
-  { label: 'Sauerkirschen', value: 'sauerkirsche', icon: '🍒' },
-  { label: 'Zwetschgen', value: 'zwetschgen', icon: '🍑' },
-  { label: 'Brombeeren', value: 'brombeere', icon: '🫐' },
-  { label: 'Johannisbeeren', value: 'johannisbeere', icon: '🫐' },
-  { label: 'Bananen', value: 'banane', icon: '🍌' },
-  { label: 'Äpfel', value: 'apfel', icon: '🍏' },
-  { label: 'Mango', value: 'mango', icon: '🥭' },
-  { label: 'Ananas & Maracuja', values: ['ananas', 'maracuja'], icon: '🍍' },
+  { id: 'all', label: 'Alle Früchte', value: 'all', matches: [], icon: '🍓' },
+  { id: 'erdbeer', label: 'Erdbeeren', value: 'erdbeer', matches: ['erdbeer'], icon: '🍓' },
+  { id: 'himbeer', label: 'Himbeeren', value: 'himbeer', matches: ['himbeer'], icon: '🫐' },
+  { id: 'heidelbeer', label: 'Heidelbeeren', value: 'heidelbeer', matches: ['heidelbeer', 'blaubeer'], icon: '🫐' },
+  { id: 'aprikose', label: 'Aprikosen', value: 'aprikose', matches: ['aprikose'], icon: '🍑' },
+  { id: 'sauerkirsche', label: 'Sauerkirschen', value: 'sauerkirsche', matches: ['sauerkirsche'], icon: '🍒' },
+  { id: 'zwetschgen', label: 'Zwetschgen', value: 'zwetschgen', matches: ['zwetschgen'], icon: '🍑' },
+  { id: 'brombeere', label: 'Brombeeren', value: 'brombeere', matches: ['brombeere'], icon: '🫐' },
+  { id: 'johannisbeere', label: 'Johannisbeeren', value: 'johannisbeere', matches: ['johannisbeere'], icon: '🫐' },
+  { id: 'banane', label: 'Bananen', value: 'banane', matches: ['banane'], icon: '🍌' },
+  { id: 'apfel', label: 'Äpfel', value: 'apfel', matches: ['apfel'], icon: '🍏' },
+  { id: 'orange', label: 'Orange', value: 'orange', matches: ['orange', 'orangen'], icon: '🍊' },
+  { id: 'zitrone', label: 'Zitrone', value: 'zitrone', matches: ['zitrone', 'zitronen'], icon: '🍋' },
+  {
+    id: 'exotische-fruechte',
+    label: 'Exotische Früchte',
+    value: 'exotische-fruechte',
+    values: ['ananas', 'mango', 'maracuja', 'passionsfrucht', 'drachenfrucht', 'pitaya'],
+    matches: ['ananas', 'mango', 'maracuja', 'passionsfrucht', 'drachenfrucht', 'pitaya'],
+    icon: '🍍',
+  },
 ];
 
 export function getFruitFilterKey(filter: FruitFilterItem): string {
-  return filter.value || (filter.values ? filter.values.join('-') : 'all');
+  return filter.id || filter.value || (filter.matches ? filter.matches.join('-') : filter.values ? filter.values.join('-') : 'all');
 }
 
 export function findFilterByKey(key: string): FruitFilterItem | undefined {
@@ -92,30 +102,43 @@ export function findFilterByKey(key: string): FruitFilterItem | undefined {
   return FRUCHT_FILTER.find((f) => {
     const k = getFruitFilterKey(f);
     if (k === clean) return true;
+    if (f.id && f.id === clean) return true;
     if (f.value && f.value === clean) return true;
+    if (f.matches && f.matches.includes(clean)) return true;
     if (f.values && f.values.includes(clean)) return true;
-    if (clean === 'erdbeeren' && f.value === 'erdbeer') return true;
-    if (clean === 'himbeeren' && f.value === 'himbeer') return true;
-    if ((clean === 'blaubeeren' || clean === 'blaubeer') && f.value === 'heidelbeer') return true;
+    if (clean === 'erdbeeren' && (f.id === 'erdbeer' || f.value === 'erdbeer')) return true;
+    if (clean === 'himbeeren' && (f.id === 'himbeer' || f.value === 'himbeer')) return true;
+    if ((clean === 'blaubeeren' || clean === 'blaubeer') && (f.id === 'heidelbeer' || f.value === 'heidelbeer')) return true;
+    if (clean === 'orangen' && (f.id === 'orange' || f.value === 'orange')) return true;
+    if ((clean === 'zitronen' || clean === 'zitrone') && (f.id === 'zitrone' || f.value === 'zitrone')) return true;
+    if (clean === 'exotische-früchte' || clean === 'exotisch' || clean === 'exotische') {
+      if (f.id === 'exotische-fruechte') return true;
+    }
     return false;
   });
 }
 
 export function matchesFruitFilter(item: FruitFilterItem, product: ProductItem): boolean {
-  if (item.value === 'all') return true;
+  if (item.id === 'all' || item.value === 'all') return true;
 
-  const slug = product.slug.toLowerCase();
-  const name = product.name_de.toLowerCase();
+  const slug = (product.slug || '').toLowerCase();
+  const name = (product.name_de || (product as any).name || '').toLowerCase();
 
-  if (item.values && item.values.length > 0) {
-    return item.values.some(
+  const terms =
+    item.matches && item.matches.length > 0
+      ? item.matches
+      : item.values && item.values.length > 0
+      ? item.values
+      : item.value
+      ? [item.value]
+      : item.id
+      ? [item.id]
+      : [];
+
+  if (terms.length > 0) {
+    return terms.some(
       (v) => slug.includes(v.toLowerCase()) || name.includes(v.toLowerCase())
     );
-  }
-
-  if (item.value) {
-    const val = item.value.toLowerCase();
-    return slug.includes(val) || name.includes(val);
   }
 
   return true;
@@ -603,26 +626,9 @@ export default function ShopCatalog({
 
             const { country: displayCountry, flag: displayFlag } = getProductDisplayOrigin(product);
 
-            // Determine variant & form for target link
+            // Form badge indicator
             const cardForm = product.form || variants[0]?.form || variants[0]?.form_de;
-            const cardVariant =
-              variants.find(
-                (v) =>
-                  cardForm &&
-                  (v.form || v.form_de)?.toLowerCase() === cardForm.toLowerCase()
-              ) || variants[0];
-
-            const queryParams = new URLSearchParams();
-            if (cardForm) {
-              queryParams.set('form', cardForm);
-            }
-            if (cardVariant?.id) {
-              queryParams.set('variant', cardVariant.id);
-            }
-            const queryString = queryParams.toString();
-            const productHref = queryString
-              ? `/produkte/${product.slug}?${queryString}`
-              : `/produkte/${product.slug}`;
+            const productHref = `/produkte/${product.slug}`;
 
             return (
               <Link

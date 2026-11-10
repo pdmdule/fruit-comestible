@@ -73,26 +73,9 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
 
   const { country: displayCountry, flag: displayFlag } = getProductDisplayOrigin(product);
 
-  // Determine variant & form for target link
+  // Form badge indicator
   const cardForm = product.form || variants[0]?.form || variants[0]?.form_de;
-  const cardVariant =
-    variants.find(
-      (v) =>
-        cardForm &&
-        (v.form || v.form_de)?.toLowerCase() === cardForm.toLowerCase()
-    ) || variants[0];
-
-  const queryParams = new URLSearchParams();
-  if (cardForm) {
-    queryParams.set('form', cardForm);
-  }
-  if (cardVariant?.id) {
-    queryParams.set('variant', cardVariant.id);
-  }
-  const queryString = queryParams.toString();
-  const productHref = queryString
-    ? `/produkte/${product.slug}?${queryString}`
-    : `/produkte/${product.slug}`;
+  const productHref = `/produkte/${product.slug}`;
 
   return (
     <Link

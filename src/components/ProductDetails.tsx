@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import ProductGallery from '@/components/ProductGallery';
 import ProductPurchaseSection, {
   type ProductVariant,
@@ -43,24 +42,31 @@ export default function ProductDetails({
   initialForm,
   initialVariantId,
 }: ProductDetailsProps) {
-  const searchParams = useSearchParams();
-  const formParam = searchParams?.get('form')?.toLowerCase() || initialForm?.toLowerCase();
-  const variantParam = searchParams?.get('variant') || initialVariantId;
-
-  // 1. Inicijalno traženje varijante prema URL parametru (ako postoji)
+  // 1. Inicijalno traženje varijante prema parametrima (ili podrazumevano)
   const getInitialVariant = useCallback(() => {
     if (!variants || variants.length === 0) return undefined;
 
-    if (variantParam) {
-      const byId = variants.find((v) => String(v.id) === variantParam);
+    let vId = initialVariantId;
+    let fParam = initialForm?.toLowerCase();
+
+    if (typeof window !== 'undefined' && (!vId || !fParam)) {
+      try {
+        const sp = new URLSearchParams(window.location.search);
+        if (!vId) vId = sp.get('variant') || undefined;
+        if (!fParam) fParam = sp.get('form')?.toLowerCase() || undefined;
+      } catch {}
+    }
+
+    if (vId) {
+      const byId = variants.find((v) => String(v.id) === vId);
       if (byId) return byId;
     }
 
-    if (formParam) {
+    if (fParam) {
       const byForm = variants.find((v) => {
         const vf = (v.form || v.form_de || '').toLowerCase();
         const vt = (v.title || v.name_de || v.label_de || '').toLowerCase();
-        return vf === formParam || vt.includes(formParam);
+        return vf === fParam || vt.includes(fParam);
       });
       if (byForm) return byForm;
     }
@@ -75,45 +81,22 @@ export default function ProductDetails({
 
     const inStock = variants.find((v) => (v.stock_quantity ?? 0) > 0);
     return inStock || variants[0];
-  }, [variants, variantParam, formParam, product.form]);
+  }, [variants, initialVariantId, initialForm, product.form]);
 
-  // JEDAN izvor istine za celu stranicu proizvoda
+  // JEDAN izvor istine za celu stranicu proizvoda - selektirana varijanta u lokalnom React stanju
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | undefined>(getInitialVariant);
 
-  // Ref za sprečavanje neželjenog resetovanja stanja ako korisnik sam menja varijantu
-  const lastSyncedParamsRef = useRef({ formParam, variantParam });
-
-  // Ako se promeni URL (npr. browser Back/Forward), sinhronizuj stanje
+  // Ako stranica prilikom učitavanja već zatekne query parametre, tiho ih očisti bez refresha
   useEffect(() => {
-    if (
-      lastSyncedParamsRef.current.formParam !== formParam ||
-      lastSyncedParamsRef.current.variantParam !== variantParam
-    ) {
-      lastSyncedParamsRef.current = { formParam, variantParam };
-      const matched = getInitialVariant();
-      if (matched) setSelectedVariant(matched);
+    if (typeof window !== 'undefined' && window.location.search) {
+      window.history.replaceState(null, '', window.location.pathname);
     }
-  }, [formParam, variantParam, getInitialVariant]);
+  }, []);
 
-  // Handler za promenu varijante kada korisnik klikne dugme
+  // Handler za promenu varijante kada korisnik klikne dugme - drži se isključivo u lokalnom React stanju
   const handleSelectVariant = (variant: ProductVariant) => {
     if (!variant) return;
-    const vForm = (variant.form || variant.form_de || 'Ganz').toLowerCase();
-    lastSyncedParamsRef.current = {
-      formParam: vForm,
-      variantParam: variant.id,
-    };
     setSelectedVariant(variant);
-
-    // Nežno ažuriraj URL u adresnoj traci
-    if (typeof window !== 'undefined') {
-      const url = new URL(window.location.href);
-      if (variant.form || variant.form_de) {
-        url.searchParams.set('form', variant.form || variant.form_de || 'Ganz');
-      }
-      url.searchParams.set('variant', variant.id);
-      window.history.replaceState(null, '', url.toString());
-    }
   };
 
   // Form of currently selected variant
@@ -240,14 +223,15 @@ export default function ProductDetails({
     ];
   }, [selectedVariant, formLower]);
 
-  // 5. Dinamički sastojci (Ingredients)
-  const displayIngredients = useMemo(() => {
-    return (
-      selectedVariant?.ingredients_de ||
-      product.ingredients_de ||
-      '100% gefriergetrocknete Früchte (ohne Zusätze)'
-    );
-  }, [selectedVariant, product.ingredients_de]);
+  // 5. Dinamički sastojci (Ingredients - Miks vs. Monoproizvod vs. Fallback)
+  const fallbackIngredients = useMemo(() => {
+    return `100% naturbelassene, gefriergetrocknete ${product.name_de || 'Früchte'} ohne Zusatzstoffe.`;
+  }, [product.name_de]);
+
+  const rawIngredients = (selectedVariant?.ingredients_de || product.ingredients_de || '').trim();
+  const isFallbackIngredients = !rawIngredients;
+  const displayIngredients = isFallbackIngredients ? fallbackIngredients : rawIngredients;
+  const isMultiIngredient = !isFallbackIngredients && displayIngredients.includes(',');
 
   // 6. Dinamički popis slika prema odabranoj varijanti (Pulver / Granulat / Ganz / pakovanje)
   const activeImages = useMemo(() => {
@@ -307,6 +291,29 @@ export default function ProductDetails({
           {displayDescription && (
             <div className="pt-2 text-stone-700 text-base leading-relaxed space-y-3">
               <p>{displayDescription}</p>
+            </div>
+          )}
+
+          {/* Zutaten (Sastojci) Section - prikazuje se isključivo za proizvode sa više sastojaka */}
+          {isMultiIngredient && (
+            <div className="mt-6 border-t border-stone-200 pt-4">
+              <h3 className="text-sm font-semibold tracking-wider text-stone-900 uppercase mb-2">
+                Zutaten
+              </h3>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {displayIngredients
+                  .split(',')
+                  .map((ingredient: string) => ingredient.trim().replace(/\.$/, '').trim())
+                  .filter(Boolean)
+                  .map((ingredient: string, idx: number) => (
+                    <span
+                      key={idx}
+                      className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#F4EFE6] text-stone-800 border border-stone-300"
+                    >
+                      {ingredient}
+                    </span>
+                  ))}
+              </div>
             </div>
           )}
 
