@@ -299,7 +299,7 @@ export default function HeroSlider() {
                       src={slide.image}
                       alt={slide.imageAlt}
                       fill
-                      priority={index === 0}
+                      priority={index === 0 || index === currentSlide}
                       unoptimized
                       sizes="(max-width: 1024px) 100vw, 50vw"
                       className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"

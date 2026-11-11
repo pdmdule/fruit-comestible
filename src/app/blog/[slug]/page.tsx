@@ -18,12 +18,41 @@ import {
 import { supabase } from '@/lib/supabase';
 import RecipeBox, { RecipeData } from '@/components/RecipeBox';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import ProductCard from '@/components/ProductCard';
+import { FRUIT_FAMILIES } from '@/lib/productForms';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
 export const dynamic = 'force-dynamic';
+
+function resolveProductSlugs(slugs: string[]): string[] {
+  const result = new Set<string>();
+  slugs.forEach((rawSlug) => {
+    if (!rawSlug) return;
+    const clean = String(rawSlug).trim().toLowerCase();
+    result.add(clean);
+    result.add(clean.replace(/-/g, ''));
+
+    for (const family of FRUIT_FAMILIES) {
+      if (family.dbSlug.toLowerCase() === clean) {
+        result.add(family.dbSlug);
+      }
+      for (const form of family.forms) {
+        if (
+          form.slug.toLowerCase() === clean ||
+          form.aliases.map((a) => a.toLowerCase()).includes(clean)
+        ) {
+          result.add(form.slug);
+          if (family.dbSlug) result.add(family.dbSlug);
+          form.aliases.forEach((a) => result.add(a.toLowerCase()));
+        }
+      }
+    }
+  });
+  return Array.from(result);
+}
 
 function formatDate(dateStr?: string | null): string {
   if (!dateStr) return '';
@@ -86,6 +115,42 @@ export default async function BlogPostPage({ params }: PageProps) {
     }
   }
 
+  // Fetch related products for recipe if available (from post.related_product_slugs or recipe.related_product_slugs)
+  let rawRelatedSlugs: string[] = [];
+  if (Array.isArray(post.related_product_slugs)) {
+    rawRelatedSlugs = post.related_product_slugs;
+  } else if (typeof post.related_product_slugs === 'string' && post.related_product_slugs.trim().length > 0) {
+    try {
+      const parsed = JSON.parse(post.related_product_slugs);
+      if (Array.isArray(parsed)) {
+        rawRelatedSlugs = parsed;
+      } else {
+        rawRelatedSlugs = [post.related_product_slugs.trim()];
+      }
+    } catch {
+      rawRelatedSlugs = post.related_product_slugs.split(',').map((s: string) => s.trim()).filter(Boolean);
+    }
+  } else if (Array.isArray((recipe as any)?.related_product_slugs)) {
+    rawRelatedSlugs = (recipe as any).related_product_slugs;
+  }
+
+  let usedProducts: any[] = [];
+  if (rawRelatedSlugs.length > 0) {
+    const slugsToFetch = resolveProductSlugs(rawRelatedSlugs);
+    const { data: productsData, error: productsError } = await supabase
+      .from('products')
+      .select('id, slug, name_de, subtitle_de, images, form, origin_country, product_variants(price_chf, weight_grams)')
+      .in('slug', slugsToFetch);
+
+    if (productsError) {
+      console.error('Error fetching recipe related products:', productsError);
+    }
+
+    if (productsData && productsData.length > 0) {
+      usedProducts = productsData;
+    }
+  }
+
   const isRecipe =
     post.category?.toLowerCase().includes('rezept') || recipe !== null;
   const imageSrc =
@@ -123,9 +188,9 @@ export default async function BlogPostPage({ params }: PageProps) {
         </div>
       </div>
 
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 space-y-10">
+      <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 space-y-10">
         {/* Article Header */}
-        <header className="space-y-5 text-center max-w-3xl mx-auto">
+        <header className="space-y-5 text-center max-w-4xl mx-auto">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-stone-200 shadow-2xs text-xs font-bold text-stone-800">
             {isRecipe ? (
@@ -188,7 +253,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             fill
             priority
             unoptimized
-            sizes="(max-width: 1024px) 100vw, 896px"
+            sizes="(max-width: 1024px) 100vw, 1024px"
             className="object-cover"
           />
         </div>
@@ -202,14 +267,14 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Markdown Content formatted in Tailwind Typography */}
         {post.content_de && (
-          <div className="prose prose-stone prose-base sm:prose-lg max-w-3xl mx-auto py-4 prose-headings:font-black prose-headings:tracking-tight prose-headings:text-stone-900 prose-p:text-stone-700 prose-p:leading-relaxed prose-strong:text-stone-900 prose-li:text-stone-700 prose-ul:my-4 prose-a:text-rose-700 prose-a:font-bold hover:prose-a:underline">
+          <div className="prose prose-stone prose-base sm:prose-lg max-w-4xl mx-auto py-4 prose-headings:font-black prose-headings:tracking-tight prose-headings:text-stone-900 prose-p:text-stone-700 prose-p:leading-relaxed prose-strong:text-stone-900 prose-li:text-stone-700 prose-ul:my-4 prose-a:text-rose-700 prose-a:font-bold hover:prose-a:underline">
             <ReactMarkdown>{post.content_de}</ReactMarkdown>
           </div>
         )}
 
         {/* Tags if available */}
         {post.tags && Array.isArray(post.tags) && post.tags.length > 0 && (
-          <div className="pt-6 border-t border-stone-200/80 flex flex-wrap items-center gap-2 max-w-3xl mx-auto">
+          <div className="pt-6 border-t border-stone-200/80 flex flex-wrap items-center gap-2 max-w-4xl mx-auto">
             <span className="text-xs font-bold text-stone-500 mr-2">Tags:</span>
             {post.tags.map((tag: string, idx: number) => (
               <span
@@ -222,31 +287,53 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         )}
 
-        {/* Bottom CTA: "Passende Produkte entdecken" */}
-        <div className="mt-14 p-8 sm:p-10 rounded-3xl bg-white border border-stone-200/90 shadow-sm max-w-3xl mx-auto space-y-6 text-center sm:text-left">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-            <div className="space-y-2">
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-rose-700 block">
-                🇨🇭 100% Reine Frucht – Ohne Zuckerzusatz
+        {/* Verwendete Produkte (Im Rezept verwendet) */}
+        {usedProducts && usedProducts.length > 0 && (
+          <section className="mt-16 pt-10 border-t border-stone-200">
+            <div className="mb-6">
+              <span className="text-xs font-semibold tracking-wider text-[#A0522D] uppercase">
+                Im Rezept verwendet
               </span>
-              <h3 className="text-xl sm:text-2xl font-black text-stone-900 tracking-tight">
-                Passende Produkte entdecken
-              </h3>
-              <p className="text-xs sm:text-sm text-stone-600 leading-relaxed max-w-md">
-                Verleihen Sie Ihren Rezepten, Bowls oder Desserts den perfekten
-                Crunch mit gefriergetrockneten Schweizer Sommerbeeren & Fruchtgranulat.
-              </p>
+              <h2 className="text-2xl font-serif font-bold text-stone-900 mt-1">
+                Passende gefriergetrocknete Früchte
+              </h2>
             </div>
 
-            <Link
-              href="/shop"
-              className="h-13 px-7 rounded-2xl bg-stone-900 hover:bg-stone-800 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98] shrink-0"
-            >
-              <ShoppingBag className="w-4 h-4" />
-              <span>Zum Shop</span>
-            </Link>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+              {usedProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Bottom CTA: "Passende Produkte entdecken" (Fallback wenn keine spezifischen Produkte zugewiesen) */}
+        {(!usedProducts || usedProducts.length === 0) && (
+          <div className="mt-14 p-8 sm:p-10 rounded-3xl bg-white border border-stone-200/90 shadow-sm max-w-3xl mx-auto space-y-6 text-center sm:text-left">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+              <div className="space-y-2">
+                <span className="text-[11px] font-extrabold uppercase tracking-widest text-rose-700 block">
+                  🇨🇭 100% Reine Frucht – Ohne Zuckerzusatz
+                </span>
+                <h3 className="text-xl sm:text-2xl font-black text-stone-900 tracking-tight">
+                  Passende Produkte entdecken
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-600 leading-relaxed max-w-md">
+                  Verleihen Sie Ihren Rezepten, Bowls oder Desserts den perfekten
+                  Crunch mit gefriergetrockneten Schweizer Sommerbeeren & Fruchtgranulat.
+                </p>
+              </div>
+
+              <Link
+                href="/shop"
+                className="h-13 px-7 rounded-2xl bg-stone-900 hover:bg-stone-800 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98] shrink-0"
+              >
+                <ShoppingBag className="w-4 h-4" />
+                <span>Zum Shop</span>
+              </Link>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Bottom Back Navigation */}
         <div className="pt-8 text-center">

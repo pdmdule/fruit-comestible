@@ -77,20 +77,28 @@ const headingClasses =
 
 export function Hero() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
-  // Automatska rotacija slajdova svakih 7 sekundi
+  // Automatska rotacija slajdova svakih 7 sekundi (pauzirana kada je miš iznad Hero sekcije)
   useEffect(() => {
+    if (isHovered) return;
+
     const timer = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % HERO_SLIDES.length);
     }, 7000);
+
     return () => clearInterval(timer);
-  }, []);
+  }, [isHovered]);
 
   const currentSlide = HERO_SLIDES[activeIndex];
   const isFirstSlide = activeIndex === 0;
 
   return (
-    <section className="w-full lg:h-[75vh] lg:min-h-[580px] lg:max-h-[780px] grid grid-cols-1 lg:grid-cols-2 overflow-hidden mb-0">
+    <section
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="w-full lg:h-[75vh] lg:min-h-[580px] lg:max-h-[780px] grid grid-cols-1 lg:grid-cols-2 overflow-hidden mb-0 relative"
+    >
       {/* 1. LIJEVA STRANA (TEKST I CTA S DINAMIČKOM POZADINSKOM BOJOM) */}
       <div
         style={{
@@ -176,16 +184,28 @@ export function Hero() {
         </div>
       </div>
 
-      {/* 2. DESNA STRANA (FOTOGRAFIJA) */}
+      {/* 2. DESNA STRANA (FOTOGRAFIJA - LCP optimizacija) */}
       <div className="order-1 lg:order-2 relative w-full h-[360px] sm:h-[450px] lg:h-full overflow-hidden bg-stone-200">
-        <Image
-          src={currentSlide.image}
-          alt={currentSlide.imageAlt || currentSlide.title}
-          fill
-          priority
-          sizes="(max-width: 1024px) 100vw, 50vw"
-          className="object-cover object-center transition-opacity duration-700"
-        />
+        {HERO_SLIDES.map((slide, idx) => {
+          const isActive = activeIndex === idx;
+          return (
+            <div
+              key={slide.id}
+              className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+                isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+              }`}
+            >
+              <Image
+                src={slide.image}
+                alt={slide.imageAlt || slide.title}
+                fill
+                priority={idx === 0 || isActive}
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover object-center"
+              />
+            </div>
+          );
+        })}
       </div>
     </section>
   );
