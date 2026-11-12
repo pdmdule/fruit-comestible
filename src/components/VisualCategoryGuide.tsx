@@ -84,7 +84,7 @@ export default function VisualCategoryGuide() {
           <Link
             key={cat.href}
             href={cat.href}
-            className="group relative flex flex-col justify-end overflow-hidden rounded-2xl sm:rounded-3xl h-72 sm:h-80 lg:h-96 p-4 sm:p-6 border border-stone-200/80 shadow-sm transition-all duration-500 hover:shadow-xl hover:-translate-y-1"
+            className="group relative flex flex-col justify-end overflow-hidden rounded-2xl sm:rounded-3xl h-72 sm:h-80 lg:h-96 p-4 sm:p-6 border border-stone-200/80 shadow-sm transition-[box-shadow,transform] duration-500 hover:shadow-xl hover:-translate-y-1 isolate transform-gpu backface-hidden"
           >
             {/* Pozadinska slika */}
             <Image
@@ -92,7 +92,7 @@ export default function VisualCategoryGuide() {
               alt={cat.title}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 transform-gpu backface-hidden will-change-transform"
             />
 
             {/* Donji dio: Krupni naslov i link ka kategoriji sa strelicom */}

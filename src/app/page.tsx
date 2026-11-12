@@ -276,18 +276,18 @@ export default async function HomePage() {
               <Link
                 key={product.id}
                 href={productHref}
-                className={`group flex flex-col bg-white border border-stone-200/90 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xs hover:shadow-md hover:border-stone-300 transition-all duration-300 h-full ${
+                className={`group flex flex-col bg-white border border-stone-200/90 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xs hover:shadow-md hover:border-stone-300 transition-[box-shadow,border-color] duration-300 h-full ${
                   index >= 5 ? 'lg:hidden' : ''
                 }`}
               >
-                <div className="relative aspect-square w-full overflow-hidden bg-stone-100">
+                <div className="relative aspect-square w-full overflow-hidden bg-stone-100 transform-gpu backface-hidden isolate">
                   <Image
                     src={displayImage}
                     alt={product.name_de || product.name || 'Produkt'}
                     fill
                     unoptimized
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-105 transform-gpu backface-hidden will-change-transform"
                   />
                   {(() => {
                     const { country: displayCountry, flag: displayFlag } = getProductDisplayOrigin(product);

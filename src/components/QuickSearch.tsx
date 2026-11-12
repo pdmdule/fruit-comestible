@@ -265,14 +265,14 @@ export default function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
                     className="w-full text-left py-3 px-3 rounded-2xl hover:bg-stone-50 transition flex items-center justify-between gap-4 group cursor-pointer"
                   >
                     <div className="flex items-center gap-3.5 min-w-0">
-                      <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-stone-100 shrink-0 border border-stone-200/80">
+                      <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-stone-100 shrink-0 border border-stone-200/80 transform-gpu backface-hidden isolate">
                         <Image
                           src={p.image}
                           alt={p.name_de}
                           fill
                           unoptimized
                           sizes="48px"
-                          className="object-cover group-hover:scale-105 transition-transform"
+                          className="object-cover transition-transform duration-300 ease-out group-hover:scale-105 transform-gpu backface-hidden will-change-transform"
                         />
                       </div>
                       <div className="min-w-0">
@@ -323,14 +323,14 @@ export default function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
                     className="w-full text-left py-3 px-3 rounded-2xl hover:bg-stone-50 transition flex items-center justify-between gap-4 group cursor-pointer"
                   >
                     <div className="flex items-center gap-3.5 min-w-0">
-                      <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-stone-100 shrink-0 border border-stone-200/80">
+                      <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-stone-100 shrink-0 border border-stone-200/80 transform-gpu backface-hidden isolate">
                         <Image
                           src={b.image}
                           alt={b.title_de}
                           fill
                           unoptimized
                           sizes="48px"
-                          className="object-cover group-hover:scale-105 transition-transform"
+                          className="object-cover transition-transform duration-300 ease-out group-hover:scale-105 transform-gpu backface-hidden will-change-transform"
                         />
                       </div>
                       <div className="min-w-0">

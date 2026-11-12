@@ -11,6 +11,8 @@ import ProductNutritionChart, {
 import ProductFaq, { type FaqItem } from '@/components/ProductFaq';
 import ProductOriginMap from '@/components/ProductOriginMap';
 import SuggestedProducts from '@/components/SuggestedProducts';
+import ProductReviewsSection from '@/components/ProductReviewsSection';
+import type { ProductReview, ProductReviewsSummary } from '@/types/reviews';
 import {
   PRODUCT_ORIGINS,
   getProductOrigin,
@@ -395,6 +397,31 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
     subtitle_de: rawProduct.subtitle_de || familyInfo?.activeForm.subtitle || '',
   };
 
+  // Fetch approved customer reviews for this product
+  const { data: reviewsData } = await supabase
+    .from('product_reviews')
+    .select('*')
+    .eq('product_id', rawProduct.id)
+    .eq('is_approved', true)
+    .order('created_at', { ascending: false });
+
+  const reviews: ProductReview[] = (reviewsData || []) as ProductReview[];
+  const totalReviews = reviews.length;
+  const averageRating =
+    totalReviews > 0
+      ? Number(
+          (
+            reviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0) /
+            totalReviews
+          ).toFixed(1)
+        )
+      : 0;
+
+  const reviewsSummary: ProductReviewsSummary = {
+    averageRating,
+    totalReviews,
+  };
+
   const primaryImage = product.images?.[0];
 
   // Dynamic category and form mapping for breadcrumbs
@@ -465,6 +492,7 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
             primaryImage={primaryImage}
             initialForm={initialForm}
             initialVariantId={initialVariantId}
+            reviewsSummary={reviewsSummary}
           />
         </React.Suspense>
 
@@ -518,6 +546,14 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
             originData={currentOrigin}
           />
         </section>
+
+        {/* Customer Reviews Section */}
+        <ProductReviewsSection
+          productId={product.id}
+          productName={product.name_de}
+          reviews={reviews}
+          summary={reviewsSummary}
+        />
 
         {/* Suggested Products Section: Das könnte dir auch gefallen */}
         <SuggestedProducts

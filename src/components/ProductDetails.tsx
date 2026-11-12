@@ -7,6 +7,7 @@ import ProductPurchaseSection, {
   type FormLink,
 } from '@/components/ProductPurchaseSection';
 import { Leaf, Sparkles, ShieldCheck } from 'lucide-react';
+import type { ProductReviewsSummary } from '@/types/reviews';
 
 export interface ProductDetailsProps {
   product: {
@@ -32,6 +33,7 @@ export interface ProductDetailsProps {
   primaryImage?: string;
   initialForm?: string;
   initialVariantId?: string;
+  reviewsSummary?: ProductReviewsSummary;
 }
 
 export default function ProductDetails({
@@ -41,6 +43,7 @@ export default function ProductDetails({
   primaryImage,
   initialForm,
   initialVariantId,
+  reviewsSummary,
 }: ProductDetailsProps) {
   // 1. Inicijalno traženje varijante prema parametrima (ili podrazumevano)
   const getInitialVariant = useCallback(() => {
@@ -444,6 +447,7 @@ export default function ProductDetails({
             availableForms={availableForms}
             selectedVariant={selectedVariant}
             onVariantChange={handleSelectVariant}
+            reviewsSummary={reviewsSummary}
           />
         </div>
       </div>

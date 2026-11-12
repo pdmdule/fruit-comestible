@@ -101,11 +101,11 @@ export default function ProductImageGallery({
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        className="relative touch-pan-y select-none aspect-square sm:aspect-4/3 w-full rounded-3xl overflow-hidden bg-stone-100 border border-stone-200 shadow-xs group cursor-grab active:cursor-grabbing"
+        className="relative touch-pan-y select-none aspect-square sm:aspect-4/3 w-full rounded-3xl overflow-hidden bg-stone-100 border border-stone-200 shadow-xs group cursor-grab active:cursor-grabbing isolate transform-gpu backface-hidden"
       >
         {/* Animated Carousel Slides Track */}
         <div
-          className="flex h-full w-full will-change-transform"
+          className="flex h-full w-full will-change-transform transform-gpu backface-hidden"
           style={{
             transform:
               dragOffset !== 0
@@ -119,7 +119,7 @@ export default function ProductImageGallery({
           {galleryImages.map((img, idx) => (
             <div
               key={idx}
-              className="relative w-full h-full shrink-0 flex-none select-none overflow-hidden"
+              className="relative w-full h-full shrink-0 flex-none select-none overflow-hidden transform-gpu backface-hidden"
             >
               <Image
                 src={img}
@@ -128,7 +128,7 @@ export default function ProductImageGallery({
                 priority={idx === 0}
                 unoptimized
                 sizes="(max-width: 1024px) 100vw, 55vw"
-                className={`object-cover transition-transform duration-700 ease-out pointer-events-none select-none ${
+                className={`object-cover transition-transform duration-700 ease-out pointer-events-none select-none transform-gpu backface-hidden will-change-transform ${
                   idx === activeIndex ? 'lg:group-hover:scale-105' : ''
                 }`}
               />
@@ -197,7 +197,7 @@ export default function ProductImageGallery({
                 type="button"
                 onClick={() => setActiveIndex(idx)}
                 aria-label={`Bild ${idx + 1} auswählen`}
-                className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 transition-all duration-200 bg-stone-100 cursor-pointer ${
+                className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 transition-[transform,opacity,border-color,box-shadow] duration-200 bg-stone-100 cursor-pointer transform-gpu backface-hidden ${
                   isSelected
                     ? 'ring-2 ring-stone-900 ring-offset-2 border-transparent scale-102 shadow-xs'
                     : 'border border-stone-200 opacity-60 hover:opacity-100 hover:border-stone-400'
@@ -209,7 +209,7 @@ export default function ProductImageGallery({
                   fill
                   unoptimized
                   sizes="96px"
-                  className="object-cover pointer-events-none"
+                  className="object-cover pointer-events-none transform-gpu backface-hidden"
                 />
               </button>
             );

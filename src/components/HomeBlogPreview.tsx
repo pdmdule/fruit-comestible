@@ -92,10 +92,10 @@ export default function HomeBlogPreview({
             <Link
               key={idx}
               href={`/blog/${post.slug}`}
-              className="group flex flex-col bg-white border border-stone-200/80 rounded-3xl overflow-hidden shadow-xs hover:shadow-lg hover:border-stone-300 transition-all duration-300"
+              className="group flex flex-col bg-white border border-stone-200/80 rounded-3xl overflow-hidden shadow-xs hover:shadow-lg hover:border-stone-300 transition-[box-shadow,border-color] duration-300"
             >
               {/* Image */}
-              <div className="relative aspect-16/10 w-full overflow-hidden bg-stone-100">
+              <div className="relative aspect-16/10 w-full overflow-hidden bg-stone-100 isolate transform-gpu backface-hidden">
                 <Image
                   src={
                     post.image ||
@@ -105,7 +105,7 @@ export default function HomeBlogPreview({
                   fill
                   unoptimized
                   sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 transform-gpu backface-hidden will-change-transform"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-stone-900/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 

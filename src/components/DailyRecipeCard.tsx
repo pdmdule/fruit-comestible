@@ -54,14 +54,14 @@ export default function DailyRecipeCard({ recipe }: DailyRecipeCardProps) {
         </div>
 
         {/* Recipe Image with Overlaid Badges */}
-        <div className="relative w-full h-48 sm:h-52 rounded-2xl overflow-hidden bg-stone-100 mb-5 group/img">
+        <div className="relative w-full h-48 sm:h-52 rounded-2xl overflow-hidden bg-stone-100 mb-5 group/img isolate transform-gpu backface-hidden">
           <Image
             src={currentRecipe.imageUrl}
             alt={currentRecipe.title}
             fill
             unoptimized
             sizes="(max-width: 1024px) 100vw, 400px"
-            className="object-cover group-hover/img:scale-105 transition-transform duration-500"
+            className="object-cover group-hover/img:scale-105 transition-transform duration-500 ease-out transform-gpu backface-hidden will-change-transform"
           />
 
           {/* Gradient Overlay for Text Readability */}

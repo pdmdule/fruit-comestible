@@ -142,13 +142,13 @@ export default function BlogListing({ posts }: BlogListingProps) {
             return (
               <article
                 key={post.id}
-                className="group bg-white border border-stone-200/80 rounded-3xl overflow-hidden shadow-xs hover:shadow-lg hover:border-stone-300 transition-all duration-300 flex flex-col justify-between"
+                className="group bg-white border border-stone-200/80 rounded-3xl overflow-hidden shadow-xs hover:shadow-lg hover:border-stone-300 transition-[box-shadow,border-color] duration-300 flex flex-col justify-between"
               >
                 <div>
                   {/* Thumbnail */}
                   <Link
                     href={`/blog/${post.slug}`}
-                    className="relative aspect-16/10 w-full overflow-hidden bg-stone-100 block"
+                    className="relative aspect-16/10 w-full overflow-hidden bg-stone-100 block isolate transform-gpu backface-hidden"
                   >
                     <Image
                       src={imageSrc}
@@ -156,7 +156,7 @@ export default function BlogListing({ posts }: BlogListingProps) {
                       fill
                       unoptimized
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out transform-gpu backface-hidden will-change-transform"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-stone-900/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 

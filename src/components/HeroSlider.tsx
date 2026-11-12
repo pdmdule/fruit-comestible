@@ -294,7 +294,7 @@ export default function HeroSlider() {
 
                 {/* Right Column: Hero Image with Floating Badge */}
                 <div className="lg:col-span-6 relative">
-                  <div className="relative aspect-4/3 sm:aspect-square lg:aspect-4/3 xl:aspect-square rounded-3xl overflow-hidden bg-white border border-stone-200 shadow-xl group">
+                  <div className="relative aspect-4/3 sm:aspect-square lg:aspect-4/3 xl:aspect-square rounded-3xl overflow-hidden bg-white border border-stone-200 shadow-xl group isolate transform-gpu backface-hidden">
                     <Image
                       src={slide.image}
                       alt={slide.imageAlt}
@@ -302,7 +302,7 @@ export default function HeroSlider() {
                       priority={index === 0 || index === currentSlide}
                       unoptimized
                       sizes="(max-width: 1024px) 100vw, 50vw"
-                      className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+                      className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105 transform-gpu backface-hidden will-change-transform"
                     />
 
                     {/* Gradient Overlay for subtle text contrast if needed */}

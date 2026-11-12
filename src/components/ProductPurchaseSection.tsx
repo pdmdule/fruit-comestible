@@ -16,6 +16,8 @@ import {
   Scale,
   Sparkles,
 } from 'lucide-react';
+import ProductRatingStars from '@/components/ProductRatingStars';
+import type { ProductReviewsSummary } from '@/types/reviews';
 
 export interface ProductVariant {
   id: string;
@@ -59,6 +61,7 @@ interface ProductPurchaseSectionProps {
   availableForms?: FormLink[];
   selectedVariant?: ProductVariant;
   onVariantChange?: (variant: ProductVariant) => void;
+  reviewsSummary?: ProductReviewsSummary;
 }
 
 export default function ProductPurchaseSection({
@@ -69,8 +72,17 @@ export default function ProductPurchaseSection({
   availableForms = [],
   selectedVariant,
   onVariantChange,
+  reviewsSummary,
 }: ProductPurchaseSectionProps) {
   const { addItem, openCart } = useCart();
+
+  const scrollToReviews = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const el = document.getElementById('kundenbewertungen');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   // Single source of truth: selectedVariant prop (or fallback to first in-stock variant)
   const currentVariant =
@@ -314,7 +326,37 @@ export default function ProductPurchaseSection({
     <>
       <div className="bg-white border border-stone-200/90 rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col gap-6 sm:gap-7">
       {/* Price Header (order-1) */}
-      <div className="order-1 space-y-1.5 pb-4 border-b border-stone-100">
+      <div className="order-1 space-y-2.5 pb-4 border-b border-stone-100">
+        {/* Star Rating Summary directly above price */}
+        <div>
+          <button
+            type="button"
+            onClick={scrollToReviews}
+            className="group/stars inline-flex items-center gap-1.5 text-xs text-stone-600 hover:text-stone-900 transition cursor-pointer text-left"
+            aria-label="Zu den Kundenbewertungen springen"
+          >
+            {reviewsSummary && reviewsSummary.totalReviews > 0 ? (
+              <>
+                <ProductRatingStars rating={reviewsSummary.averageRating} size="xs" />
+                <span className="font-extrabold text-stone-900 group-hover/stars:underline">
+                  {reviewsSummary.averageRating.toFixed(1)}
+                </span>
+                <span className="text-stone-500 group-hover/stars:text-stone-700">
+                  ({reviewsSummary.totalReviews}{' '}
+                  {reviewsSummary.totalReviews === 1 ? 'Bewertung' : 'Bewertungen'})
+                </span>
+              </>
+            ) : (
+              <>
+                <ProductRatingStars rating={0} size="xs" />
+                <span className="text-stone-500 hover:text-stone-800 underline underline-offset-2">
+                  Noch keine Bewertungen – Jetzt bewerten
+                </span>
+              </>
+            )}
+          </button>
+        </div>
+
         <div className="flex items-baseline justify-between gap-4">
           <div className="flex items-baseline gap-2">
             <span className="text-3xl sm:text-4xl font-extrabold tracking-tight text-stone-900 font-sans">
