@@ -431,7 +431,7 @@ export default function BenefitSpotlightCarousel() {
               <div className="relative w-full h-full rounded-full overflow-hidden bg-stone-100">
                 <Image
                   src={currentSlide.imageUrl}
-                  alt={`${currentSlide.name} Zdjelica`}
+                  alt={`${currentSlide.name || 'Früchte'} Bowl`}
                   fill
                   unoptimized
                   priority
@@ -488,7 +488,7 @@ export default function BenefitSpotlightCarousel() {
               <div className="relative w-full h-full rounded-full overflow-hidden bg-stone-100">
                 <Image
                   src={currentSlide.imageUrl}
-                  alt={`${currentSlide.name} Zdjelica`}
+                  alt={`${currentSlide.name || 'Früchte'} Bowl`}
                   fill
                   unoptimized
                   priority

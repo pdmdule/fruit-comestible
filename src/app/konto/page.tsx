@@ -119,14 +119,38 @@ function KontoDashboardContent() {
 
   // Fetch orders for user
   useEffect(() => {
+    // 1. Clean up any legacy mock or test orders from storage
+    try {
+      ['fc_user_orders', 'orders', 'fc_orders', 'mock_orders', 'test_orders', 'user_orders'].forEach((k) => {
+        localStorage.removeItem(k);
+        sessionStorage.removeItem(k);
+      });
+    } catch {
+      // ignore
+    }
+
     if (!user?.email) return;
 
     let isMounted = true;
     setOrdersLoading(true);
 
     const loadOrders = async () => {
-      let combined: OrderItem[] = [];
+      // 2. Fetch verified orders directly from Supabase via server-side API (bypassing RLS safely)
+      try {
+        const res = await fetch(`/api/orders?email=${encodeURIComponent(user.email!)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && data.orders && Array.isArray(data.orders)) {
+            setOrders(data.orders);
+            setOrdersLoading(false);
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Notice loading orders via API:', err);
+      }
 
+      // Fallback direct supabase query if API is temporarily unavailable
       try {
         const { data, error } = await supabase
           .from('orders')
@@ -134,43 +158,15 @@ function KontoDashboardContent() {
           .eq('customer_email', user.email)
           .order('created_at', { ascending: false });
 
-        if (data && Array.isArray(data)) {
-          combined.push(...data);
+        if (isMounted && data && Array.isArray(data)) {
+          setOrders(data);
         }
       } catch (err) {
         console.warn('Notice loading orders from database:', err);
-      }
-
-      // Also read local storage cache for any recent orders
-      try {
-        const localRaw = localStorage.getItem('fc_user_orders');
-        if (localRaw) {
-          const localOrders: OrderItem[] = JSON.parse(localRaw);
-          const filteredLocal = localOrders.filter(
-            (o) => !o.customer_email || o.customer_email.toLowerCase() === user.email?.toLowerCase()
-          );
-
-          // Deduplicate by order_number
-          const existingNumbers = new Set(combined.map((o) => String(o.order_number)));
-          for (const lo of filteredLocal) {
-            if (!existingNumbers.has(String(lo.order_number))) {
-              combined.push(lo);
-              existingNumbers.add(String(lo.order_number));
-            }
-          }
+      } finally {
+        if (isMounted) {
+          setOrdersLoading(false);
         }
-      } catch (err) {
-        console.warn('Notice reading local orders cache:', err);
-      }
-
-      // Sort newest first
-      combined.sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-
-      if (isMounted) {
-        setOrders(combined);
-        setOrdersLoading(false);
       }
     };
 

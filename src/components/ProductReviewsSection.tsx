@@ -1,16 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Star,
   CheckCircle2,
   PenLine,
-  ChevronDown,
-  ChevronUp,
   AlertCircle,
   Sparkles,
   ShieldCheck,
   MessageSquareHeart,
+  X,
 } from 'lucide-react';
 import type { ProductReview, ProductReviewsSummary } from '@/types/reviews';
 import ProductRatingStars from '@/components/ProductRatingStars';
@@ -75,6 +74,27 @@ export default function ProductReviewsSection({
 
   const visibleReviews = reviews.slice(0, visibleCount);
   const hasMoreReviews = visibleCount < reviews.length;
+
+  // Handle ESC key and lock body scroll when modal is open
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsFormOpen(false);
+      }
+    };
+
+    if (isFormOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [isFormOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -143,6 +163,12 @@ export default function ProductReviewsSection({
       setAuthorLocation('');
       setComment('');
       setHoneypot('');
+
+      // Auto close modal after 2 seconds
+      setTimeout(() => {
+        setIsFormOpen(false);
+        setSuccessMessage(null);
+      }, 2000);
     } catch (err) {
       console.error('Error submitting review:', err);
       setErrorMessage(
@@ -183,18 +209,13 @@ export default function ProductReviewsSection({
         <button
           type="button"
           onClick={() => {
-            setIsFormOpen((prev) => !prev);
+            setIsFormOpen(true);
             setErrorMessage(null);
           }}
           className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-stone-900 hover:bg-stone-800 text-white font-bold text-sm shadow-sm transition active:scale-[0.98] shrink-0 cursor-pointer"
         >
           <PenLine className="w-4 h-4 text-rose-300" />
-          <span>{isFormOpen ? 'Formular schliessen' : 'Bewertung schreiben'}</span>
-          {isFormOpen ? (
-            <ChevronUp className="w-4 h-4" />
-          ) : (
-            <ChevronDown className="w-4 h-4" />
-          )}
+          <span>Bewertung schreiben</span>
         </button>
       </div>
 
@@ -258,232 +279,6 @@ export default function ProductReviewsSection({
           </div>
         </div>
       </div>
-
-      {/* Expandable Review Form */}
-      {isFormOpen && (
-        <div className="p-6 sm:p-9 rounded-3xl bg-white border border-stone-200/90 shadow-md space-y-6 transition-all duration-300">
-          <div className="border-b border-stone-200/80 pb-4 space-y-1">
-            <span className="text-xs font-bold tracking-wider text-rose-700 uppercase">
-              Deine Meinung zählt
-            </span>
-            <h3 className="text-xl sm:text-2xl font-black text-stone-900">
-              Erfahrung für &ldquo;{productName}&rdquo; teilen
-            </h3>
-            <p className="text-xs sm:text-sm text-stone-600">
-              Bitte halte deine Bestellnummer aus der Bestätigungs-E-Mail bereit.
-            </p>
-          </div>
-
-          {errorMessage && (
-            <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm flex items-start gap-2.5">
-              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-              <span>{errorMessage}</span>
-            </div>
-          )}
-
-          {successMessage ? (
-            <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 space-y-3 text-center sm:text-left">
-              <div className="flex items-center justify-center sm:justify-start gap-2 text-emerald-700 font-extrabold text-base">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-                <span>Bewertung erfolgreich übermittelt!</span>
-              </div>
-              <p className="text-xs sm:text-sm text-emerald-800 leading-relaxed">
-                {successMessage}
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  setSuccessMessage(null);
-                  setIsFormOpen(false);
-                }}
-                className="mt-2 inline-flex items-center justify-center px-4 py-2 rounded-xl bg-emerald-700 text-white font-bold text-xs hover:bg-emerald-800 transition"
-              >
-                Formular schliessen
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* 1. Rating Stars Picker */}
-              <div className="space-y-2">
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-800">
-                  Deine Gesamtnote <span className="text-rose-600">*</span>
-                </label>
-                <div className="flex flex-wrap items-center gap-3">
-                  <div className="flex items-center gap-1.5" onMouseLeave={() => setHoverRating(null)}>
-                    {[1, 2, 3, 4, 5].map((starVal) => {
-                      const activeVal = hoverRating !== null ? hoverRating : rating;
-                      const isFilled = activeVal >= starVal;
-                      return (
-                        <button
-                          key={starVal}
-                          type="button"
-                          onClick={() => setRating(starVal)}
-                          onMouseEnter={() => setHoverRating(starVal)}
-                          className="p-1 rounded-lg hover:scale-110 transition-transform cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500"
-                          aria-label={`${starVal} Sterne`}
-                        >
-                          <Star
-                            className={`w-7 h-7 sm:w-8 sm:h-8 transition-colors ${
-                              isFilled
-                                ? 'text-amber-400 fill-amber-400'
-                                : 'text-stone-300 fill-stone-100 hover:text-amber-300'
-                            }`}
-                          />
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <span className="text-xs sm:text-sm font-semibold text-stone-700 bg-[#F4EFE6] px-3 py-1 rounded-full border border-stone-300">
-                    {RATING_LABELS[hoverRating !== null ? hoverRating : rating]}
-                  </span>
-                </div>
-              </div>
-
-              {/* 2. Verification Block: Order Number & Email */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div className="space-y-1.5">
-                  <label htmlFor="order-number-input" className="block text-xs font-bold uppercase tracking-wider text-stone-800">
-                    Bestellnummer <span className="text-rose-600">*</span>
-                  </label>
-                  <input
-                    id="order-number-input"
-                    type="text"
-                    required
-                    value={orderNumber}
-                    onChange={(e) => setOrderNumber(e.target.value)}
-                    placeholder="z. B. 1111"
-                    className="w-full px-4 py-3 rounded-2xl bg-stone-50 border border-stone-200 focus:bg-white focus:border-stone-900 focus:ring-2 focus:ring-stone-900/10 text-sm font-medium text-stone-900 transition outline-none"
-                  />
-                  <p className="text-[11px] text-stone-500">
-                    Findest du in der Bestellbestätigung per E-Mail (z. B. 1111).
-                  </p>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label htmlFor="email-input" className="block text-xs font-bold uppercase tracking-wider text-stone-800">
-                    E-Mail-Adresse <span className="text-rose-600">*</span>
-                  </label>
-                  <input
-                    id="email-input"
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="name@beispiel.ch"
-                    className="w-full px-4 py-3 rounded-2xl bg-stone-50 border border-stone-200 focus:bg-white focus:border-stone-900 focus:ring-2 focus:ring-stone-900/10 text-sm font-medium text-stone-900 transition outline-none"
-                  />
-                  <p className="text-[11px] text-stone-500">
-                    Wird niemals öffentlich angezeigt. Nur zur Verifikation.
-                  </p>
-                </div>
-              </div>
-
-              {/* 3. Author Name & Location */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label htmlFor="name-input" className="block text-xs font-bold uppercase tracking-wider text-stone-800">
-                    Dein Name / Anzeigename <span className="text-rose-600">*</span>
-                  </label>
-                  <input
-                    id="name-input"
-                    type="text"
-                    required
-                    value={authorName}
-                    onChange={(e) => setAuthorName(e.target.value)}
-                    placeholder="z. B. Anna K."
-                    className="w-full px-4 py-3 rounded-2xl bg-stone-50 border border-stone-200 focus:bg-white focus:border-stone-900 focus:ring-2 focus:ring-stone-900/10 text-sm font-medium text-stone-900 transition outline-none"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label htmlFor="location-input" className="block text-xs font-bold uppercase tracking-wider text-stone-800">
-                    Ort (optional)
-                  </label>
-                  <input
-                    id="location-input"
-                    type="text"
-                    value={authorLocation}
-                    onChange={(e) => setAuthorLocation(e.target.value)}
-                    placeholder="z. B. Bern oder Zürich"
-                    className="w-full px-4 py-3 rounded-2xl bg-stone-50 border border-stone-200 focus:bg-white focus:border-stone-900 focus:ring-2 focus:ring-stone-900/10 text-sm font-medium text-stone-900 transition outline-none"
-                  />
-                </div>
-              </div>
-
-              {/* 4. Quick Usage Chips */}
-              <div className="space-y-2">
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-800">
-                  Wofür verwendest du das Produkt am liebsten? (optional)
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {USAGE_PRESETS.map((preset) => {
-                    const isSelected = usageTag === preset;
-                    return (
-                      <button
-                        key={preset}
-                        type="button"
-                        onClick={() => setUsageTag(isSelected ? '' : preset)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer ${
-                          isSelected
-                            ? 'bg-stone-900 text-white border-stone-900 shadow-xs'
-                            : 'bg-[#F4EFE6] hover:bg-stone-200 text-stone-800 border-stone-300'
-                        }`}
-                      >
-                        {preset}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* 5. Comment Textarea */}
-              <div className="space-y-1.5">
-                <label htmlFor="comment-input" className="block text-xs font-bold uppercase tracking-wider text-stone-800">
-                  Deine Bewertung / Erfahrung <span className="text-rose-600">*</span>
-                </label>
-                <textarea
-                  id="comment-input"
-                  required
-                  rows={4}
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  placeholder="Wie schmeckt dir die Frucht? Wie ist der Crunch und das Aroma im Vergleich zu frischen Früchten?"
-                  className="w-full px-4 py-3 rounded-2xl bg-stone-50 border border-stone-200 focus:bg-white focus:border-stone-900 focus:ring-2 focus:ring-stone-900/10 text-sm font-medium text-stone-900 transition outline-none leading-relaxed"
-                />
-              </div>
-
-              {/* 6. Honeypot Field (Anti-Spam Bot Trap) */}
-              <div className="hidden absolute opacity-0 pointer-events-none -z-50" aria-hidden="true">
-                <label htmlFor="website_url">Website URL</label>
-                <input
-                  id="website_url"
-                  type="text"
-                  name="website_url"
-                  value={honeypot}
-                  onChange={(e) => setHoneypot(e.target.value)}
-                  tabIndex={-1}
-                  autoComplete="off"
-                />
-              </div>
-
-              {/* 7. Submit Action */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-                <p className="text-xs text-stone-500">
-                  <span className="text-rose-600 font-bold">*</span> Pflichtfelder für den echten Käuferschutz.
-                </p>
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-stone-900 hover:bg-stone-800 text-white font-extrabold text-sm shadow-sm transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                >
-                  {isSubmitting ? 'Wird überprüft...' : 'Bewertung absenden'}
-                </button>
-              </div>
-            </form>
-          )}
-        </div>
-      )}
 
       {/* Reviews List */}
       <div className="space-y-4">
@@ -597,6 +392,259 @@ export default function ProductReviewsSection({
           </>
         )}
       </div>
+
+      {/* Centered Review Modal Dialog */}
+      {isFormOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="review-modal-title"
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setIsFormOpen(false);
+            }
+          }}
+        >
+          <div className="max-w-lg w-full rounded-2xl bg-[#FAF8F5] border border-stone-200 p-6 sm:p-8 shadow-xl relative max-h-[90vh] overflow-y-auto space-y-6">
+            {/* Modal Header */}
+            <div className="border-b border-stone-200/80 pb-4 pr-10 space-y-1">
+              <span className="text-xs font-bold tracking-wider text-rose-700 uppercase">
+                Deine Meinung zählt
+              </span>
+              <h3 id="review-modal-title" className="text-xl sm:text-2xl font-black text-stone-900">
+                Bewertung schreiben
+              </h3>
+              <p className="text-xs sm:text-sm text-stone-600">
+                Erfahrung für &ldquo;{productName}&rdquo; teilen.
+              </p>
+            </div>
+
+            {/* Close Button X */}
+            <button
+              type="button"
+              onClick={() => setIsFormOpen(false)}
+              className="absolute top-5 right-5 p-2 rounded-xl text-stone-400 hover:text-stone-800 hover:bg-stone-200/60 transition cursor-pointer"
+              aria-label="Modal schliessen"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Error Message */}
+            {errorMessage && (
+              <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm flex items-start gap-2.5">
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
+            {/* Success Message */}
+            {successMessage ? (
+              <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 space-y-3 text-center sm:text-left">
+                <div className="flex items-center justify-center sm:justify-start gap-2 text-emerald-700 font-extrabold text-base">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                  <span>Bewertung erfolgreich übermittelt!</span>
+                </div>
+                <p className="text-xs sm:text-sm text-emerald-800 leading-relaxed">
+                  {successMessage}
+                </p>
+                <p className="text-xs text-stone-500 italic">
+                  Dieses Fenster schliesst sich in Kürze automatisch...
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {/* 1. Rating Stars Picker */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-stone-800">
+                    Deine Gesamtnote <span className="text-rose-600">*</span>
+                  </label>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex items-center gap-1.5" onMouseLeave={() => setHoverRating(null)}>
+                      {[1, 2, 3, 4, 5].map((starVal) => {
+                        const activeVal = hoverRating !== null ? hoverRating : rating;
+                        const isFilled = activeVal >= starVal;
+                        return (
+                          <button
+                            key={starVal}
+                            type="button"
+                            onClick={() => setRating(starVal)}
+                            onMouseEnter={() => setHoverRating(starVal)}
+                            className="p-1 rounded-lg hover:scale-110 transition-transform cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500"
+                            aria-label={`${starVal} Sterne`}
+                          >
+                            <Star
+                              className={`w-7 h-7 sm:w-8 sm:h-8 transition-colors ${
+                                isFilled
+                                  ? 'text-amber-400 fill-amber-400'
+                                  : 'text-stone-300 fill-stone-100 hover:text-amber-300'
+                              }`}
+                            />
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <span className="text-xs sm:text-sm font-semibold text-stone-700 bg-white px-3 py-1 rounded-full border border-stone-200">
+                      {RATING_LABELS[hoverRating !== null ? hoverRating : rating]}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 2. Verification Block: Order Number & Email */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                  <div className="space-y-1.5">
+                    <label htmlFor="modal-order-number" className="block text-xs font-bold uppercase tracking-wider text-stone-800">
+                      Bestellnummer <span className="text-rose-600">*</span>
+                    </label>
+                    <input
+                      id="modal-order-number"
+                      type="text"
+                      required
+                      value={orderNumber}
+                      onChange={(e) => setOrderNumber(e.target.value)}
+                      placeholder="z. B. 1111"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-medium text-stone-900 transition outline-none"
+                    />
+                    <p className="text-[11px] text-stone-500">
+                      Aus der Bestellbestätigung per E-Mail (z. B. 1111).
+                    </p>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label htmlFor="modal-email" className="block text-xs font-bold uppercase tracking-wider text-stone-800">
+                      E-Mail-Adresse <span className="text-rose-600">*</span>
+                    </label>
+                    <input
+                      id="modal-email"
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="name@beispiel.ch"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-medium text-stone-900 transition outline-none"
+                    />
+                    <p className="text-[11px] text-stone-500">
+                      Wird nicht öffentlich angezeigt.
+                    </p>
+                  </div>
+                </div>
+
+                {/* 3. Author Name & Location */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label htmlFor="modal-author-name" className="block text-xs font-bold uppercase tracking-wider text-stone-800">
+                      Dein Name <span className="text-rose-600">*</span>
+                    </label>
+                    <input
+                      id="modal-author-name"
+                      type="text"
+                      required
+                      value={authorName}
+                      onChange={(e) => setAuthorName(e.target.value)}
+                      placeholder="z. B. Anna K."
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-medium text-stone-900 transition outline-none"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label htmlFor="modal-author-location" className="block text-xs font-bold uppercase tracking-wider text-stone-800">
+                      Ort (optional)
+                    </label>
+                    <input
+                      id="modal-author-location"
+                      type="text"
+                      value={authorLocation}
+                      onChange={(e) => setAuthorLocation(e.target.value)}
+                      placeholder="z. B. Bern oder Zürich"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-medium text-stone-900 transition outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* 4. Quick Usage Chips */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-stone-800">
+                    Wofür verwendest du das Produkt? (optional)
+                  </label>
+                  <div className="flex flex-wrap gap-1.5">
+                    {USAGE_PRESETS.map((preset) => {
+                      const isSelected = usageTag === preset;
+                      return (
+                        <button
+                          key={preset}
+                          type="button"
+                          onClick={() => setUsageTag(isSelected ? '' : preset)}
+                          className={`px-3 py-1 rounded-full text-xs font-semibold border transition cursor-pointer ${
+                            isSelected
+                              ? 'bg-stone-900 text-white border-stone-900 shadow-2xs'
+                              : 'bg-white hover:bg-stone-100 text-stone-800 border-stone-200'
+                          }`}
+                        >
+                          {preset}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 5. Comment Textarea */}
+                <div className="space-y-1.5">
+                  <label htmlFor="modal-comment" className="block text-xs font-bold uppercase tracking-wider text-stone-800">
+                    Deine Bewertung <span className="text-rose-600">*</span>
+                  </label>
+                  <textarea
+                    id="modal-comment"
+                    required
+                    rows={4}
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Wie schmeckt dir die Frucht? Wie ist der Crunch und das Aroma im Vergleich zu frischen Früchten?"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-medium text-stone-900 transition outline-none leading-relaxed"
+                  />
+                </div>
+
+                {/* 6. Honeypot Field */}
+                <div className="hidden absolute opacity-0 pointer-events-none -z-50" aria-hidden="true">
+                  <label htmlFor="modal_website_url">Website URL</label>
+                  <input
+                    id="modal_website_url"
+                    type="text"
+                    name="website_url"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </div>
+
+                {/* 7. Modal Actions */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-stone-200/80">
+                  <p className="text-[11px] text-stone-500">
+                    <span className="text-rose-600 font-bold">*</span> Pflichtfelder für den echten Käuferschutz.
+                  </p>
+
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <button
+                      type="button"
+                      onClick={() => setIsFormOpen(false)}
+                      className="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs transition cursor-pointer"
+                    >
+                      Abbrechen
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="flex-1 sm:flex-initial px-6 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-extrabold text-xs shadow-xs transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    >
+                      {isSubmitting ? 'Wird überprüft...' : 'Bewertung absenden'}
+                    </button>
+                  </div>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

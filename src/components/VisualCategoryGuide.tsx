@@ -89,7 +89,7 @@ export default function VisualCategoryGuide() {
             {/* Pozadinska slika */}
             <Image
               src={cat.image}
-              alt={cat.title}
+              alt={cat.title || 'Kategorie'}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
               className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 transform-gpu backface-hidden will-change-transform"

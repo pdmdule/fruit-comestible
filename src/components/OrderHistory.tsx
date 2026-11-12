@@ -17,11 +17,17 @@ import {
 } from 'lucide-react';
 
 export interface OrderItemProduct {
-  name: string;
+  name?: string;
+  name_de?: string;
   form?: string;
   quantity: number;
-  price: number;
+  price?: number;
+  price_chf?: number;
   image_url?: string;
+  image?: string;
+  product_id?: string;
+  sku?: string;
+  weight_grams?: number;
 }
 
 export interface Order {
@@ -210,55 +216,57 @@ export default function OrderHistory({ orders, isLoading }: OrderHistoryProps) {
                 </h4>
 
                 <div className="divide-y divide-stone-100 rounded-2xl border border-stone-100 bg-stone-50/40 p-2 sm:p-3">
-                  {parsedItems.map((item, idx) => (
-                    <div
-                      key={`${item.name}-${idx}`}
-                      className="py-2.5 px-2 flex items-center justify-between gap-3 text-xs"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        {item.image_url ? (
-                          <div className="relative w-10 h-10 rounded-xl bg-white border border-stone-200 overflow-hidden shrink-0">
+                  {parsedItems.map((item, idx) => {
+                    const itemName = item.name_de || item.name || 'Bestelltes Produkt';
+                    const itemImage = item.image_url || item.image || '/images/placeholder.png';
+                    const itemPrice = Number(item.price_chf ?? item.price ?? 0);
+                    const itemQty = Number(item.quantity || 1);
+                    const itemForm = item.form || (item.weight_grams ? `${item.weight_grams}g` : undefined);
+
+                    return (
+                      <div
+                        key={`${itemName}-${idx}`}
+                        className="py-2.5 px-2 flex items-center justify-between gap-3 text-xs"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-stone-200 bg-[#F9F6F0]">
                             <Image
-                              src={item.image_url}
-                              alt={item.name}
+                              src={itemImage}
+                              alt={itemName}
                               fill
-                              sizes="40px"
-                              className="object-cover"
+                              sizes="48px"
+                              className="object-contain p-1"
                             />
                           </div>
-                        ) : (
-                          <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-500 shrink-0">
-                            <Sparkles className="w-4 h-4" />
-                          </div>
-                        )}
 
-                        <div className="min-w-0">
-                          <p className="font-bold text-stone-900 truncate">
-                            {item.name}
-                          </p>
-                          <div className="flex items-center gap-2 text-[11px] text-stone-500">
-                            {item.form && (
-                              <span className="px-1.5 py-0.2 rounded-md bg-stone-100 font-semibold text-stone-700">
-                                {item.form}
-                              </span>
-                            )}
-                            <span>Menge: {item.quantity}×</span>
+                          <div className="min-w-0">
+                            <p className="font-bold text-stone-900 truncate">
+                              {itemName}
+                            </p>
+                            <div className="flex items-center gap-2 text-[11px] text-stone-500">
+                              {itemForm && (
+                                <span className="px-1.5 py-0.5 rounded-md bg-stone-100 font-semibold text-stone-700">
+                                  {itemForm}
+                                </span>
+                              )}
+                              <span>Menge: {itemQty}×</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="text-right shrink-0">
-                        <span className="font-mono font-bold text-stone-900 text-xs">
-                          CHF {(Number(item.price || 0) * (item.quantity || 1)).toFixed(2)}
-                        </span>
-                        {item.quantity > 1 && (
-                          <span className="block text-[10px] text-stone-400 font-mono">
-                            CHF {Number(item.price || 0).toFixed(2)} / Stk.
+                        <div className="text-right shrink-0">
+                          <span className="font-mono font-bold text-stone-900 text-xs">
+                            CHF {(itemPrice * itemQty).toFixed(2)}
                           </span>
-                        )}
+                          {itemQty > 1 && (
+                            <span className="block text-[10px] text-stone-400 font-mono">
+                              CHF {itemPrice.toFixed(2)} / Stk.
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}

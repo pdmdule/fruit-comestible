@@ -164,7 +164,7 @@ export default function CartDrawer() {
                   <div className="w-18 h-18 rounded-xl bg-white border border-stone-200/80 overflow-hidden shrink-0 relative">
                     <Image
                       src={item.image || getProductDisplayImage(item)}
-                      alt={item.name}
+                      alt={item.name || (item as any).name_de || 'Produkt im Warenkorb'}
                       fill
                       className="object-cover"
                       sizes="72px"

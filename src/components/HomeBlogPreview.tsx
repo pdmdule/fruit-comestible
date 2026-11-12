@@ -101,7 +101,7 @@ export default function HomeBlogPreview({
                     post.image ||
                     'https://images.unsplash.com/photo-1543528176-61b239494933?q=80&w=800&auto=format&fit=crop'
                   }
-                  alt={post.title}
+                  alt={post.title || 'Blogbeitrag'}
                   fill
                   unoptimized
                   sizes="(max-width: 768px) 100vw, 33vw"

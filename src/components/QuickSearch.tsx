@@ -268,7 +268,7 @@ export default function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
                       <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-stone-100 shrink-0 border border-stone-200/80 transform-gpu backface-hidden isolate">
                         <Image
                           src={p.image}
-                          alt={p.name_de}
+                          alt={p.name_de || 'Produktbild'}
                           fill
                           unoptimized
                           sizes="48px"
@@ -326,7 +326,7 @@ export default function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
                       <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-stone-100 shrink-0 border border-stone-200/80 transform-gpu backface-hidden isolate">
                         <Image
                           src={b.image}
-                          alt={b.title_de}
+                          alt={b.title_de || 'Blogbeitrag'}
                           fill
                           unoptimized
                           sizes="48px"

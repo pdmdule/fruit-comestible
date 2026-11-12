@@ -283,7 +283,7 @@ export default async function HomePage() {
                 <div className="relative aspect-square w-full overflow-hidden bg-stone-100 transform-gpu backface-hidden isolate">
                   <Image
                     src={displayImage}
-                    alt={product.name_de || product.name || 'Produkt'}
+                    alt={product.name_de || product.name || 'Produktbild'}
                     fill
                     unoptimized
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"

@@ -297,7 +297,7 @@ export default function HeroSlider() {
                   <div className="relative aspect-4/3 sm:aspect-square lg:aspect-4/3 xl:aspect-square rounded-3xl overflow-hidden bg-white border border-stone-200 shadow-xl group isolate transform-gpu backface-hidden">
                     <Image
                       src={slide.image}
-                      alt={slide.imageAlt}
+                      alt={slide.imageAlt || slide.title || 'Fruit Comestible'}
                       fill
                       priority={index === 0 || index === currentSlide}
                       unoptimized

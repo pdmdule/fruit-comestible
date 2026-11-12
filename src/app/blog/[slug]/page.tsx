@@ -249,7 +249,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         <div className="relative aspect-16/9 w-full rounded-3xl overflow-hidden bg-stone-100 border border-stone-200/90 shadow-md">
           <Image
             src={imageSrc}
-            alt={post.title_de}
+            alt={post.title_de || 'Blogbeitrag Titelbild'}
             fill
             priority
             unoptimized

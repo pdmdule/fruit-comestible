@@ -152,7 +152,7 @@ export default function BlogListing({ posts }: BlogListingProps) {
                   >
                     <Image
                       src={imageSrc}
-                      alt={post.title_de}
+                      alt={post.title_de || 'Blogbeitrag'}
                       fill
                       unoptimized
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

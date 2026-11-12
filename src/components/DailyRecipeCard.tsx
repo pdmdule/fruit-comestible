@@ -57,7 +57,7 @@ export default function DailyRecipeCard({ recipe }: DailyRecipeCardProps) {
         <div className="relative w-full h-48 sm:h-52 rounded-2xl overflow-hidden bg-stone-100 mb-5 group/img isolate transform-gpu backface-hidden">
           <Image
             src={currentRecipe.imageUrl}
-            alt={currentRecipe.title}
+            alt={currentRecipe.title || 'Rezeptbild'}
             fill
             unoptimized
             sizes="(max-width: 1024px) 100vw, 400px"
@@ -114,7 +114,7 @@ export default function DailyRecipeCard({ recipe }: DailyRecipeCardProps) {
             <div className="relative w-12 h-12 rounded-xl bg-white border border-stone-200/80 overflow-hidden shrink-0 flex items-center justify-center p-1 shadow-2xs">
               <Image
                 src={currentRecipe.featuredProductImage || '/logo.webp'}
-                alt={currentRecipe.featuredProductName}
+                alt={currentRecipe.featuredProductName || 'Passendes Produkt'}
                 width={44}
                 height={44}
                 unoptimized

@@ -654,7 +654,7 @@ export default function ProductPurchaseSection({
           <div className="relative w-11 h-11 rounded-xl overflow-hidden bg-stone-100 border border-stone-200/80 shrink-0">
             <Image
               src={image || '/logo.webp'}
-              alt={productName || 'Produkt'}
+              alt={productName || 'Produktbild'}
               fill
               unoptimized
               sizes="44px"

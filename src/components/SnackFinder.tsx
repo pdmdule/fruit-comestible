@@ -516,7 +516,7 @@ export default function SnackFinder({ products = [] }: SnackFinderProps) {
                   <div className="relative aspect-4/3 w-full overflow-hidden bg-stone-100">
                     <Image
                       src={primaryImage}
-                      alt={product.name_de}
+                      alt={product.name_de || 'Frucht-Snack'}
                       fill
                       unoptimized
                       sizes="(max-width: 768px) 100vw, 33vw"

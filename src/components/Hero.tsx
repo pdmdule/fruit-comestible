@@ -197,7 +197,7 @@ export function Hero() {
             >
               <Image
                 src={slide.image}
-                alt={slide.imageAlt || slide.title}
+                alt={slide.imageAlt || slide.title || 'Fruit Comestible'}
                 fill
                 priority={idx === 0 || isActive}
                 sizes="(max-width: 1024px) 100vw, 50vw"
