@@ -16,6 +16,7 @@ import {
   QrCode,
   RotateCcw,
   Check,
+  FileText,
 } from 'lucide-react';
 
 export interface OrderItemProduct {
@@ -376,26 +377,36 @@ export default function OrderHistory({ orders, isLoading }: OrderHistoryProps) {
                   </span>
                 </div>
 
-                {parsedItems.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => handleReorder(order)}
-                    disabled={reorderingId === orderKey}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium bg-[#F4EFE6] text-stone-800 border border-stone-300 hover:bg-[#e8e0d2] transition-colors cursor-pointer disabled:opacity-50"
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <Link
+                    href={`/orders/${order.id || order.order_number}/invoice`}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium bg-white text-stone-800 border border-stone-300 hover:bg-stone-50 transition-colors"
                   >
-                    {reorderingId === orderKey ? (
-                      <span className="inline-flex items-center gap-1.5 text-emerald-800 font-semibold">
-                        <Check className="w-3.5 h-3.5" />
-                        <span>In den Warenkorb gelegt</span>
-                      </span>
-                    ) : (
-                      <>
-                        <RotateCcw className="w-3.5 h-3.5" />
-                        <span>Erneut bestellen</span>
-                      </>
-                    )}
-                  </button>
-                )}
+                    <FileText className="w-3.5 h-3.5 text-[#6c943e]" />
+                    <span>Beleg / PDF</span>
+                  </Link>
+
+                  {parsedItems.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => handleReorder(order)}
+                      disabled={reorderingId === orderKey}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium bg-[#F4EFE6] text-stone-800 border border-stone-300 hover:bg-[#e8e0d2] transition-colors cursor-pointer disabled:opacity-50"
+                    >
+                      {reorderingId === orderKey ? (
+                        <span className="inline-flex items-center gap-1.5 text-emerald-800 font-semibold">
+                          <Check className="w-3.5 h-3.5" />
+                          <span>In den Warenkorb gelegt</span>
+                        </span>
+                      ) : (
+                        <>
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          <span>Erneut bestellen</span>
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>

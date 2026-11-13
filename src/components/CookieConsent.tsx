@@ -29,7 +29,7 @@ export function CookieConsent() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-4 sm:bottom-6 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-50 animate-in fade-in slide-in-from-bottom-5 duration-300">
+    <div className="print:hidden fixed bottom-4 sm:bottom-6 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-50 animate-in fade-in slide-in-from-bottom-5 duration-300">
       <div className="bg-white/95 dark:bg-stone-900/95 backdrop-blur-md p-5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-xl text-stone-800 dark:text-stone-200">
         <div className="flex items-start gap-3">
           <span className="text-2xl select-none">🍪</span>

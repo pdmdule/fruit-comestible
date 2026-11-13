@@ -76,10 +76,10 @@ export default function Header() {
   return (
     <>
       {/* 1. Top Announcement Bar */}
-      <AnnouncementBar />
+      <AnnouncementBar className="print:hidden" />
 
       {/* 2. Main Header */}
-      <header className="sticky top-0 z-40 w-full border-b border-stone-200 bg-white/95 backdrop-blur-md transition-all">
+      <header className="print:hidden sticky top-0 z-40 w-full border-b border-stone-200 bg-white/95 backdrop-blur-md transition-all">
         <div className="relative max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 h-18 sm:h-20 flex items-center justify-between gap-4">
           {/* Left: Brand / Logo */}
           <div className="flex items-center relative z-10">

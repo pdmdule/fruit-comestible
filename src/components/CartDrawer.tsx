@@ -62,7 +62,7 @@ export default function CartDrawer() {
       role="dialog"
       aria-modal="true"
       aria-label="Warenkorb"
-      className={`fixed inset-0 z-[100] overflow-hidden font-sans transition-all duration-300 ${
+      className={`print:hidden fixed inset-0 z-[100] overflow-hidden font-sans transition-all duration-300 ${
         isCartOpen ? 'visible pointer-events-auto' : 'invisible pointer-events-none'
       }`}
     >

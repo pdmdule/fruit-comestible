@@ -214,13 +214,14 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
     const email = searchParams.get('email');
     const orderNumber = searchParams.get('order_number');
     const userId = searchParams.get('user_id');
 
-    if (!email && !orderNumber && !userId) {
+    if (!id && !email && !orderNumber && !userId) {
       return NextResponse.json(
-        { error: 'Mindestens ein Filterkriterium erforderlich (email, order_number oder user_id).' },
+        { error: 'Mindestens ein Filterkriterium erforderlich (id, email, order_number oder user_id).' },
         { status: 400 }
       );
     }
@@ -229,6 +230,19 @@ export async function GET(req: NextRequest) {
       .from('orders')
       .select('*')
       .order('created_at', { ascending: false });
+
+    if (id) {
+      const trimmedId = id.trim();
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(trimmedId);
+      const isNumericOrderNo = /^\d+$/.test(trimmedId);
+      if (isUuid) {
+        query = query.eq('id', trimmedId);
+      } else if (isNumericOrderNo) {
+        query = query.eq('order_number', parseInt(trimmedId, 10));
+      } else {
+        return NextResponse.json({ orders: [] });
+      }
+    }
 
     if (email) {
       query = query.ilike('customer_email', email.trim().toLowerCase());

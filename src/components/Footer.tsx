@@ -13,7 +13,7 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="border-t border-[#5b7f33] bg-[#6c943e] text-white text-sm">
+    <footer className="print:hidden border-t border-[#5b7f33] bg-[#6c943e] text-white text-sm">
       {/* Top Swiss Quality Bar */}
       <div className="border-b border-white/20 bg-black/10">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-8">
