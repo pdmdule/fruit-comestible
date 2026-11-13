@@ -253,7 +253,7 @@ export default function OriginMapClient({
   };
 
   return (
-    <div className="relative w-full aspect-16/11 sm:aspect-16/10 rounded-3xl border border-stone-200/90 overflow-hidden shadow-sm bg-stone-100">
+    <div className="relative isolate z-0 w-full aspect-16/11 sm:aspect-16/10 rounded-3xl border border-stone-200/90 overflow-hidden shadow-sm bg-stone-100">
       <style jsx global>{`
         @keyframes routeDash {
           to {

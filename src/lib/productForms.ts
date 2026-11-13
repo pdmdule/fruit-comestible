@@ -122,8 +122,8 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       {
         form: 'Ganz',
         label: 'Ganze Früchte',
-        slug: 'sauerkirschen-ganz',
-        aliases: ['gefriergetrocknete-sauerkirsche', 'sauerkirschen-ganz'],
+        slug: 'sauerkirsche-ganz',
+        aliases: ['gefriergetrocknete-sauerkirsche', 'sauerkirsche-ganz', 'sauerkirschen-ganz'],
         name: 'Gefriergetrocknete Sauerkirschen (Ganz)',
         subtitle: 'Herrlich fruchtig-säuerliche ganze Sauerkirschen in Spitzenqualität.',
         category: 'Früchte & Beeren',
@@ -135,8 +135,8 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       {
         form: 'Granulat',
         label: 'Granulat',
-        slug: 'sauerkirschgranulat',
-        aliases: ['sauerkirschgranulat', 'sauerkirschen-granulat'],
+        slug: 'sauerkirsche-granulat',
+        aliases: ['sauerkirsche-granulat', 'sauerkirschgranulat', 'sauerkirschen-granulat'],
         name: 'Sauerkirschgranulat',
         subtitle: 'Knuspriges Sauerkirsch-Granulat mit herb-frischer Geschmacksnote.',
         category: 'Granulat & Crunch',
@@ -148,8 +148,8 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       {
         form: 'Pulver',
         label: 'Fruchtpulver',
-        slug: 'sauerkirschpulver',
-        aliases: ['sauerkirschpulver', 'sauerkirschen-pulver'],
+        slug: 'sauerkirsche-pulver',
+        aliases: ['sauerkirsche-pulver', 'sauerkirschpulver', 'sauerkirschen-pulver'],
         name: 'Sauerkirschpulver',
         subtitle: 'Feinstes Sauerkirschpulver zum Backen, Kochen und Verfeinern.',
         category: 'Fruchtpulver',
@@ -168,8 +168,8 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       {
         form: 'Ganz',
         label: 'Ganze Früchte',
-        slug: 'heidelbeeren-ganz',
-        aliases: ['gefriergetrocknete-echte-heidelbeere', 'heidelbeeren-ganz'],
+        slug: 'echte-heidelbeere-ganz',
+        aliases: ['gefriergetrocknete-echte-heidelbeere', 'echte-heidelbeere-ganz', 'heidelbeeren-ganz'],
         name: 'Gefriergetrocknete Echte Heidelbeeren',
         subtitle: 'Wilde Waldheidelbeeren aus nachhaltiger Ernte – reich an Anthocyanen.',
         category: 'Früchte & Beeren',
@@ -181,8 +181,8 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       {
         form: 'Pulver',
         label: 'Fruchtpulver',
-        slug: 'heidelbeerpulver',
-        aliases: ['heidelbeerpulver', 'heidelbeeren-pulver'],
+        slug: 'echte-heidelbeere-pulver',
+        aliases: ['echte-heidelbeere-pulver', 'heidelbeerpulver', 'heidelbeeren-pulver'],
         name: 'Heidelbeerpulver',
         subtitle: 'Tiefblaues, hochkonzentriertes Heidelbeerpulver für Shakes und Bowls.',
         category: 'Fruchtpulver',
@@ -200,9 +200,9 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
     forms: [
       {
         form: 'Ganz',
-        label: 'Ganze Früchte',
-        slug: 'aprikosen-ganz',
-        aliases: ['gefriergetrocknete-aprikose', 'aprikosen-ganz'],
+        label: 'Schnitze / Stücke',
+        slug: 'aprikose-schnitze',
+        aliases: ['gefriergetrocknete-aprikose', 'aprikose-schnitze', 'aprikosen-ganz'],
         name: 'Gefriergetrocknete Aprikosen (Schnitze)',
         subtitle: 'Sonnenverwöhnte Walliser Aprikosen in knusprigen Spalten.',
         category: 'Früchte & Beeren',
@@ -214,8 +214,8 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       {
         form: 'Granulat',
         label: 'Granulat',
-        slug: 'aprikosengranulat',
-        aliases: ['aprikosengranulat', 'aprikosen-granulat'],
+        slug: 'aprikose-granulat',
+        aliases: ['aprikose-granulat', 'aprikosengranulat', 'aprikosen-granulat'],
         name: 'Aprikosengranulat',
         subtitle: 'Feiner Aprikosen-Crunch mit samtig-süssem Schweizer Naturaroma.',
         category: 'Granulat & Crunch',
@@ -227,8 +227,8 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       {
         form: 'Pulver',
         label: 'Fruchtpulver',
-        slug: 'aprikosenpulver',
-        aliases: ['aprikosenpulver', 'aprikosen-pulver'],
+        slug: 'aprikose-pulver',
+        aliases: ['aprikose-pulver', 'aprikosenpulver', 'aprikosen-pulver'],
         name: 'Aprikosenpulver',
         subtitle: 'Reines Aprikosenpulver für feine Pâtisserie, Quark und Desserts.',
         category: 'Fruchtpulver',
@@ -246,9 +246,9 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
     forms: [
       {
         form: 'Ganz',
-        label: 'Ganze Früchte',
-        slug: 'zwetschgen-ganz',
-        aliases: ['gefriergetrocknete-zwetschgen', 'zwetschgen-ganz'],
+        label: 'Schnitze / Stücke',
+        slug: 'zwetschgen-schnitze',
+        aliases: ['gefriergetrocknete-zwetschgen', 'zwetschgen-schnitze', 'zwetschgen-ganz'],
         name: 'Gefriergetrocknete Zwetschgen (Schnitze)',
         subtitle: 'Klassische Schweizer Zwetschgenspalten, intensiv aromatisch und knusprig.',
         category: 'Früchte & Beeren',
@@ -260,8 +260,8 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       {
         form: 'Granulat',
         label: 'Granulat',
-        slug: 'zwetschgengranulat',
-        aliases: ['zwetschgengranulat', 'zwetschgen-granulat'],
+        slug: 'zwetschgen-granulat',
+        aliases: ['zwetschgen-granulat', 'zwetschgengranulat'],
         name: 'Zwetschgengranulat',
         subtitle: 'Würziger Zwetschgen-Crunch für Porridge, Joghurt und Herbstgebäck.',
         category: 'Granulat & Crunch',
@@ -273,8 +273,8 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       {
         form: 'Pulver',
         label: 'Fruchtpulver',
-        slug: 'zwetschgenpulver',
-        aliases: ['zwetschgenpulver', 'zwetschgen-pulver'],
+        slug: 'zwetschgen-pulver',
+        aliases: ['zwetschgen-pulver', 'zwetschgenpulver'],
         name: 'Zwetschgenpulver',
         subtitle: 'Naturreines Schweizer Zwetschgenpulver für Teige, Shakes und Cremes.',
         category: 'Fruchtpulver',
@@ -292,9 +292,9 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
     forms: [
       {
         form: 'Ganz',
-        label: 'Ganze Früchte',
-        slug: 'apfel-ganz',
-        aliases: ['gefriergetrockneter-apfel', 'apfel-ganz', 'apfelscheiben-ganz'],
+        label: 'Würfel / Stücke',
+        slug: 'apfel-Gewurfelt',
+        aliases: ['gefriergetrockneter-apfel', 'apfel-gewurfelt', 'apfel-ganz', 'apfelscheiben-ganz'],
         name: 'Gefriergetrocknete Apfelstücke (Ganz)',
         subtitle: 'Knusprige Schweizer Apfelwürfel mit herrlich erfrischendem Biss.',
         category: 'Früchte & Beeren',
@@ -306,8 +306,8 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       {
         form: 'Granulat',
         label: 'Granulat',
-        slug: 'apfelgranulat',
-        aliases: ['apfelgranulat', 'apfel-granulat'],
+        slug: 'apfel-granulat',
+        aliases: ['apfel-granulat', 'apfelgranulat'],
         name: 'Apfelgranulat',
         subtitle: 'Goldenes Apfelgranulat mit natürlicher Schweizer Apfelsüsse.',
         category: 'Granulat & Crunch',
@@ -319,8 +319,8 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       {
         form: 'Pulver',
         label: 'Fruchtpulver',
-        slug: 'apfelpulver',
-        aliases: ['apfelpulver', 'apfel-pulver'],
+        slug: 'apfel-pulver',
+        aliases: ['apfel-pulver', 'apfelpulver'],
         name: 'Apfelpulver',
         subtitle: 'Reines Schweizer Apfelpulver reich an Ballaststoffen und natürlichem Pektin.',
         category: 'Fruchtpulver',
@@ -338,9 +338,9 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
     forms: [
       {
         form: 'Ganz',
-        label: 'Ganze Früchte',
-        slug: 'bananen-ganz',
-        aliases: ['gefriergetrocknete-banane', 'bananen-ganz'],
+        label: 'Scheiben',
+        slug: 'banane-scheiben',
+        aliases: ['gefriergetrocknete-banane', 'banane-scheiben', 'bananen-ganz'],
         name: 'Gefriergetrocknete Bananenscheiben',
         subtitle: 'Süsse, knusprige Bananenscheiben ohne Fett, ohne Frittieren und ohne Zusätze.',
         category: 'Früchte & Beeren',
@@ -352,8 +352,8 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       {
         form: 'Pulver',
         label: 'Fruchtpulver',
-        slug: 'bananenpulver',
-        aliases: ['bananenpulver', 'bananen-pulver'],
+        slug: 'banane-pulver',
+        aliases: ['banane-pulver', 'bananenpulver', 'bananen-pulver'],
         name: 'Bananenpulver',
         subtitle: 'Cremiges Bananenpulver für natürliche Shakes, Smoothies und Porridge.',
         category: 'Fruchtpulver',
@@ -371,9 +371,9 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
     forms: [
       {
         form: 'Ganz',
-        label: 'Ganze Früchte',
-        slug: 'mango-ganz',
-        aliases: ['gefriergetrocknete-mango', 'mango-ganz'],
+        label: 'Würfel / Stücke',
+        slug: 'mango-wuerfel',
+        aliases: ['gefriergetrocknete-mango', 'mango-wuerfel', 'mango-ganz'],
         name: 'Gefriergetrocknete Mango (Würfel)',
         subtitle: 'Exotische Mangowürfel voller Tropenaroma und sonniger Fülle.',
         category: 'Früchte & Beeren',
@@ -405,8 +405,8 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       {
         form: 'Ganz',
         label: 'Ganze Früchte',
-        slug: 'brombeeren-ganz',
-        aliases: ['gefriergetrocknete-brombeere', 'brombeeren-ganz'],
+        slug: 'brombeere-ganz',
+        aliases: ['gefriergetrocknete-brombeere', 'brombeere-ganz', 'brombeeren-ganz'],
         name: 'Gefriergetrocknete Brombeeren (Ganz)',
         subtitle: 'Ganze, samtig-dunkle Brombeeren mit vollem Waldbeergeschmack.',
         category: 'Früchte & Beeren',
@@ -418,14 +418,47 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       {
         form: 'Pulver',
         label: 'Fruchtpulver',
-        slug: 'brombeerpulver',
-        aliases: ['brombeerpulver', 'brombeeren-pulver'],
+        slug: 'brombeere-pulver',
+        aliases: ['brombeere-pulver', 'brombeerpulver', 'brombeeren-pulver'],
         name: 'Brombeerpulver',
         subtitle: 'Feines Brombeerpulver reich an Vitamin C und tiefdunklen Vitalstoffen.',
         category: 'Fruchtpulver',
         variantMatch: (form, label) => {
           const str = `${form || ''} ${label || ''}`.toLowerCase();
           return str.includes('pulver');
+        },
+      },
+    ],
+  },
+  {
+    familyKey: 'rote-drachenfrucht',
+    baseFruitName: 'Rote Drachenfrucht',
+    dbSlug: 'rote-drachenfrucht-schnitze',
+    forms: [
+      {
+        form: 'Ganz',
+        label: 'Schnitze / Scheiben',
+        slug: 'rote-drachenfrucht-schnitze',
+        aliases: ['rote-drachenfrucht-schnitze', 'drachenfrucht-schnitze'],
+        name: 'Gefriergetrocknete Rote Drachenfrucht (Schnitze)',
+        subtitle: 'Exotische rote Pitaya-Schnitze voller intensiver Farbe und milder Fruchtsüsse.',
+        category: 'Früchte & Beeren',
+        variantMatch: (form, label) => {
+          const str = `${form || ''} ${label || ''}`.toLowerCase();
+          return str.includes('schnitz') || str.includes('ganz') || !str.includes('granulat');
+        },
+      },
+      {
+        form: 'Granulat',
+        label: 'Granulat',
+        slug: 'rote-drachenfrucht-granulat',
+        aliases: ['rote-drachenfrucht-granulat', 'drachenfrucht-granulat'],
+        name: 'Gefriergetrocknete Rote Drachenfrucht (Granulat)',
+        subtitle: 'Farbenfroher Drachenfrucht-Crunch für Bowls, Müesli und Desserts.',
+        category: 'Granulat & Crunch',
+        variantMatch: (form, label) => {
+          const str = `${form || ''} ${label || ''}`.toLowerCase();
+          return str.includes('granulat');
         },
       },
     ],
@@ -471,8 +504,8 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       {
         form: 'Pulver',
         label: 'Fruchtpulver',
-        slug: 'orangenpulver',
-        aliases: ['gefriergetrocknete-orange', 'orangenpulver'],
+        slug: 'orange-pulver',
+        aliases: ['gefriergetrocknete-orange', 'orange-pulver', 'orangenpulver'],
         name: 'Gefriergetrocknetes Orangenpulver',
         subtitle: 'Sonniges Zitrusaroma und natürliche Frische in schonend getrocknetem Orangenpulver.',
         category: 'Fruchtpulver',
@@ -488,8 +521,8 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       {
         form: 'Pulver',
         label: 'Fruchtpulver',
-        slug: 'zitronenpulver',
-        aliases: ['gefriergetrocknete-zitrone', 'zitronenpulver'],
+        slug: 'zitrone-pulver',
+        aliases: ['gefriergetrocknete-zitrone', 'zitrone-pulver', 'zitronenpulver'],
         name: 'Gefriergetrocknetes Zitronenpulver',
         subtitle: 'Herrlich spritzige Zitronenfrische für Desserts, Dressings und Getränke.',
         category: 'Fruchtpulver',
@@ -505,8 +538,8 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       {
         form: 'Granulat',
         label: 'Granulat',
-        slug: 'ananasgranulat',
-        aliases: ['gefriergetrocknete-ananas', 'ananasgranulat'],
+        slug: 'ananas-granulat',
+        aliases: ['gefriergetrocknete-ananas', 'ananas-granulat', 'ananasgranulat'],
         name: 'Gefriergetrocknete Ananas (Granulat)',
         subtitle: 'Knusprig-süsser Ananas-Crunch für tropisches Sommerfeeling im Müsli.',
         category: 'Granulat & Crunch',
@@ -522,8 +555,8 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
       {
         form: 'Granulat',
         label: 'Granulat',
-        slug: 'maracujagranulat',
-        aliases: ['gefriergetrocknete-maracuja', 'maracujagranulat'],
+        slug: 'maracuja-granulat',
+        aliases: ['gefriergetrocknete-maracuja', 'maracuja-granulat', 'maracujagranulat'],
         name: 'Gefriergetrocknete Maracuja (Granulat)',
         subtitle: 'Prickelnd exotischer Maracuja-Crunch mit intensiv säuerlich-süssem Aroma.',
         category: 'Granulat & Crunch',
@@ -543,16 +576,16 @@ export function getFruitFamilyInfo(requestedSlug: string) {
     // Check if the slug matches any of the family's forms or aliases
     for (const formItem of family.forms) {
       if (
-        formItem.slug === cleanSlug ||
-        formItem.aliases.includes(cleanSlug) ||
-        (family.dbSlug === cleanSlug && formItem.form === 'Ganz')
+        formItem.slug.toLowerCase() === cleanSlug ||
+        formItem.aliases.some((a) => a.toLowerCase() === cleanSlug) ||
+        (family.dbSlug.toLowerCase() === cleanSlug && formItem.form === 'Ganz')
       ) {
         // Found matching family & active form!
         const siblingLinks: FormLink[] = family.forms.map((f) => ({
           form: f.form,
           label: f.label,
           href: `/produkte/${f.slug}`,
-          isActive: f.slug === formItem.slug,
+          isActive: f.slug.toLowerCase() === formItem.slug.toLowerCase(),
         }));
 
         return {

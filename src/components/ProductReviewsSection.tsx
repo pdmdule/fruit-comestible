@@ -1,24 +1,30 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   Star,
   CheckCircle2,
   PenLine,
   AlertCircle,
-  Sparkles,
   ShieldCheck,
   MessageSquareHeart,
   X,
+  LogIn,
+  Lock,
 } from 'lucide-react';
 import type { ProductReview, ProductReviewsSummary } from '@/types/reviews';
 import ProductRatingStars from '@/components/ProductRatingStars';
+import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/lib/supabase';
 
 interface ProductReviewsSectionProps {
   productId: string;
   productName: string;
   reviews: ProductReview[];
   summary: ProductReviewsSummary;
+  onReviewsChange?: (productId: string, reviews: ProductReview[]) => void;
 }
 
 const USAGE_PRESETS = [
@@ -55,13 +61,16 @@ export default function ProductReviewsSection({
   productName,
   reviews,
   summary,
+  onReviewsChange,
 }: ProductReviewsSectionProps) {
+  const pathname = usePathname();
+  const { user, session, profile, loading: authLoading } = useAuth();
+
+  const [reviewsList, setReviewsList] = useState<ProductReview[]>(reviews);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState<number>(INITIAL_VISIBLE_REVIEWS);
   const [rating, setRating] = useState<number>(5);
   const [hoverRating, setHoverRating] = useState<number | null>(null);
-  const [orderNumber, setOrderNumber] = useState('');
-  const [email, setEmail] = useState('');
   const [authorName, setAuthorName] = useState('');
   const [authorLocation, setAuthorLocation] = useState('');
   const [usageTag, setUsageTag] = useState<string>('Für Müesli & Bowls');
@@ -72,8 +81,76 @@ export default function ProductReviewsSection({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const visibleReviews = reviews.slice(0, visibleCount);
-  const hasMoreReviews = visibleCount < reviews.length;
+  // Sync reviews dynamically whenever productId changes (e.g. switching fruit form)
+  useEffect(() => {
+    let isMounted = true;
+    setReviewsList(reviews);
+    setVisibleCount(INITIAL_VISIBLE_REVIEWS);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
+    async function fetchReviewsForProduct() {
+      const { data, error } = await supabase
+        .from('product_reviews')
+        .select('*')
+        .eq('product_id', productId)
+        .eq('is_approved', true)
+        .order('created_at', { ascending: false });
+
+      if (isMounted && !error && Array.isArray(data)) {
+        const loaded = data as ProductReview[];
+        setReviewsList(loaded);
+        onReviewsChange?.(productId, loaded);
+      }
+    }
+
+    fetchReviewsForProduct();
+    return () => {
+      isMounted = false;
+    };
+  }, [productId, reviews, onReviewsChange]);
+
+  const liveSummary: ProductReviewsSummary = {
+    totalReviews: reviewsList.length,
+    averageRating:
+      reviewsList.length > 0
+        ? Number(
+            (
+              reviewsList.reduce((acc, r) => acc + (Number(r.rating) || 0), 0) /
+              reviewsList.length
+            ).toFixed(1)
+          )
+        : summary.totalReviews > 0
+        ? summary.averageRating
+        : 0,
+  };
+
+  const visibleReviews = reviewsList.slice(0, visibleCount);
+  const hasMoreReviews = visibleCount < reviewsList.length;
+
+  // Pre-fill authorName and authorLocation from authenticated user's profile when modal opens
+  useEffect(() => {
+    if (!isFormOpen || !user) return;
+
+    const firstName =
+      profile?.first_name?.trim() ||
+      (typeof user.user_metadata?.first_name === 'string'
+        ? user.user_metadata.first_name.trim()
+        : '');
+    const lastName =
+      profile?.last_name?.trim() ||
+      (typeof user.user_metadata?.last_name === 'string'
+        ? user.user_metadata.last_name.trim()
+        : '');
+
+    const fullName = [firstName, lastName].filter(Boolean).join(' ');
+    if (fullName && !authorName) {
+      setAuthorName(fullName);
+    }
+    if (profile?.city && !authorLocation) {
+      setAuthorLocation(profile.city.trim());
+    }
+  }, [isFormOpen, user, profile, authorName, authorLocation]);
 
   // Handle ESC key and lock body scroll when modal is open
   useEffect(() => {
@@ -101,16 +178,13 @@ export default function ProductReviewsSection({
     setErrorMessage(null);
     setSuccessMessage(null);
 
+    if (!user) {
+      setErrorMessage('Du musst angemeldet sein, um eine Bewertung abzugeben.');
+      return;
+    }
+
     if (!rating || rating < 1 || rating > 5) {
       setErrorMessage('Bitte wähle eine Bewertung zwischen 1 und 5 Sternen.');
-      return;
-    }
-    if (!orderNumber.trim()) {
-      setErrorMessage('Bitte gib deine Bestellnummer ein (z. B. 1111).');
-      return;
-    }
-    if (!email.trim() || !email.includes('@')) {
-      setErrorMessage('Bitte gib eine gültige E-Mail-Adresse ein.');
       return;
     }
     if (!authorName.trim() || authorName.trim().length < 2) {
@@ -125,15 +199,26 @@ export default function ProductReviewsSection({
     setIsSubmitting(true);
 
     try {
+      const accessToken =
+        session?.access_token ||
+        (await supabase.auth.getSession()).data.session?.access_token;
+
+      if (!accessToken) {
+        setErrorMessage('Du musst angemeldet sein, um eine Bewertung abzugeben.');
+        setIsSubmitting(false);
+        return;
+      }
+
       const res = await fetch('/api/reviews', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
         body: JSON.stringify({
           productId,
           authorName: authorName.trim(),
           authorLocation: authorLocation.trim() || undefined,
-          email: email.trim(),
-          orderNumber: orderNumber.trim(),
           rating,
           comment: comment.trim(),
           usageTag: usageTag.trim() || undefined,
@@ -146,7 +231,7 @@ export default function ProductReviewsSection({
       if (!res.ok) {
         setErrorMessage(
           data.error ||
-            'Die Kombination aus Bestellnummer und E-Mail-Adresse konnte nicht gefunden werden. Bitte überprüfe deine Angaben.'
+            'Beim Speichern deiner Bewertung ist ein Fehler aufgetreten. Bitte versuche es erneut.'
         );
         setIsSubmitting(false);
         return;
@@ -157,10 +242,6 @@ export default function ProductReviewsSection({
           'Vielen Dank für deine Bewertung! Nach kurzer Prüfung wird dein Beitrag veröffentlicht.'
       );
       // Reset form
-      setOrderNumber('');
-      setEmail('');
-      setAuthorName('');
-      setAuthorLocation('');
       setComment('');
       setHoneypot('');
 
@@ -181,8 +262,8 @@ export default function ProductReviewsSection({
 
   // Calculate star distribution
   const ratingDistribution = [5, 4, 3, 2, 1].map((stars) => {
-    const count = reviews.filter((r) => Math.round(Number(r.rating)) === stars).length;
-    const percentage = summary.totalReviews > 0 ? (count / summary.totalReviews) * 100 : 0;
+    const count = reviewsList.filter((r) => Math.round(Number(r.rating)) === stars).length;
+    const percentage = liveSummary.totalReviews > 0 ? (count / liveSummary.totalReviews) * 100 : 0;
     return { stars, count, percentage };
   });
 
@@ -226,21 +307,21 @@ export default function ProductReviewsSection({
           <div className="md:col-span-4 text-center md:text-left space-y-2 border-b md:border-b-0 md:border-r border-stone-200/80 pb-6 md:pb-0 md:pr-8">
             <div className="flex items-baseline justify-center md:justify-start gap-2">
               <span className="text-4xl sm:text-5xl font-black text-stone-900 tracking-tight">
-                {summary.totalReviews > 0 ? summary.averageRating.toFixed(1) : '–'}
+                {liveSummary.totalReviews > 0 ? liveSummary.averageRating.toFixed(1) : '–'}
               </span>
               <span className="text-stone-500 font-semibold text-lg">/ 5.0</span>
             </div>
             <div>
               <ProductRatingStars
-                rating={summary.averageRating}
+                rating={liveSummary.averageRating}
                 size="md"
                 className="justify-center md:justify-start"
               />
             </div>
             <p className="text-xs sm:text-sm font-medium text-stone-600">
-              {summary.totalReviews > 0
-                ? `Basierend auf ${summary.totalReviews} verifizierten ${
-                    summary.totalReviews === 1 ? 'Bewertung' : 'Bewertungen'
+              {liveSummary.totalReviews > 0
+                ? `Basierend auf ${liveSummary.totalReviews} verifizierten ${
+                    liveSummary.totalReviews === 1 ? 'Bewertung' : 'Bewertungen'
                   }`
                 : 'Noch keine Bewertungen vorhanden'}
             </p>
@@ -274,7 +355,7 @@ export default function ProductReviewsSection({
               <span>Verifizierte Käufe</span>
             </div>
             <p className="text-xs text-stone-600 leading-relaxed">
-              Jede Bewertung wird mit einer echten Bestellnummer abgeglichen, um maximale Ehrlichkeit und Echtheit zu garantieren.
+              Nur angemeldete Kundinnen und Kunden können Bewertungen abgeben; bestehende Käufe werden automatisch verifiziert.
             </p>
           </div>
         </div>
@@ -282,7 +363,7 @@ export default function ProductReviewsSection({
 
       {/* Reviews List */}
       <div className="space-y-4">
-        {reviews.length === 0 ? (
+        {reviewsList.length === 0 ? (
           <div className="p-8 sm:p-12 rounded-3xl bg-white border border-stone-200/80 text-center space-y-4 max-w-2xl mx-auto shadow-2xs">
             <div className="w-12 h-12 rounded-2xl bg-[#F4EFE6] text-stone-700 flex items-center justify-center mx-auto">
               <Star className="w-6 h-6 text-amber-500 fill-amber-500" />
@@ -368,13 +449,13 @@ export default function ProductReviewsSection({
                   onClick={() => setVisibleCount((prev) => prev + 6)}
                   className="px-6 py-2.5 rounded-full text-sm font-medium bg-[#F4EFE6] text-stone-800 border border-stone-300 hover:bg-[#e8e0d2] transition-colors cursor-pointer"
                 >
-                  Weitere Bewertungen anzeigen ({reviews.length - visibleCount} weitere)
+                  Weitere Bewertungen anzeigen ({reviewsList.length - visibleCount} weitere)
                 </button>
               </div>
             )}
 
             {/* Optional: Weniger anzeigen when expanded */}
-            {!hasMoreReviews && reviews.length > INITIAL_VISIBLE_REVIEWS && (
+            {!hasMoreReviews && reviewsList.length > INITIAL_VISIBLE_REVIEWS && (
               <div className="mt-8 flex justify-center">
                 <button
                   type="button"
@@ -399,14 +480,14 @@ export default function ProductReviewsSection({
           role="dialog"
           aria-modal="true"
           aria-labelledby="review-modal-title"
-          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4"
+          className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-xs flex items-center justify-center p-4"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setIsFormOpen(false);
             }
           }}
         >
-          <div className="max-w-lg w-full rounded-2xl bg-[#FAF8F5] border border-stone-200 p-6 sm:p-8 shadow-xl relative max-h-[90vh] overflow-y-auto space-y-6">
+          <div className="max-w-2xl sm:max-w-[720px] w-full rounded-2xl bg-[#FAF8F5] border border-stone-200 p-6 sm:p-8 shadow-xl relative max-h-[90vh] overflow-y-auto space-y-6">
             {/* Modal Header */}
             <div className="border-b border-stone-200/80 pb-4 pr-10 space-y-1">
               <span className="text-xs font-bold tracking-wider text-rose-700 uppercase">
@@ -430,217 +511,233 @@ export default function ProductReviewsSection({
               <X className="w-5 h-5" />
             </button>
 
-            {/* Error Message */}
-            {errorMessage && (
-              <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm flex items-start gap-2.5">
-                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-                <span>{errorMessage}</span>
+            {/* Auth Check: Must be logged in to submit a review */}
+            {authLoading ? (
+              <div className="py-10 text-center text-sm text-stone-500">
+                Anmeldestatus wird geprüft...
               </div>
-            )}
-
-            {/* Success Message */}
-            {successMessage ? (
-              <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 space-y-3 text-center sm:text-left">
-                <div className="flex items-center justify-center sm:justify-start gap-2 text-emerald-700 font-extrabold text-base">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-                  <span>Bewertung erfolgreich übermittelt!</span>
+            ) : !user ? (
+              <div className="p-6 sm:p-8 rounded-2xl bg-[#F4EFE6] border border-stone-200 text-center space-y-5">
+                <div className="w-12 h-12 rounded-2xl bg-white border border-stone-200 text-stone-800 flex items-center justify-center mx-auto shadow-2xs">
+                  <Lock className="w-5 h-5 text-rose-600" />
                 </div>
-                <p className="text-xs sm:text-sm text-emerald-800 leading-relaxed">
-                  {successMessage}
-                </p>
-                <p className="text-xs text-stone-500 italic">
-                  Dieses Fenster schliesst sich in Kürze automatisch...
-                </p>
+                <div className="space-y-2 max-w-md mx-auto">
+                  <h4 className="text-lg font-extrabold text-stone-900">
+                    Anmeldung erforderlich
+                  </h4>
+                  <p className="text-sm text-stone-700 leading-relaxed">
+                    Bitte melde dich in deinem Kundenkonto an, um eine Bewertung abzugeben.
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
+                  <Link
+                    href={`/login?redirect=${encodeURIComponent(
+                      `${pathname || '/'}#kundenbewertungen`
+                    )}`}
+                    onClick={() => setIsFormOpen(false)}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-bold text-sm shadow-xs transition"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    <span>Jetzt anmelden</span>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setIsFormOpen(false)}
+                    className="w-full sm:w-auto px-5 py-3 rounded-xl bg-white hover:bg-stone-100 text-stone-700 border border-stone-200 font-bold text-sm transition cursor-pointer"
+                  >
+                    Abbrechen
+                  </button>
+                </div>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
-                {/* 1. Rating Stars Picker */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-stone-800">
-                    Deine Gesamtnote <span className="text-rose-600">*</span>
-                  </label>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex items-center gap-1.5" onMouseLeave={() => setHoverRating(null)}>
-                      {[1, 2, 3, 4, 5].map((starVal) => {
-                        const activeVal = hoverRating !== null ? hoverRating : rating;
-                        const isFilled = activeVal >= starVal;
-                        return (
-                          <button
-                            key={starVal}
-                            type="button"
-                            onClick={() => setRating(starVal)}
-                            onMouseEnter={() => setHoverRating(starVal)}
-                            className="p-1 rounded-lg hover:scale-110 transition-transform cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500"
-                            aria-label={`${starVal} Sterne`}
-                          >
-                            <Star
-                              className={`w-7 h-7 sm:w-8 sm:h-8 transition-colors ${
-                                isFilled
-                                  ? 'text-amber-400 fill-amber-400'
-                                  : 'text-stone-300 fill-stone-100 hover:text-amber-300'
-                              }`}
-                            />
-                          </button>
-                        );
-                      })}
+              <>
+                {/* Error Message */}
+                {errorMessage && (
+                  <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm flex items-start gap-2.5">
+                    <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
+
+                {/* Success Message */}
+                {successMessage ? (
+                  <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 space-y-3 text-center sm:text-left">
+                    <div className="flex items-center justify-center sm:justify-start gap-2 text-emerald-700 font-extrabold text-base">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                      <span>Bewertung erfolgreich übermittelt!</span>
                     </div>
-                    <span className="text-xs sm:text-sm font-semibold text-stone-700 bg-white px-3 py-1 rounded-full border border-stone-200">
-                      {RATING_LABELS[hoverRating !== null ? hoverRating : rating]}
-                    </span>
-                  </div>
-                </div>
-
-                {/* 2. Verification Block: Order Number & Email */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                  <div className="space-y-1.5">
-                    <label htmlFor="modal-order-number" className="block text-xs font-bold uppercase tracking-wider text-stone-800">
-                      Bestellnummer <span className="text-rose-600">*</span>
-                    </label>
-                    <input
-                      id="modal-order-number"
-                      type="text"
-                      required
-                      value={orderNumber}
-                      onChange={(e) => setOrderNumber(e.target.value)}
-                      placeholder="z. B. 1111"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-medium text-stone-900 transition outline-none"
-                    />
-                    <p className="text-[11px] text-stone-500">
-                      Aus der Bestellbestätigung per E-Mail (z. B. 1111).
+                    <p className="text-xs sm:text-sm text-emerald-800 leading-relaxed">
+                      {successMessage}
+                    </p>
+                    <p className="text-xs text-stone-500 italic">
+                      Dieses Fenster schliesst sich in Kürze automatisch...
                     </p>
                   </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-5">
+                    {/* Logged-in Account Banner */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 rounded-xl bg-[#F4EFE6] border border-stone-200/80 text-xs text-stone-700">
+                      <span>
+                        Angemeldet als{' '}
+                        <strong className="font-semibold text-stone-900">
+                          {user.email}
+                        </strong>
+                      </span>
+                      <span className="text-[11px] text-stone-500">
+                        E-Mail wird nicht veröffentlicht
+                      </span>
+                    </div>
 
-                  <div className="space-y-1.5">
-                    <label htmlFor="modal-email" className="block text-xs font-bold uppercase tracking-wider text-stone-800">
-                      E-Mail-Adresse <span className="text-rose-600">*</span>
-                    </label>
-                    <input
-                      id="modal-email"
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="name@beispiel.ch"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-medium text-stone-900 transition outline-none"
-                    />
-                    <p className="text-[11px] text-stone-500">
-                      Wird nicht öffentlich angezeigt.
-                    </p>
-                  </div>
-                </div>
+                    {/* 1. Rating Stars Picker */}
+                    <div className="space-y-2">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-stone-800">
+                        Deine Gesamtnote <span className="text-rose-600">*</span>
+                      </label>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <div className="flex items-center gap-1.5" onMouseLeave={() => setHoverRating(null)}>
+                          {[1, 2, 3, 4, 5].map((starVal) => {
+                            const activeVal = hoverRating !== null ? hoverRating : rating;
+                            const isFilled = activeVal >= starVal;
+                            return (
+                              <button
+                                key={starVal}
+                                type="button"
+                                onClick={() => setRating(starVal)}
+                                onMouseEnter={() => setHoverRating(starVal)}
+                                className="p-1 rounded-lg hover:scale-110 transition-transform cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500"
+                                aria-label={`${starVal} Sterne`}
+                              >
+                                <Star
+                                  className={`w-7 h-7 sm:w-8 sm:h-8 transition-colors ${
+                                    isFilled
+                                      ? 'text-amber-400 fill-amber-400'
+                                      : 'text-stone-300 fill-stone-100 hover:text-amber-300'
+                                  }`}
+                                />
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <span className="text-xs sm:text-sm font-semibold text-stone-700 bg-white px-3 py-1 rounded-full border border-stone-200">
+                          {RATING_LABELS[hoverRating !== null ? hoverRating : rating]}
+                        </span>
+                      </div>
+                    </div>
 
-                {/* 3. Author Name & Location */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label htmlFor="modal-author-name" className="block text-xs font-bold uppercase tracking-wider text-stone-800">
-                      Dein Name <span className="text-rose-600">*</span>
-                    </label>
-                    <input
-                      id="modal-author-name"
-                      type="text"
-                      required
-                      value={authorName}
-                      onChange={(e) => setAuthorName(e.target.value)}
-                      placeholder="z. B. Anna K."
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-medium text-stone-900 transition outline-none"
-                    />
-                  </div>
+                    {/* 2. Author Name & Location (2 columns on desktop) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label htmlFor="modal-author-name" className="block text-xs font-bold uppercase tracking-wider text-stone-800">
+                          Dein Name <span className="text-rose-600">*</span>
+                        </label>
+                        <input
+                          id="modal-author-name"
+                          type="text"
+                          required
+                          value={authorName}
+                          onChange={(e) => setAuthorName(e.target.value)}
+                          placeholder="z. B. Sarah M."
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-medium text-stone-900 transition outline-none"
+                        />
+                      </div>
 
-                  <div className="space-y-1.5">
-                    <label htmlFor="modal-author-location" className="block text-xs font-bold uppercase tracking-wider text-stone-800">
-                      Ort (optional)
-                    </label>
-                    <input
-                      id="modal-author-location"
-                      type="text"
-                      value={authorLocation}
-                      onChange={(e) => setAuthorLocation(e.target.value)}
-                      placeholder="z. B. Bern oder Zürich"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-medium text-stone-900 transition outline-none"
-                    />
-                  </div>
-                </div>
+                      <div className="space-y-1.5">
+                        <label htmlFor="modal-author-location" className="block text-xs font-bold uppercase tracking-wider text-stone-800">
+                          Ort (optional)
+                        </label>
+                        <input
+                          id="modal-author-location"
+                          type="text"
+                          value={authorLocation}
+                          onChange={(e) => setAuthorLocation(e.target.value)}
+                          placeholder="z. B. Bern oder Zürich"
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-medium text-stone-900 transition outline-none"
+                        />
+                      </div>
+                    </div>
 
-                {/* 4. Quick Usage Chips */}
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-stone-800">
-                    Wofür verwendest du das Produkt? (optional)
-                  </label>
-                  <div className="flex flex-wrap gap-1.5">
-                    {USAGE_PRESETS.map((preset) => {
-                      const isSelected = usageTag === preset;
-                      return (
+                    {/* 3. Quick Usage Chips */}
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-stone-800">
+                        Wofür verwendest du das Produkt? (optional)
+                      </label>
+                      <div className="flex flex-wrap gap-1.5">
+                        {USAGE_PRESETS.map((preset) => {
+                          const isSelected = usageTag === preset;
+                          return (
+                            <button
+                              key={preset}
+                              type="button"
+                              onClick={() => setUsageTag(isSelected ? '' : preset)}
+                              className={`px-3 py-1 rounded-full text-xs font-semibold border transition cursor-pointer ${
+                                isSelected
+                                  ? 'bg-stone-900 text-white border-stone-900 shadow-2xs'
+                                  : 'bg-white hover:bg-stone-100 text-stone-800 border-stone-200'
+                              }`}
+                            >
+                              {preset}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* 4. Comment Textarea */}
+                    <div className="space-y-1.5">
+                      <label htmlFor="modal-comment" className="block text-xs font-bold uppercase tracking-wider text-stone-800">
+                        Deine Bewertung <span className="text-rose-600">*</span>
+                      </label>
+                      <textarea
+                        id="modal-comment"
+                        required
+                        rows={4}
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder="Wie schmeckt dir die Frucht? Wie ist der Crunch und das Aroma im Vergleich zu frischen Früchten?"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-medium text-stone-900 transition outline-none leading-relaxed"
+                      />
+                    </div>
+
+                    {/* 5. Honeypot Field */}
+                    <div className="hidden absolute opacity-0 pointer-events-none -z-50" aria-hidden="true">
+                      <label htmlFor="modal_website_url">Website URL</label>
+                      <input
+                        id="modal_website_url"
+                        type="text"
+                        name="website_url"
+                        value={honeypot}
+                        onChange={(e) => setHoneypot(e.target.value)}
+                        tabIndex={-1}
+                        autoComplete="off"
+                      />
+                    </div>
+
+                    {/* 6. Modal Actions */}
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-stone-200/80">
+                      <p className="text-[11px] text-stone-500">
+                        <span className="text-rose-600 font-bold">*</span> Pflichtfelder
+                      </p>
+
+                      <div className="flex items-center gap-2 w-full sm:w-auto">
                         <button
-                          key={preset}
                           type="button"
-                          onClick={() => setUsageTag(isSelected ? '' : preset)}
-                          className={`px-3 py-1 rounded-full text-xs font-semibold border transition cursor-pointer ${
-                            isSelected
-                              ? 'bg-stone-900 text-white border-stone-900 shadow-2xs'
-                              : 'bg-white hover:bg-stone-100 text-stone-800 border-stone-200'
-                          }`}
+                          onClick={() => setIsFormOpen(false)}
+                          className="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs transition cursor-pointer"
                         >
-                          {preset}
+                          Abbrechen
                         </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* 5. Comment Textarea */}
-                <div className="space-y-1.5">
-                  <label htmlFor="modal-comment" className="block text-xs font-bold uppercase tracking-wider text-stone-800">
-                    Deine Bewertung <span className="text-rose-600">*</span>
-                  </label>
-                  <textarea
-                    id="modal-comment"
-                    required
-                    rows={4}
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder="Wie schmeckt dir die Frucht? Wie ist der Crunch und das Aroma im Vergleich zu frischen Früchten?"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-medium text-stone-900 transition outline-none leading-relaxed"
-                  />
-                </div>
-
-                {/* 6. Honeypot Field */}
-                <div className="hidden absolute opacity-0 pointer-events-none -z-50" aria-hidden="true">
-                  <label htmlFor="modal_website_url">Website URL</label>
-                  <input
-                    id="modal_website_url"
-                    type="text"
-                    name="website_url"
-                    value={honeypot}
-                    onChange={(e) => setHoneypot(e.target.value)}
-                    tabIndex={-1}
-                    autoComplete="off"
-                  />
-                </div>
-
-                {/* 7. Modal Actions */}
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-stone-200/80">
-                  <p className="text-[11px] text-stone-500">
-                    <span className="text-rose-600 font-bold">*</span> Pflichtfelder für den echten Käuferschutz.
-                  </p>
-
-                  <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <button
-                      type="button"
-                      onClick={() => setIsFormOpen(false)}
-                      className="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs transition cursor-pointer"
-                    >
-                      Abbrechen
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="flex-1 sm:flex-initial px-6 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-extrabold text-xs shadow-xs transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                    >
-                      {isSubmitting ? 'Wird überprüft...' : 'Bewertung absenden'}
-                    </button>
-                  </div>
-                </div>
-              </form>
+                        <button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="flex-1 sm:flex-initial px-6 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-extrabold text-xs shadow-xs transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                        >
+                          {isSubmitting ? 'Wird übermittelt...' : 'Bewertung absenden'}
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                )}
+              </>
             )}
           </div>
         </div>

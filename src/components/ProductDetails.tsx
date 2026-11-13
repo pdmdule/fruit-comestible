@@ -17,12 +17,14 @@ export interface ProductDetailsProps {
     name_de: string;
     subtitle?: string;
     subtitle_de?: string;
+    short_description_de?: string;
     description?: string;
     description_de?: string;
     origin_country?: string;
     ingredients_de?: string;
     images?: string[];
     image_url?: string | null;
+    bowl_image_url?: string | null;
     form?: string;
     category?: string;
     variants?: ProductVariant[];
@@ -33,6 +35,8 @@ export interface ProductDetailsProps {
   primaryImage?: string;
   initialForm?: string;
   initialVariantId?: string;
+  preferredWeight?: number;
+  onFormSelect?: (targetSlug: string, formName: string, currentWeightGrams?: number) => void;
   reviewsSummary?: ProductReviewsSummary;
 }
 
@@ -43,6 +47,8 @@ export default function ProductDetails({
   primaryImage,
   initialForm,
   initialVariantId,
+  preferredWeight,
+  onFormSelect,
   reviewsSummary,
 }: ProductDetailsProps) {
   // 1. Inicijalno traženje varijante prema parametrima (ili podrazumevano)
@@ -65,6 +71,13 @@ export default function ProductDetails({
       if (byId) return byId;
     }
 
+    if (preferredWeight) {
+      const byPreferredWeight = variants.find(
+        (v) => v.weight_grams === preferredWeight && (v.stock_quantity ?? 1) > 0
+      );
+      if (byPreferredWeight) return byPreferredWeight;
+    }
+
     if (fParam) {
       const byForm = variants.find((v) => {
         const vf = (v.form || v.form_de || '').toLowerCase();
@@ -84,7 +97,7 @@ export default function ProductDetails({
 
     const inStock = variants.find((v) => (v.stock_quantity ?? 0) > 0);
     return inStock || variants[0];
-  }, [variants, initialVariantId, initialForm, product.form]);
+  }, [variants, initialVariantId, initialForm, preferredWeight, product.form]);
 
   // JEDAN izvor istine za celu stranicu proizvoda - selektirana varijanta u lokalnom React stanju
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | undefined>(getInitialVariant);
@@ -153,6 +166,9 @@ export default function ProductDetails({
   const displaySubtitle = useMemo(() => {
     if (selectedVariant?.subtitle) return selectedVariant.subtitle;
     if (selectedVariant?.subtitle_de) return selectedVariant.subtitle_de;
+    if (product.subtitle_de) return product.subtitle_de;
+    if (product.short_description_de) return product.short_description_de;
+    if (product.subtitle) return product.subtitle;
 
     if (formLower === 'granulat') {
       return 'Fruchtiger Knusper-Crunch – ideal für Bowls, Müsli und feine Rezepte.';
@@ -161,11 +177,11 @@ export default function ProductDetails({
       return '100% reines Fruchtpulver – perfekt für Smoothies, Shakes & Backkreationen.';
     }
     if (formLower === 'ganz') {
-      return product.subtitle_de || 'Schonend gefriergetrocknete Schweizer Früchte voller Aroma und Crunch.';
+      return 'Schonend gefriergetrocknete Schweizer Früchte voller Aroma und Crunch.';
     }
 
-    return product.subtitle_de || product.subtitle || '';
-  }, [selectedVariant, product.subtitle_de, product.subtitle, formLower]);
+    return '';
+  }, [selectedVariant, product.subtitle_de, product.short_description_de, product.subtitle, formLower]);
 
   // 3. Dinamički opis (Description)
   const displayDescription = useMemo(() => {
@@ -236,24 +252,18 @@ export default function ProductDetails({
   const displayIngredients = isFallbackIngredients ? fallbackIngredients : rawIngredients;
   const isMultiIngredient = !isFallbackIngredients && displayIngredients.includes(',');
 
-  // 6. Dinamički popis slika prema odabranoj varijanti (Pulver / Granulat / Ganz / pakovanje)
+  // 6. Dinamički popis slika prema odabranoj varijanti i proizvodu (images, image_url, bowl_image_url)
   const activeImages = useMemo(() => {
-    if (selectedVariant?.images && selectedVariant.images.length > 0) {
-      return selectedVariant.images.filter(Boolean) as string[];
-    }
-    if (selectedVariant?.image_url) {
-      return [
-        selectedVariant.image_url,
-        ...(product.images || []),
-      ].filter(Boolean) as string[];
-    }
-    if (product.images && product.images.length > 0) {
-      return product.images.filter(Boolean) as string[];
-    }
-    if (product.image_url) {
-      return [product.image_url];
-    }
-    return product.images || (product.image_url ? [product.image_url] : []);
+    const collected = [
+      ...(selectedVariant?.images || []),
+      selectedVariant?.image_url,
+      selectedVariant?.bowl_image_url,
+      ...(product.images || []),
+      product.image_url,
+      product.bowl_image_url,
+    ].filter((img): img is string => typeof img === 'string' && img.trim().length > 0);
+
+    return Array.from(new Set(collected));
   }, [selectedVariant, product]);
 
   return (
@@ -447,6 +457,7 @@ export default function ProductDetails({
             availableForms={availableForms}
             selectedVariant={selectedVariant}
             onVariantChange={handleSelectVariant}
+            onFormSelect={onFormSelect}
             reviewsSummary={reviewsSummary}
           />
         </div>

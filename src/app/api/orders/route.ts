@@ -146,7 +146,7 @@ export async function POST(req: NextRequest) {
     }
 
     const calculatedTotal = Math.max(0, Math.round((subtotalChf + shippingChf - verifiedDiscountChf) * 100) / 100);
-    const totalChf = calculatedTotal > 0 ? calculatedTotal : Number(body.total_chf);
+    const totalChf = !isNaN(calculatedTotal) ? calculatedTotal : Number(body.total_chf);
 
     if (isNaN(totalChf) || totalChf < 0) {
       return NextResponse.json(

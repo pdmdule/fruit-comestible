@@ -19,34 +19,51 @@ interface ReviewRequestBody {
   productId: string;
   authorName: string;
   authorLocation?: string;
-  email: string;
-  orderNumber: string;
   rating: number;
   comment: string;
   usageTag?: string;
   website_url?: string; // Honeypot field
 }
 
-// Regex to check basic email validity
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 export async function POST(req: NextRequest) {
   try {
+    // 1. Authenticate user via Bearer token from Supabase session
+    const authHeader = req.headers.get('authorization') || '';
+    const token = authHeader.toLowerCase().startsWith('bearer ')
+      ? authHeader.slice(7).trim()
+      : '';
+
+    if (!token) {
+      return NextResponse.json(
+        { error: 'Du musst angemeldet sein, um eine Bewertung abzugeben.' },
+        { status: 401 }
+      );
+    }
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabaseAdmin.auth.getUser(token);
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Du musst angemeldet sein, um eine Bewertung abzugeben.' },
+        { status: 401 }
+      );
+    }
+
     const body = (await req.json()) as Partial<ReviewRequestBody>;
     const {
       productId,
       authorName,
       authorLocation,
-      email,
-      orderNumber,
       rating,
       comment,
       usageTag,
       website_url,
     } = body;
 
-    // 1. Honeypot check (anti-spam bot trap)
-    // If a bot fills the hidden website_url field, silently accept without writing to DB
+    // 2. Honeypot check (anti-spam bot trap)
     if (website_url && website_url.trim().length > 0) {
       return NextResponse.json(
         {
@@ -58,7 +75,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. Basic required fields validation
+    // 3. Validate input fields
     if (!productId || typeof productId !== 'string') {
       return NextResponse.json(
         { error: 'Produkt-ID fehlt oder ist ungültig.' },
@@ -70,25 +87,6 @@ export async function POST(req: NextRequest) {
     if (!cleanAuthorName || cleanAuthorName.length < 2) {
       return NextResponse.json(
         { error: 'Bitte gib deinen Namen ein (mindestens 2 Zeichen).' },
-        { status: 400 }
-      );
-    }
-
-    const cleanEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
-    if (!cleanEmail || !EMAIL_REGEX.test(cleanEmail)) {
-      return NextResponse.json(
-        { error: 'Bitte gib eine gültige E-Mail-Adresse ein.' },
-        { status: 400 }
-      );
-    }
-
-    // Normalizuj order_number: iz "#FC-1111" ili "FC-1111" ili " 1111 " izvlači samo brojke "1111"
-    const rawOrderNumber = typeof orderNumber === 'string' ? orderNumber : String(orderNumber ?? '');
-    const cleanOrderNumber = rawOrderNumber.replace(/[^0-9]/g, '').trim();
-
-    if (!cleanOrderNumber) {
-      return NextResponse.json(
-        { error: 'Bitte gib eine gültige Bestellnummer ein (z. B. 1111).' },
         { status: 400 }
       );
     }
@@ -109,80 +107,74 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 3. Striktna provera u tabeli 'orders'
-    // Kolona order_number u tabeli orders je tipa integer
-    const numOrder = parseInt(cleanOrderNumber, 10);
-    let orderQuery = supabaseAdmin
-      .from('orders')
-      .select('id, order_number, customer_email');
-
-    if (!isNaN(numOrder)) {
-      orderQuery = orderQuery.eq('order_number', numOrder);
-    } else {
-      orderQuery = orderQuery.eq('order_number', cleanOrderNumber);
-    }
-
-    const { data: existingOrder, error: orderError } = await orderQuery
-      .or(`customer_email.ilike.${cleanEmail},customer_email.ilike.%${cleanEmail}%`)
-      .limit(1)
-      .maybeSingle();
-
-    if (orderError) {
-      console.error('Error querying orders table in Supabase:', orderError);
-    }
-
-    const isServiceRoleConfigured = Boolean(
-      process.env.SUPABASE_SERVICE_ROLE_KEY &&
-        process.env.SUPABASE_SERVICE_ROLE_KEY.trim().length > 0 &&
-        process.env.SUPABASE_SERVICE_ROLE_KEY !== process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    );
-
-    // Ako je konfigurisan SUPABASE_SERVICE_ROLE_KEY (ili ako je porudžbina uspešno pronađena u bazi)
-    if (isServiceRoleConfigured) {
-      if (orderError || !existingOrder) {
-        return NextResponse.json(
-          {
-            error:
-              'Keine Bestellung mit dieser Bestellnummer und E-Mail-Adresse gefunden. Bitte überprüfe deine Angaben.',
-          },
-          { status: 400 }
-        );
-      }
-    } else if (!existingOrder) {
-      // Ako SUPABASE_SERVICE_ROLE_KEY nije u .env.local, RLS na tabeli 'orders' blokira SELECT anonimnom klijentu.
-      // Proveravamo format broja porudžbine kako korisnik ne bi bio trajno blokiran lažnom greškom.
-      const isValidOrderFormat = cleanOrderNumber.length >= 3 && cleanEmail.includes('@');
-      if (!isValidOrderFormat) {
-        return NextResponse.json(
-          {
-            error:
-              'Keine Bestellung mit dieser Bestellnummer und E-Mail-Adresse gefunden. Bitte überprüfe deine Angaben.',
-          },
-          { status: 400 }
-        );
-      }
-      console.warn(
-        'Hinweis: SUPABASE_SERVICE_ROLE_KEY ist in .env.local nicht gesetzt. RLS auf der Tabelle "orders" verhindert das Lesen ohne Service-Role-Schlüssel.'
-      );
-    }
-
-    // 4. Spreči višestruko ocenjivanje istog proizvoda sa istom porudžbinom
-    const { data: duplicateReview, error: dupError } = await supabaseAdmin
-      .from('product_reviews')
-      .select('id')
-      .eq('product_id', productId)
-      .eq('order_number', cleanOrderNumber)
-      .limit(1)
-      .maybeSingle();
-
-    if (!dupError && duplicateReview) {
+    const userEmail = (user.email || '').trim().toLowerCase();
+    if (!userEmail) {
       return NextResponse.json(
-        { error: 'Du hast dieses Produkt für diese Bestellung bereits bewertet.' },
+        { error: 'Keine gültige E-Mail-Adresse im Benutzerkonto gefunden.' },
         { status: 400 }
       );
     }
 
-    // 5. Upis nove recenzije u product_reviews sa cleanOrderNumber
+    // 4. Prevent duplicate reviews per user/email for the same product
+    const { data: existingByUserId } = await supabaseAdmin
+      .from('product_reviews')
+      .select('id')
+      .eq('product_id', productId)
+      .eq('user_id', user.id)
+      .limit(1)
+      .maybeSingle();
+
+    if (existingByUserId) {
+      return NextResponse.json(
+        { error: 'Du hast dieses Produkt bereits bewertet.' },
+        { status: 400 }
+      );
+    }
+
+    const { data: existingByEmail } = await supabaseAdmin
+      .from('product_reviews')
+      .select('id')
+      .eq('product_id', productId)
+      .ilike('email', userEmail)
+      .limit(1)
+      .maybeSingle();
+
+    if (existingByEmail) {
+      return NextResponse.json(
+        { error: 'Du hast dieses Produkt bereits bewertet.' },
+        { status: 400 }
+      );
+    }
+
+    // 5. Smart Verified Purchase check in orders table (silent background check)
+    let isVerifiedPurchase = false;
+    try {
+      const { data: matchingOrderByUser } = await supabaseAdmin
+        .from('orders')
+        .select('id')
+        .eq('user_id', user.id)
+        .limit(1)
+        .maybeSingle();
+
+      if (matchingOrderByUser) {
+        isVerifiedPurchase = true;
+      } else {
+        const { data: matchingOrderByEmail } = await supabaseAdmin
+          .from('orders')
+          .select('id')
+          .ilike('customer_email', userEmail)
+          .limit(1)
+          .maybeSingle();
+
+        if (matchingOrderByEmail) {
+          isVerifiedPurchase = true;
+        }
+      }
+    } catch {
+      // Ignore silent verification errors so authenticated users can still submit reviews
+    }
+
+    // 6. Insert new review (requires admin approval)
     const cleanUsageTag =
       typeof usageTag === 'string' && usageTag.trim().length > 0
         ? usageTag.trim()
@@ -197,15 +189,16 @@ export async function POST(req: NextRequest) {
       .from('product_reviews')
       .insert({
         product_id: productId,
+        user_id: user.id,
         author_name: cleanAuthorName,
         author_location: cleanLocation,
-        email: cleanEmail,
-        order_number: cleanOrderNumber,
+        email: userEmail,
+        order_number: null,
         rating: Math.round(numRating),
         comment: cleanComment,
         usage_tag: cleanUsageTag,
-        is_verified_purchase: true,
-        is_approved: false, // Zahteva moderatorsko odobrenje pre prikazivanja
+        is_verified_purchase: isVerifiedPurchase,
+        is_approved: false,
       });
 
     if (insertError) {

@@ -13,11 +13,8 @@ import SeoContentSection from '@/components/SeoContentSection';
 import BenefitSpotlightCarousel from '@/components/BenefitSpotlightCarousel';
 import SnackFinder from '@/components/SnackFinder';
 import DailyRecipeCard from '@/components/DailyRecipeCard';
-import {
-  DEFAULT_RECIPES,
-  getDailyRecipe,
-  type DailyRecipe,
-} from '@/lib/dailyRecipes';
+import { getDailyRecipe, type DailyRecipe } from '@/lib/dailyRecipes';
+import { FRUIT_FAMILIES } from '@/lib/productForms';
 import { getProductDisplayOrigin } from '@/lib/productOrigins';
 import { getProductDisplayImage } from '@/lib/utils';
 import {
@@ -118,9 +115,10 @@ export default async function HomePage() {
   const { data: recipePostsData } = await supabase
     .from('blog_posts')
     .select(
-      'id, slug, title_de, summary_de, category, recipe_data, image_url, cover_image_url'
+      'id, slug, title_de, summary_de, excerpt_de, cover_image_url, image_url, reading_time_minutes, category, recipe_data, related_product_slugs, published_at'
     )
-    .ilike('category', '%rezept%');
+    .or('category.ilike.%rezept%,recipe_data.not.is.null')
+    .order('published_at', { ascending: false });
 
   // Bestsellers: 6 items (5 on desktop, 6 on mobile/tablet)
   const featuredProducts = products.filter((p) => p.is_featured);
@@ -143,7 +141,7 @@ export default async function HomePage() {
     created_at: p.published_at,
   }));
 
-  const dbRecipes: DailyRecipe[] = (recipePostsData || []).map((post) => {
+  const dbRecipes: DailyRecipe[] = (recipePostsData || []).map((post: any) => {
     let recipeMeta: { prep_time?: string; difficulty?: string; servings?: string } = {};
     if (post.recipe_data) {
       try {
@@ -151,41 +149,76 @@ export default async function HomePage() {
           typeof post.recipe_data === 'string'
             ? JSON.parse(post.recipe_data)
             : post.recipe_data;
-      } catch (e) {
-        // ignore
+      } catch {
+        // ignore malformed JSON
       }
     }
 
-    const s = post.slug.toLowerCase();
-    let featSlug = 'himbeeren-ganz';
-    let featName = 'Gefriergetrocknete Himbeeren (Ganz)';
-    let featImg = '/images/spotlight/himbeeren-bowl.png';
-
-    if (s.includes('erdbeer')) {
-      featSlug = 'erdbeeren-ganz';
-      featName = 'Gefriergetrocknete Erdbeeren (Hälften)';
-      featImg = '/images/spotlight/erdbeeren-bowl.png';
-    } else if (s.includes('heidelbeer')) {
-      featSlug = 'echte-heidelbeere-ganz';
-      featName = 'Gefriergetrocknete Echte Heidelbeere (Ganz)';
-      featImg = '/images/spotlight/heidelbeeren-bowl.png';
-    } else if (s.includes('mango')) {
-      featSlug = 'mango-wuerfel';
-      featName = 'Gefriergetrocknete Mango (Würfel)';
-      featImg = '/images/spotlight/mango-bowl.png';
-    } else if (s.includes('cassis') || s.includes('johannisbeere')) {
-      featSlug = 'schwarze-johannisbeere-ganz';
-      featName = 'Gefriergetrocknete Schwarze Johannisbeere';
-      featImg = '/images/spotlight/schwarze-johannisbeere-bowl.png';
-    } else if (s.includes('aprikose')) {
-      featSlug = 'aprikose-schnitze';
-      featName = 'Gefriergetrocknete Aprikose (Schnitze)';
-      featImg = '/logo.webp';
-    } else if (s.includes('zwetschgen')) {
-      featSlug = 'zwetschgen-schnitze';
-      featName = 'Gefriergetrocknete Zwetschgen (Schnitze)';
-      featImg = '/logo.webp';
+    let rawRelatedSlugs: string[] = [];
+    if (Array.isArray(post.related_product_slugs)) {
+      rawRelatedSlugs = post.related_product_slugs;
+    } else if (
+      typeof post.related_product_slugs === 'string' &&
+      post.related_product_slugs.trim().length > 0
+    ) {
+      try {
+        const parsed = JSON.parse(post.related_product_slugs);
+        rawRelatedSlugs = Array.isArray(parsed) ? parsed : [post.related_product_slugs.trim()];
+      } catch {
+        rawRelatedSlugs = post.related_product_slugs
+          .split(',')
+          .map((s: string) => s.trim())
+          .filter(Boolean);
+      }
     }
+
+    let featuredProductSlug: string | undefined;
+    let featuredProductName: string | undefined;
+    let featuredProductImage: string | undefined;
+
+    for (const rawSlug of rawRelatedSlugs) {
+      const clean = String(rawSlug || '').trim().toLowerCase();
+      if (!clean) continue;
+
+      let matchedProduct = products.find((p) => p.slug?.toLowerCase() === clean);
+      let resolvedName: string | undefined;
+      let resolvedSlug: string | undefined;
+
+      if (!matchedProduct) {
+        for (const family of FRUIT_FAMILIES) {
+          if (family.dbSlug.toLowerCase() === clean) {
+            matchedProduct = products.find(
+              (p) => p.slug?.toLowerCase() === family.dbSlug.toLowerCase()
+            );
+            if (matchedProduct) break;
+          }
+          const matchedForm = family.forms.find(
+            (f) =>
+              f.slug.toLowerCase() === clean ||
+              f.aliases.some((a) => a.toLowerCase() === clean)
+          );
+          if (matchedForm) {
+            matchedProduct = products.find(
+              (p) => p.slug?.toLowerCase() === family.dbSlug.toLowerCase()
+            );
+            if (matchedProduct) {
+              resolvedName = matchedForm.name;
+              resolvedSlug = matchedForm.slug;
+              break;
+            }
+          }
+        }
+      }
+
+      if (matchedProduct) {
+        featuredProductSlug = resolvedSlug || matchedProduct.slug;
+        featuredProductName = resolvedName || matchedProduct.name_de || matchedProduct.name;
+        featuredProductImage = getProductDisplayImage(matchedProduct);
+        break;
+      }
+    }
+
+    const cleanImageUrl = String(post.cover_image_url || post.image_url || '').trim();
 
     return {
       id: post.id,
@@ -194,22 +227,16 @@ export default async function HomePage() {
       category: post.category || 'Rezepte',
       prepTime: recipeMeta.prep_time || '10 Min.',
       difficulty: recipeMeta.difficulty || 'Einfach',
-      description:
-        post.summary_de ||
-        'Köstliches Schweizer Rezept veredelt mit puren, schonend gefriergetrockneten Früchten.',
-      imageUrl:
-        post.image_url ||
-        post.cover_image_url ||
-        'https://images.unsplash.com/photo-1543528176-61b239494933?q=80&w=1200&auto=format&fit=crop',
-      featuredProductSlug: featSlug,
-      featuredProductName: featName,
-      featuredProductImage: featImg,
+      description: post.summary_de || post.excerpt_de || '',
+      imageUrl: cleanImageUrl,
+      featuredProductSlug,
+      featuredProductName,
+      featuredProductImage,
       servings: recipeMeta.servings,
     };
   });
 
-  const dailyRecipes = dbRecipes.length > 0 ? dbRecipes : DEFAULT_RECIPES;
-  const initialDailyRecipe = getDailyRecipe(dailyRecipes);
+  const initialDailyRecipe = getDailyRecipe(dbRecipes);
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 font-sans antialiased space-y-24 sm:space-y-32 pb-24">
@@ -373,13 +400,15 @@ export default async function HomePage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          <div className="lg:col-span-7 xl:col-span-8 flex flex-col">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className={initialDailyRecipe ? 'lg:col-span-7 xl:col-span-8 w-full' : 'lg:col-span-12 w-full'}>
             <SnackFinder products={products} />
           </div>
-          <div className="lg:col-span-5 xl:col-span-4 flex flex-col">
-            <DailyRecipeCard recipe={initialDailyRecipe} />
-          </div>
+          {initialDailyRecipe && (
+            <div className="lg:col-span-5 xl:col-span-4 w-full self-start">
+              <DailyRecipeCard recipe={initialDailyRecipe} />
+            </div>
+          )}
         </div>
       </section>
 

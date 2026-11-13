@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
@@ -51,6 +52,8 @@ export interface FormLink {
   label: string;
   href: string;
   isActive: boolean;
+  targetSlug?: string;
+  productId?: string;
 }
 
 interface ProductPurchaseSectionProps {
@@ -61,6 +64,7 @@ interface ProductPurchaseSectionProps {
   availableForms?: FormLink[];
   selectedVariant?: ProductVariant;
   onVariantChange?: (variant: ProductVariant) => void;
+  onFormSelect?: (targetSlug: string, formName: string, currentWeightGrams?: number) => void;
   reviewsSummary?: ProductReviewsSummary;
 }
 
@@ -72,6 +76,7 @@ export default function ProductPurchaseSection({
   availableForms = [],
   selectedVariant,
   onVariantChange,
+  onFormSelect,
   reviewsSummary,
 }: ProductPurchaseSectionProps) {
   const { addItem, openCart } = useCart();
@@ -98,9 +103,14 @@ export default function ProductPurchaseSection({
   const [quantity, setQuantity] = useState<number>(1);
   const [isAdded, setIsAdded] = useState<boolean>(false);
 
-  // Ref and state for the mobile sticky add-to-cart bar
+  // Ref and state for the sticky add-to-cart bar
   const mainCtaRef = useRef<HTMLDivElement>(null);
   const [showStickyBar, setShowStickyBar] = useState<boolean>(false);
+  const [isPortalReady, setIsPortalReady] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsPortalReady(true);
+  }, []);
 
   useEffect(() => {
     const el = mainCtaRef.current;
@@ -114,13 +124,13 @@ export default function ProductPurchaseSection({
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        const isPast = !entry.isIntersecting && entry.boundingClientRect.top < 0;
-        setShowStickyBar(isPast);
+        setShowStickyBar(entry.boundingClientRect.bottom < 80);
       },
       { root: null, threshold: 0 }
     );
 
     observer.observe(el);
+    checkVisibility();
     window.addEventListener('scroll', checkVisibility, { passive: true });
 
     return () => {
@@ -220,6 +230,7 @@ export default function ProductPurchaseSection({
     form: string;
     label: string;
     href?: string;
+    targetSlug?: string;
     isActive: boolean;
     matchingVariant?: ProductVariant;
   }
@@ -229,9 +240,7 @@ export default function ProductPurchaseSection({
     if (availableForms && availableForms.length > 0) {
       return availableForms.map((item: FormLink): FormButtonItem => {
         const itemFormLower = item.form.toLowerCase();
-        const isActive =
-          activeFormName === itemFormLower ||
-          (!activeFormName && item.isActive);
+        const isActive = item.isActive || (!availableForms.some((f) => f.isActive) && activeFormName === itemFormLower);
 
         const currentWeight = currentVariant?.weight_grams;
         const matchingVariant =
@@ -248,6 +257,7 @@ export default function ProductPurchaseSection({
           form: item.form,
           label: item.label,
           href: item.href,
+          targetSlug: item.targetSlug,
           isActive,
           matchingVariant,
         };
@@ -454,7 +464,14 @@ export default function ProductPurchaseSection({
                     key={item.form}
                     type="button"
                     onClick={() => {
-                      if (item.matchingVariant) {
+                      if (item.isActive) return;
+                      if (item.targetSlug && onFormSelect) {
+                        onFormSelect(
+                          item.targetSlug,
+                          item.form,
+                          currentVariant?.weight_grams
+                        );
+                      } else if (item.matchingVariant) {
                         handleSelectVariant(item.matchingVariant);
                       }
                     }}
@@ -639,67 +656,80 @@ export default function ProductPurchaseSection({
       </div>
     </div>
 
-    {/* Mobile Sticky Add-to-Cart Bar */}
-    <div
-      className={`md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-stone-200 p-3 shadow-lg transition-transform duration-300 ${
-        showStickyBar ? 'translate-y-0' : 'translate-y-full'
-      }`}
-      style={{
-        paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))',
-      }}
-    >
-      <div className="flex items-center justify-between gap-3 max-w-[1600px] mx-auto">
-        {/* Left Side: Thumbnail, Title in 1 line, Variant and Price */}
-        <div className="flex items-center gap-2.5 min-w-0 flex-1">
-          <div className="relative w-11 h-11 rounded-xl overflow-hidden bg-stone-100 border border-stone-200/80 shrink-0">
-            <Image
-              src={image || '/logo.webp'}
-              alt={productName || 'Produktbild'}
-              fill
-              unoptimized
-              sizes="44px"
-              className="object-cover"
-            />
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate font-medium text-sm text-stone-900 leading-tight">
-              {productName}
-            </p>
-            <p className="text-xs text-stone-500 font-semibold truncate mt-0.5">
-              {variantSummary} – CHF {unitPrice.toFixed(2)}
-            </p>
-          </div>
-        </div>
-
-        {/* Right Side: Compact CTA */}
-        <button
-          type="button"
-          onClick={handleAddToCart}
-          disabled={isOutOfStock}
-          className={`h-11 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all duration-200 shrink-0 cursor-pointer ${
-            isOutOfStock
-              ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
-              : isAdded
-              ? 'bg-emerald-700 text-white'
-              : 'bg-rose-600 hover:bg-rose-700 text-white active:scale-95'
+    {/* Responsive Sticky Add-to-Cart Bar mounted cleanly in document.body via createPortal */}
+    {isPortalReady &&
+      typeof document !== 'undefined' &&
+      createPortal(
+        <div
+          aria-hidden={!showStickyBar}
+          className={`fixed bottom-0 inset-x-0 md:inset-x-auto md:left-auto md:bottom-6 md:right-6 md:w-auto z-[90] transition-all duration-300 ${
+            showStickyBar
+              ? 'translate-y-0 opacity-100'
+              : 'translate-y-8 opacity-0 pointer-events-none'
           }`}
         >
-          {isOutOfStock ? (
-            <span>Ausverkauft</span>
-          ) : isAdded ? (
-            <>
-              <Check className="w-3.5 h-3.5 stroke-[3]" />
-              <span>Im Warenkorb!</span>
-            </>
-          ) : (
-            <>
-              <ShoppingBag className="w-3.5 h-3.5" />
-              <span>In den Warenkorb</span>
-            </>
-          )}
-        </button>
-      </div>
-    </div>
+          <div className="flex items-center justify-between md:justify-start gap-3 sm:gap-4 bg-white/95 md:bg-[#FAF8F5]/95 backdrop-blur-md border-t md:border border-stone-200 md:border-stone-300 shadow-lg md:shadow-xl md:rounded-2xl p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:px-4 md:py-3">
+            {/* Left Side: Thumbnail of active form, Title, Weight & Price */}
+            <div className="flex items-center gap-3 min-w-0 flex-1 md:flex-initial">
+              <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-lg md:rounded-xl overflow-hidden bg-[#F9F6F0] border border-stone-200/90 shrink-0">
+                <Image
+                  src={currentVariant?.image_url || image || '/logo.webp'}
+                  alt={productName || 'Produktbild'}
+                  fill
+                  unoptimized
+                  sizes="44px"
+                  className="object-contain p-1"
+                />
+              </div>
+              <div className="min-w-0 max-w-[180px] sm:max-w-[230px]">
+                <p className="truncate font-semibold text-xs sm:text-sm text-stone-900 leading-tight">
+                  {productName}
+                </p>
+                <p className="text-xs text-stone-600 truncate mt-0.5">
+                  {quantity > 1 ? `${quantity}× ` : ''}
+                  {currentVariant?.weight_grams
+                    ? `${currentVariant.weight_grams}g`
+                    : variantSummary}{' '}
+                  •{' '}
+                  <span className="font-bold text-stone-900">
+                    CHF {totalPrice.toFixed(2)}
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            {/* Right Side: Compact CTA */}
+            <button
+              type="button"
+              tabIndex={showStickyBar ? 0 : -1}
+              onClick={handleAddToCart}
+              disabled={isOutOfStock}
+              className={`shrink-0 h-10 sm:h-11 px-4 sm:px-5 rounded-xl md:rounded-full font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 shadow-sm transition-all duration-200 cursor-pointer ${
+                isOutOfStock
+                  ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
+                  : isAdded
+                  ? 'bg-emerald-700 text-white'
+                  : 'bg-rose-600 hover:bg-rose-700 md:bg-stone-900 md:hover:bg-stone-800 text-white active:scale-95'
+              }`}
+            >
+              {isOutOfStock ? (
+                <span>Ausverkauft</span>
+              ) : isAdded ? (
+                <>
+                  <Check className="w-3.5 h-3.5 stroke-[3]" />
+                  <span>Im Warenkorb!</span>
+                </>
+              ) : (
+                <>
+                  <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <span>In den Warenkorb</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>,
+        document.body
+      )}
   </>
   );
 }

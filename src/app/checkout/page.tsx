@@ -105,6 +105,8 @@ export default function CheckoutPage() {
     order_number: number;
     customer_email: string;
     total_chf: number;
+    coupon_code?: string | null;
+    discount_chf?: number | string | null;
     items?: any[];
   } | null>(null);
 
@@ -306,6 +308,8 @@ export default function CheckoutPage() {
       clearCart();
       setCompletedOrder({
         ...createdOrder,
+        coupon_code: createdOrder.coupon_code ?? appliedCoupon?.code ?? null,
+        discount_chf: createdOrder.discount_chf ?? discountChf ?? 0,
         items: createdOrder.items || orderItems,
       });
     } catch (err) {
@@ -388,9 +392,21 @@ export default function CheckoutPage() {
                   Bestellte Artikel ({completedOrder.items.length})
                 </span>
                 <span className="text-xs font-mono font-bold text-stone-900">
-                  Total: CHF {Number(completedOrder.total_chf || total).toFixed(2)}
+                  Total: CHF {Number(completedOrder.total_chf ?? 0).toFixed(2)}
                 </span>
               </div>
+
+              {completedOrder.coupon_code && Number(completedOrder.discount_chf) > 0 && (
+                <div className="flex items-center justify-between text-xs sm:text-sm text-emerald-700 bg-emerald-50/80 border border-emerald-200 px-3 py-1.5 rounded-lg mt-2">
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <span>🏷️ Gutscheincode:</span>
+                    <span className="font-mono font-bold uppercase">{completedOrder.coupon_code}</span>
+                  </span>
+                  <span className="font-semibold">
+                    - CHF {Number(completedOrder.discount_chf).toFixed(2)}
+                  </span>
+                </div>
+              )}
 
               <div className="divide-y divide-stone-100 max-h-64 overflow-y-auto pr-1">
                 {completedOrder.items.map((item: any, idx: number) => {

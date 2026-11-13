@@ -62,7 +62,7 @@ export default function CartDrawer() {
       role="dialog"
       aria-modal="true"
       aria-label="Warenkorb"
-      className={`fixed inset-0 z-50 overflow-hidden font-sans transition-all duration-300 ${
+      className={`fixed inset-0 z-[100] overflow-hidden font-sans transition-all duration-300 ${
         isCartOpen ? 'visible pointer-events-auto' : 'invisible pointer-events-none'
       }`}
     >
@@ -77,7 +77,7 @@ export default function CartDrawer() {
 
       {/* Drawer Container pinned to right */}
       <div
-        className={`fixed inset-y-0 right-0 z-50 flex max-w-full pl-6 sm:pl-10 transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-y-0 right-0 z-[100] flex max-w-full pl-6 sm:pl-10 transition-transform duration-300 ease-in-out ${
           isCartOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >

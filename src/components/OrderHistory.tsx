@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
 import {
   Package,
   Calendar,
@@ -13,7 +14,8 @@ import {
   ArrowRight,
   CreditCard,
   QrCode,
-  Sparkles,
+  RotateCcw,
+  Check,
 } from 'lucide-react';
 
 export interface OrderItemProduct {
@@ -26,6 +28,8 @@ export interface OrderItemProduct {
   image_url?: string;
   image?: string;
   product_id?: string;
+  variant_id?: string;
+  product_slug?: string;
   sku?: string;
   weight_grams?: number;
 }
@@ -34,6 +38,8 @@ export interface Order {
   id?: string;
   order_number: number | string;
   total_chf: number | string;
+  coupon_code?: string | null;
+  discount_chf?: number | string | null;
   order_status?: string;
   payment_status?: string;
   payment_method?: string;
@@ -54,7 +60,59 @@ interface OrderHistoryProps {
   isLoading?: boolean;
 }
 
+function parseOrderItems(rawItems: Order['items']): OrderItemProduct[] {
+  if (!rawItems) return [];
+  if (Array.isArray(rawItems)) return rawItems;
+  if (typeof rawItems === 'string') {
+    try {
+      const parsed = JSON.parse(rawItems);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.warn('Failed parsing order.items JSON:', e);
+    }
+  }
+  return [];
+}
+
 export default function OrderHistory({ orders, isLoading }: OrderHistoryProps) {
+  const { addItem, openCart } = useCart();
+  const [reorderingId, setReorderingId] = useState<string | null>(null);
+
+  const handleReorder = (order: OrderRecord) => {
+    const itemsToAdd = parseOrderItems(order.items);
+    if (itemsToAdd.length === 0) return;
+
+    const orderKey = String(order.id ?? order.order_number);
+
+    itemsToAdd.forEach((item, idx) => {
+      const itemName = item.name_de || item.name || 'Gefriergetrocknete Früchte';
+      const fallbackVariantId =
+        item.variant_id ||
+        item.sku ||
+        item.product_id ||
+        `${item.product_slug || itemName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${item.form || idx}`;
+
+      addItem({
+        productId: item.product_id || item.product_slug || fallbackVariantId,
+        variantId: fallbackVariantId,
+        name: itemName,
+        label: item.form || (item.weight_grams ? `${item.weight_grams}g` : 'Standard'),
+        weight_grams: item.weight_grams,
+        price: Number(item.price_chf ?? item.price ?? 0),
+        quantity: Math.max(1, Number(item.quantity || 1)),
+        image: item.image_url || item.image || '/images/placeholder.png',
+        sku: item.sku,
+      });
+    });
+
+    setReorderingId(orderKey);
+    openCart();
+
+    setTimeout(() => {
+      setReorderingId((prev) => (prev === orderKey ? null : prev));
+    }, 2000);
+  };
+
   if (isLoading) {
     return (
       <div className="bg-white border border-stone-200 rounded-3xl p-12 text-center text-stone-400 text-sm">
@@ -91,19 +149,8 @@ export default function OrderHistory({ orders, isLoading }: OrderHistoryProps) {
   return (
     <div className="space-y-5">
       {orders.map((order) => {
-        // Parse items safely if stored as JSON string
-        let parsedItems: OrderItemProduct[] = [];
-        if (order.items) {
-          if (Array.isArray(order.items)) {
-            parsedItems = order.items;
-          } else if (typeof order.items === 'string') {
-            try {
-              parsedItems = JSON.parse(order.items);
-            } catch (e) {
-              console.warn('Failed parsing order.items JSON:', e);
-            }
-          }
-        }
+        const parsedItems = parseOrderItems(order.items);
+        const orderKey = String(order.id ?? order.order_number);
 
         // Date formatting in Swiss format
         const orderDate = new Date(order.created_at);
@@ -271,7 +318,20 @@ export default function OrderHistory({ orders, isLoading }: OrderHistoryProps) {
               </div>
             )}
 
-            {/* Bottom Section: Delivery address & Payment Method */}
+            {/* Applied Coupon Discount */}
+            {order.coupon_code && Number(order.discount_chf) > 0 && (
+              <div className="flex items-center justify-between text-xs sm:text-sm text-emerald-700 bg-emerald-50/80 border border-emerald-200 px-3 py-1.5 rounded-lg mt-2">
+                <span className="flex items-center gap-1.5 font-medium">
+                  <span>🏷️ Gutscheincode:</span>
+                  <span className="font-mono font-bold uppercase">{order.coupon_code}</span>
+                </span>
+                <span className="font-semibold">
+                  - CHF {Number(order.discount_chf).toFixed(2)}
+                </span>
+              </div>
+            )}
+
+            {/* Bottom Section: Delivery address, Payment Method & Reorder CTA */}
             <div className="pt-3 border-t border-stone-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-stone-600">
               {/* Shipping Address */}
               {formattedAddress ? (
@@ -293,26 +353,49 @@ export default function OrderHistory({ orders, isLoading }: OrderHistoryProps) {
                 </div>
               )}
 
-              {/* Payment Method */}
-              <div className="flex items-center gap-2 shrink-0">
-                <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider">
-                  Zahlungsart:
-                </span>
-                <span className="inline-flex items-center gap-1.5 font-bold text-stone-800">
-                  {order.payment_method === 'bill' ? (
-                    <>
-                      <QrCode className="w-3.5 h-3.5 text-rose-700" />
-                      <span>QR-Rechnung</span>
-                    </>
-                  ) : order.payment_method === 'twint' ? (
-                    <span>TWINT</span>
-                  ) : (
-                    <>
-                      <CreditCard className="w-3.5 h-3.5 text-stone-600" />
-                      <span>Kreditkarte / Online</span>
-                    </>
-                  )}
-                </span>
+              {/* Payment Method & Reorder Button */}
+              <div className="flex flex-wrap items-center justify-between sm:justify-end gap-3 sm:gap-4 shrink-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider">
+                    Zahlungsart:
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 font-bold text-stone-800">
+                    {order.payment_method === 'bill' ? (
+                      <>
+                        <QrCode className="w-3.5 h-3.5 text-rose-700" />
+                        <span>QR-Rechnung</span>
+                      </>
+                    ) : order.payment_method === 'twint' ? (
+                      <span>TWINT</span>
+                    ) : (
+                      <>
+                        <CreditCard className="w-3.5 h-3.5 text-stone-600" />
+                        <span>Kreditkarte / Online</span>
+                      </>
+                    )}
+                  </span>
+                </div>
+
+                {parsedItems.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => handleReorder(order)}
+                    disabled={reorderingId === orderKey}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium bg-[#F4EFE6] text-stone-800 border border-stone-300 hover:bg-[#e8e0d2] transition-colors cursor-pointer disabled:opacity-50"
+                  >
+                    {reorderingId === orderKey ? (
+                      <span className="inline-flex items-center gap-1.5 text-emerald-800 font-semibold">
+                        <Check className="w-3.5 h-3.5" />
+                        <span>In den Warenkorb gelegt</span>
+                      </span>
+                    ) : (
+                      <>
+                        <RotateCcw className="w-3.5 h-3.5" />
+                        <span>Erneut bestellen</span>
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             </div>
           </div>

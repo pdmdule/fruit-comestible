@@ -1,27 +1,21 @@
 import React from 'react';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { supabase } from '@/lib/supabase';
-import ProductDetails from '@/components/ProductDetails';
-import { type ProductVariant } from '@/components/ProductPurchaseSection';
-import ProductNutritionChart, {
-  type MacroItem,
-} from '@/components/ProductNutritionChart';
-import ProductFaq, { type FaqItem } from '@/components/ProductFaq';
-import ProductOriginMap from '@/components/ProductOriginMap';
-import SuggestedProducts from '@/components/SuggestedProducts';
-import ProductReviewsSection from '@/components/ProductReviewsSection';
-import type { ProductReview, ProductReviewsSummary } from '@/types/reviews';
+import type { ProductVariant } from '@/components/ProductPurchaseSection';
+import type { MacroItem } from '@/components/ProductNutritionChart';
+import type { FaqItem } from '@/components/ProductFaq';
+import ProductPageClient, {
+  type ProductPageEntry,
+  type ProductRecordData,
+} from '@/components/ProductPageClient';
+import type { ProductReview } from '@/types/reviews';
 import {
   PRODUCT_ORIGINS,
   getProductOrigin,
-  getProductDisplayOrigin,
   type ProductOriginData,
 } from '@/data/productOrigins';
 import { getFruitFamilyInfo, expandProductsForCatalog } from '@/lib/productForms';
-import Breadcrumbs from '@/components/Breadcrumbs';
-import { ArrowLeft } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,24 +24,119 @@ interface PageProps {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-interface ProductRecord {
-  id: string;
-  slug: string;
-  name?: string;
-  name_de: string;
-  subtitle_de?: string;
-  description_de?: string;
-  origin_country?: string;
-  ingredients_de?: string;
-  images?: string[];
-  image_url?: string | null;
-  form?: string;
-  category?: string;
-  macro_distribution?: MacroItem[];
-  nutritional_values?: MacroItem[];
-  faq?: FaqItem[];
+interface RawProductRow extends ProductRecordData {
   variants?: ProductVariant[];
   product_variants?: ProductVariant[];
+}
+
+function getFormLabel(formName: string, overrideLabel?: string): string {
+  if (overrideLabel) return overrideLabel;
+  const fLower = formName.toLowerCase();
+  if (fLower === 'ganz') return 'Ganze Früchte';
+  if (fLower === 'granulat') return 'Granulat';
+  if (fLower === 'pulver') return 'Fruchtpulver';
+  return formName || 'Standard';
+}
+
+function getCategoryMeta(prod: RawProductRow): {
+  categoryLabel: string;
+  categoryHref: string;
+} {
+  const formValue = (prod.form || '').toLowerCase();
+  const catValue = (prod.category || '').toLowerCase();
+  const slugLower = (prod.slug || '').toLowerCase();
+
+  if (catValue.includes('schokolade') || slugLower.includes('schokolade')) {
+    return { categoryLabel: 'Schokolade', categoryHref: '/shop/schokolade' };
+  }
+  if (catValue.includes('geschenk') || catValue.includes('box') || slugLower.includes('box')) {
+    return { categoryLabel: 'Geschenkboxen', categoryHref: '/shop/geschenkboxen' };
+  }
+  if (
+    catValue.includes('snack') ||
+    catValue.includes('mix') ||
+    slugLower.includes('snack') ||
+    slugLower.includes('probier') ||
+    slugLower.includes('booster')
+  ) {
+    return { categoryLabel: 'Snacks & Mixes', categoryHref: '/shop/mixes' };
+  }
+  if (formValue === 'pulver' || slugLower.includes('pulver') || catValue.includes('pulver')) {
+    return { categoryLabel: 'Fruchtpulver', categoryHref: '/shop/fruchtpulver' };
+  }
+  if (
+    formValue === 'granulat' ||
+    slugLower.includes('granulat') ||
+    catValue.includes('granulat') ||
+    catValue.includes('crunch')
+  ) {
+    return { categoryLabel: 'Granulat & Crunch', categoryHref: '/shop/granulat' };
+  }
+  return { categoryLabel: 'Ganze Früchte', categoryHref: '/shop/beeren' };
+}
+
+function buildProductEntry(
+  rawProd: RawProductRow,
+  formLabelOverride?: string
+): ProductPageEntry {
+  const prodOrigin: ProductOriginData =
+    PRODUCT_ORIGINS[rawProd.slug] ||
+    PRODUCT_ORIGINS[rawProd.slug.toLowerCase()] ||
+    getProductOrigin(rawProd.slug, rawProd.origin_country);
+
+  const rawVariants = rawProd.variants || rawProd.product_variants || [];
+  const formName = rawProd.form || rawVariants[0]?.form || rawVariants[0]?.form_de || 'Ganz';
+
+  const normalizedVariants: ProductVariant[] = rawVariants
+    .map((v: any) => {
+      const vForm = v.form || v.form_de || formName;
+      return {
+        ...v,
+        product_id: v.product_id || rawProd.id,
+        form: vForm,
+        form_de: v.form_de || vForm,
+        title: v.title || rawProd.name_de,
+        name_de: rawProd.name_de,
+        name: rawProd.name_de,
+        subtitle: v.subtitle || rawProd.subtitle_de || rawProd.short_description_de,
+        subtitle_de: v.subtitle_de || rawProd.subtitle_de || rawProd.short_description_de,
+        description: v.description || rawProd.description_de,
+        description_de: v.description_de || rawProd.description_de,
+        ingredients_de: rawProd.ingredients_de,
+        bowl_image_url: v.bowl_image_url || rawProd.bowl_image_url || null,
+      };
+    })
+    .sort((a, b) => (a.weight_grams || 0) - (b.weight_grams || 0));
+
+  const { categoryLabel, categoryHref } = getCategoryMeta(rawProd);
+
+  return {
+    product: {
+      id: rawProd.id,
+      slug: rawProd.slug,
+      name: rawProd.name,
+      name_de: rawProd.name_de || 'Gefriergetrocknete Früchte',
+      subtitle_de: rawProd.subtitle_de || '',
+      short_description_de: rawProd.short_description_de || '',
+      description_de: rawProd.description_de || '',
+      origin_country: prodOrigin.country,
+      ingredients_de: rawProd.ingredients_de,
+      images: rawProd.images || [],
+      image_url: rawProd.image_url || null,
+      bowl_image_url: rawProd.bowl_image_url || null,
+      form: formName,
+      category: rawProd.category,
+      macro_distribution: rawProd.macro_distribution as MacroItem[] | undefined,
+      nutritional_values: rawProd.nutritional_values as MacroItem[] | undefined,
+      faq: rawProd.faq as FaqItem[] | undefined,
+    },
+    variants: normalizedVariants,
+    originData: prodOrigin,
+    categoryLabel,
+    categoryHref,
+    formName,
+    formLabel: getFormLabel(formName, formLabelOverride),
+  };
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -77,6 +166,33 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     `)
     .eq('slug', slug)
     .maybeSingle();
+
+  if (!product && familyInfo?.activeForm?.slug) {
+    const byFormSlug = await supabase
+      .from('products')
+      .select(`
+        name_de,
+        subtitle_de,
+        description_de,
+        form,
+        images,
+        variants:product_variants (
+          id,
+          weight_grams,
+          price_chf,
+          stock_quantity,
+          form:form_de,
+          form_de,
+          label_de,
+          sku,
+          image_url,
+          images
+        )
+      `)
+      .ilike('slug', familyInfo.activeForm.slug)
+      .maybeSingle();
+    product = byFormSlug.data;
+  }
 
   if (!product && familyInfo?.dbSlugToFetch) {
     const fallback = await supabase
@@ -111,14 +227,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  // Determine fruit name (prioritize DB name_de, e.g. "Gefriergetrocknetes Erdbeerpulver")
   let productName = product?.name_de || familyInfo?.activeForm?.name || 'Gefriergetrocknete Früchte';
   if (!productName.toLowerCase().startsWith('gefriergetrocknet')) {
     productName = `Gefriergetrocknetes ${productName}`;
   }
 
-  // Weight packaging string from variants (e.g. "100g / 200g")
-  const rawMetadataVariants = ((product as any)?.variants || (product as any)?.product_variants || []);
+  const rawMetadataVariants = (product as any)?.variants || (product as any)?.product_variants || [];
   const variants = rawMetadataVariants.filter(
     (v: any) => v.weight_grams === 100 || v.weight_grams === 200
   );
@@ -127,10 +241,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   );
   const weightString = weights.length > 0 ? weights.map((w) => `${w}g`).join(' / ') : '100g / 200g';
 
-  // Target SEO Title: e.g. "Gefriergetrocknetes Erdbeerpulver 100g / 200g kaufen | fruit-Comestible"
   const metaTitle = `${productName} ${weightString} kaufen | fruit-Comestible`;
 
-  // Specific Description tailored to the form
   const formType = product?.form || familyInfo?.activeForm?.form;
   let metaDescription = '';
 
@@ -203,6 +315,7 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
         *,
         variants:product_variants (
           id,
+          product_id,
           weight_grams,
           price_chf,
           stock_quantity,
@@ -222,6 +335,7 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
         *,
         variants:product_variants (
           id,
+          product_id,
           weight_grams,
           price_chf,
           stock_quantity,
@@ -236,331 +350,111 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
       .order('created_at', { ascending: false }),
   ]);
 
-  let data = productRes.data;
-  let error = productRes.error;
+  const allProducts = ((allProductsRes.data || []) as RawProductRow[]).map((p) => {
+    const vars = p.variants || p.product_variants || [];
+    return {
+      ...p,
+      variants: vars,
+      product_variants: vars,
+    };
+  });
 
-  if (!data && familyInfo?.dbSlugToFetch) {
-    const fallbackRes = await supabase
-      .from('products')
-      .select(`
-        *,
-        variants:product_variants (
-          id,
-          weight_grams,
-          price_chf,
-          stock_quantity,
-          form:form_de,
-          form_de,
-          label_de,
-          sku,
-          image_url,
-          images
-        )
-      `)
-      .eq('slug', familyInfo.dbSlugToFetch)
-      .maybeSingle();
-    data = fallbackRes.data;
-    error = fallbackRes.error;
+  let data = productRes.data as RawProductRow | null;
+  const error = productRes.error;
+
+  // Fallback: case-insensitive slug match or matching legacy alias in FRUIT_FAMILIES
+  if (!data) {
+    const cleanSlug = slug.toLowerCase().trim();
+    data =
+      allProducts.find((p) => p.slug?.toLowerCase() === cleanSlug) ||
+      (familyInfo?.activeForm
+        ? allProducts.find(
+            (p) =>
+              p.slug?.toLowerCase() === familyInfo.activeForm.slug.toLowerCase() ||
+              familyInfo.activeForm.aliases.some(
+                (a) => a.toLowerCase() === p.slug?.toLowerCase()
+              )
+          )
+        : undefined) ||
+      (familyInfo?.dbSlugToFetch
+        ? allProducts.find(
+            (p) => p.slug?.toLowerCase() === familyInfo.dbSlugToFetch.toLowerCase()
+          )
+        : undefined) ||
+      null;
   }
 
   if (error || !data) {
     notFound();
   }
 
-  const rawProduct = data as ProductRecord;
-  rawProduct.product_variants = rawProduct.variants || rawProduct.product_variants || [];
-  rawProduct.variants = rawProduct.variants || rawProduct.product_variants || [];
-
-  (allProductsRes.data || []).forEach((p: any) => {
-    p.product_variants = p.variants || p.product_variants || [];
-    p.variants = p.variants || p.product_variants || [];
-  });
-
-  const catalogProducts = expandProductsForCatalog(allProductsRes.data || []);
-
-  // Sibling forms cross-linking:
-  let availableForms = familyInfo?.siblingLinks
-    ? familyInfo.siblingLinks.map((link) => ({
-        ...link,
-        label: link.form === 'Granulat' ? 'Granulat' : link.label,
-        isActive: Boolean(
-          link.href === `/produkte/${slug}` ||
-            (rawProduct.form &&
-              link.form.toLowerCase() === rawProduct.form.toLowerCase())
-        ),
-      }))
-    : [];
-
-  // Weight & Form variants: include all variants from this product
-  let rawVariants: ProductVariant[] = (rawProduct.variants || []).map((v: any) => {
-    const vForm = v.form || v.form_de || rawProduct.form || 'Ganz';
-    const formDef = familyInfo?.family?.forms.find(
-      (f) => f.form.toLowerCase() === vForm.toLowerCase()
-    );
-    return {
-      ...v,
-      form: vForm,
-      form_de: v.form_de || vForm,
-      title: v.title || formDef?.name || rawProduct.name_de,
-      name_de: formDef?.name || rawProduct.name_de,
-      name: formDef?.name || rawProduct.name_de,
-      subtitle: v.subtitle || formDef?.subtitle || rawProduct.subtitle_de,
-      subtitle_de: v.subtitle_de || formDef?.subtitle || rawProduct.subtitle_de,
-      description: v.description || rawProduct.description_de,
-      description_de: v.description_de || rawProduct.description_de,
-      ingredients_de: rawProduct.ingredients_de,
-    };
-  });
-
-  // If the product belongs to a fruit family with sibling forms, augment with sibling variants for instant switching
-  const distinctProductForms = new Set(
-    rawVariants.map((v) => (v.form || v.form_de)?.toLowerCase()).filter(Boolean)
-  );
-  if (distinctProductForms.size <= 1 && familyInfo?.siblingLinks) {
-    familyInfo.siblingLinks.forEach((siblingLink) => {
-      const siblingSlug = siblingLink.href.replace('/produkte/', '');
-      if (siblingSlug !== slug) {
-        const siblingProduct = (allProductsRes.data || []).find(
-          (p: any) => p.slug === siblingSlug
-        );
-        const siblingDef = familyInfo?.family?.forms.find(
-          (f) => f.slug === siblingSlug || f.form.toLowerCase() === siblingLink.form.toLowerCase()
-        );
-        if (siblingProduct?.variants && siblingProduct.variants.length > 0) {
-          siblingProduct.variants.forEach((sv: any) => {
-            const exists = rawVariants.some((v) => v.id === sv.id);
-            if (!exists) {
-              const vForm = sv.form || sv.form_de || siblingLink.form;
-              rawVariants.push({
-                ...sv,
-                form: vForm,
-                form_de: sv.form_de || vForm,
-                image_url: sv.image_url || siblingProduct.images?.[0] || null,
-                images:
-                  sv.images && sv.images.length > 0
-                    ? sv.images
-                    : (siblingProduct.images || []),
-                title: sv.title || siblingProduct.name_de || siblingDef?.name,
-                name_de: siblingProduct.name_de || siblingDef?.name,
-                name: siblingProduct.name_de || siblingDef?.name,
-                subtitle: sv.subtitle || siblingProduct.subtitle_de || siblingDef?.subtitle,
-                subtitle_de: sv.subtitle_de || siblingProduct.subtitle_de || siblingDef?.subtitle,
-                description: sv.description || siblingProduct.description_de || rawProduct.description_de,
-                description_de: sv.description_de || siblingProduct.description_de || rawProduct.description_de,
-                ingredients_de: siblingProduct.ingredients_de || rawProduct.ingredients_de,
-              });
-            }
-          });
-        }
-      }
-    });
-  }
-
-  let variants = rawVariants;
-  const targetFormName = (
-    initialForm ||
-    rawProduct.form ||
-    familyInfo?.activeForm?.form ||
-    'Ganz'
-  ).toLowerCase();
-
-  // Sort variants: matching target form first, then by weight_grams ascending
-  variants.sort((a, b) => {
-    const aForm = (a.form || a.form_de || '').toLowerCase();
-    const bForm = (b.form || b.form_de || '').toLowerCase();
-    const aMatches = aForm === targetFormName;
-    const bMatches = bForm === targetFormName;
-
-    if (aMatches && !bMatches) return -1;
-    if (!aMatches && bMatches) return 1;
-
-    return (a.weight_grams || 0) - (b.weight_grams || 0);
-  });
-
-  // Authentic product origin strictly mapped per product slug (no category generalization)
-  const currentOrigin: ProductOriginData =
-    PRODUCT_ORIGINS[slug] ||
-    PRODUCT_ORIGINS[rawProduct.slug] ||
-    getProductOrigin(slug, rawProduct.origin_country);
-
-  const displayOrigin = getProductDisplayOrigin({
-    slug,
-    name_de: rawProduct.name_de,
-    origin_country: currentOrigin.country,
-  });
-
-  const product = {
-    ...rawProduct,
-    slug,
-    origin_country: currentOrigin.country,
-    name_de: rawProduct.name_de || familyInfo?.activeForm.name || 'Gefriergetrocknete Früchte',
-    subtitle_de: rawProduct.subtitle_de || familyInfo?.activeForm.subtitle || '',
+  const rawProduct: RawProductRow = {
+    ...data,
+    variants: data.variants || data.product_variants || [],
+    product_variants: data.variants || data.product_variants || [],
   };
 
-  // Fetch approved customer reviews for this product
+  const catalogProducts = expandProductsForCatalog(allProducts);
+
+  // Resolve all sibling forms for this fruit family from real database products
+  const siblingProducts: ProductPageEntry[] = [];
+  const seenIds = new Set<string>();
+
+  if (familyInfo?.family?.forms) {
+    for (const formDef of familyInfo.family.forms) {
+      const candidateSlugs = [
+        formDef.slug.toLowerCase(),
+        ...formDef.aliases.map((a) => a.toLowerCase()),
+      ];
+      const matchedDbProduct =
+        rawProduct.slug && candidateSlugs.includes(rawProduct.slug.toLowerCase())
+          ? rawProduct
+          : allProducts.find((p) =>
+              candidateSlugs.includes((p.slug || '').toLowerCase())
+            );
+
+      if (matchedDbProduct && !seenIds.has(matchedDbProduct.id)) {
+        seenIds.add(matchedDbProduct.id);
+        siblingProducts.push(buildProductEntry(matchedDbProduct, formDef.label));
+      }
+    }
+  }
+
+  // Ensure the active product itself is always in siblingProducts
+  if (!seenIds.has(rawProduct.id)) {
+    seenIds.add(rawProduct.id);
+    siblingProducts.unshift(buildProductEntry(rawProduct));
+  }
+
+  // Prefetch approved reviews for the active product AND all sibling forms in one query
+  const siblingIds = siblingProducts.map((entry) => entry.product.id);
   const { data: reviewsData } = await supabase
     .from('product_reviews')
     .select('*')
-    .eq('product_id', rawProduct.id)
+    .in('product_id', siblingIds)
     .eq('is_approved', true)
     .order('created_at', { ascending: false });
 
-  const reviews: ProductReview[] = (reviewsData || []) as ProductReview[];
-  const totalReviews = reviews.length;
-  const averageRating =
-    totalReviews > 0
-      ? Number(
-          (
-            reviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0) /
-            totalReviews
-          ).toFixed(1)
-        )
-      : 0;
+  const initialReviewsByProductId: Record<string, ProductReview[]> = {};
+  siblingIds.forEach((id) => {
+    initialReviewsByProductId[id] = [];
+  });
 
-  const reviewsSummary: ProductReviewsSummary = {
-    averageRating,
-    totalReviews,
-  };
-
-  const primaryImage = product.images?.[0];
-
-  // Dynamic category and form mapping for breadcrumbs
-  const formValue = (rawProduct.form || familyInfo?.activeForm?.form || '').toLowerCase();
-  const catValue = (rawProduct.category || '').toLowerCase();
-  const slugLower = slug.toLowerCase();
-
-  let categoryLabel = 'Früchte & Beeren';
-  let categoryHref = '/shop/beeren';
-
-  if (catValue.includes('schokolade') || slugLower.includes('schokolade')) {
-    categoryLabel = 'Schokolade';
-    categoryHref = '/shop/schokolade';
-  } else if (catValue.includes('geschenk') || catValue.includes('box') || slugLower.includes('box')) {
-    categoryLabel = 'Geschenkboxen';
-    categoryHref = '/shop/geschenkboxen';
-  } else if (
-    catValue.includes('snack') ||
-    catValue.includes('mix') ||
-    slugLower.includes('snack') ||
-    slugLower.includes('probier') ||
-    slugLower.includes('booster')
-  ) {
-    categoryLabel = 'Snacks & Mixes';
-    categoryHref = '/shop/mixes';
-  } else if (formValue === 'pulver' || slugLower.includes('pulver') || catValue.includes('pulver')) {
-    categoryLabel = 'Fruchtpulver';
-    categoryHref = '/shop/fruchtpulver';
-  } else if (formValue === 'granulat' || slugLower.includes('granulat') || catValue.includes('granulat') || catValue.includes('crunch')) {
-    categoryLabel = 'Granulat & Crunch';
-    categoryHref = '/shop/granulat';
-  } else {
-    categoryLabel = 'Ganze Früchte';
-    categoryHref = '/shop/beeren';
-  }
+  ((reviewsData || []) as ProductReview[]).forEach((review) => {
+    if (!initialReviewsByProductId[review.product_id]) {
+      initialReviewsByProductId[review.product_id] = [];
+    }
+    initialReviewsByProductId[review.product_id].push(review);
+  });
 
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-900 font-sans antialiased">
-      {/* Top minimal breadcrumb / back bar */}
-      <nav className="border-b border-stone-200/80 bg-white/95 backdrop-blur-md sticky top-18 sm:top-20 z-20">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-3.5 flex items-center justify-between gap-4 text-xs">
-          <div className="flex-1 min-w-0">
-            <Breadcrumbs
-              customItems={[
-                { label: 'Shop', href: '/shop' },
-                { label: categoryLabel, href: categoryHref },
-                { label: product.name_de },
-              ]}
-            />
-          </div>
-          <Link
-            href={categoryHref || '/shop'}
-            className="hidden md:inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-500 hover:text-stone-900 transition shrink-0"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Zurück zur Übersicht</span>
-          </Link>
-        </div>
-      </nav>
-
-      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-10 sm:py-16 space-y-20">
-        {/* Main 2-Column Product Layout with Dynamic Gallery & Purchase Section */}
-        <React.Suspense fallback={<div className="min-h-[500px]" />}>
-          <ProductDetails
-            product={product}
-            variants={variants}
-            availableForms={availableForms}
-            primaryImage={primaryImage}
-            initialForm={initialForm}
-            initialVariantId={initialVariantId}
-            reviewsSummary={reviewsSummary}
-          />
-        </React.Suspense>
-
-        {/* Lower Section: Nutrition Donut Chart & FAQ Accordion */}
-        <div className="pt-16 border-t border-stone-200 space-y-12">
-          <div className="space-y-1.5">
-            <span className="text-xs font-extrabold tracking-widest uppercase text-stone-400">
-              Transparenz & Qualität
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-stone-900">
-              Nährwerte & Häufige Fragen
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
-            {/* Recharts Macronutrient Breakdown */}
-            <div className="lg:col-span-6">
-              <ProductNutritionChart
-                macroDistribution={product.macro_distribution || product.nutritional_values}
-              />
-            </div>
-
-            {/* Accessible FAQ Accordion */}
-            <div className="lg:col-span-6">
-              <ProductFaq
-                faq={product.faq}
-                productName={product.name_de}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Origin Map Section: Woher kommt deine Frucht? */}
-        <section className="pt-16 border-t border-stone-200 space-y-6">
-          <div className="space-y-1.5">
-            <span className="text-xs font-extrabold tracking-widest uppercase text-rose-600">
-              Herkunft & Anbau
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-stone-900">
-              Woher kommt deine Frucht?
-            </h2>
-            <p className="text-base text-stone-600">
-              Transparenz vom Feld bis in den Aromabeutel.
-            </p>
-          </div>
-
-          <ProductOriginMap
-            slug={product.slug}
-            originCountry={currentOrigin.country}
-            productName={product.name_de}
-            originData={currentOrigin}
-          />
-        </section>
-
-        {/* Customer Reviews Section */}
-        <ProductReviewsSection
-          productId={product.id}
-          productName={product.name_de}
-          reviews={reviews}
-          summary={reviewsSummary}
-        />
-
-        {/* Suggested Products Section: Das könnte dir auch gefallen */}
-        <SuggestedProducts
-          currentSlug={slug}
-          allProducts={catalogProducts}
-        />
-      </main>
-    </div>
+    <ProductPageClient
+      initialProductSlug={rawProduct.slug}
+      siblingProducts={siblingProducts}
+      initialReviewsByProductId={initialReviewsByProductId}
+      catalogProducts={catalogProducts}
+      initialForm={initialForm}
+      initialVariantId={initialVariantId}
+    />
   );
 }
