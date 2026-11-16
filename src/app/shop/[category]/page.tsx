@@ -29,11 +29,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!config) {
     return {
-      title: 'Kategorie nicht gefunden | fruit-Comestible Schweiz',
+      title: 'Kategorie nicht gefunden',
     };
   }
 
-  const canonicalUrl = `https://fruit-comestible.ch${config.canonicalPath}`;
+  const canonicalUrl = `https://www.fruit-comestible.ch${config.canonicalPath}`;
+  const fullOgTitle = `${config.metaTitle} | Fruit-Comestible Schweiz`;
 
   return {
     title: config.metaTitle,
@@ -42,16 +43,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: config.metaTitle,
+      title: fullOgTitle,
       description: config.metaDescription,
       url: canonicalUrl,
-      siteName: 'fruit-Comestible Schweiz',
+      siteName: 'Fruit-Comestible',
       locale: 'de_CH',
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: config.metaTitle,
+      title: fullOgTitle,
       description: config.metaDescription,
     },
   };
@@ -105,7 +106,7 @@ export default async function CategoryPage({ params }: PageProps) {
 
           <div className="flex items-center gap-2 text-emerald-800 font-medium shrink-0">
             <Truck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Kostenloser Schweizer Post Versand ab CHF 80.–</span>
+            <span>Kostenloser Schweizer Post Versand ab CHF 80.00–</span>
           </div>
         </div>
       </div>
@@ -148,15 +149,27 @@ export default async function CategoryPage({ params }: PageProps) {
               </p>
             </div>
 
-            <div className="space-y-1.5">
-              <span className="text-xl">🌿</span>
-              <h4 className="font-bold text-stone-900 text-sm">
-                100% Frucht – Nichts sonst
-              </h4>
-              <p className="text-xs text-stone-500 leading-relaxed">
-                Kein raffinierter Zucker, keine Schwefelung, 100% vegan und glutenfrei.
-              </p>
-            </div>
+            {config.slug === 'schokolade' ? (
+              <div className="space-y-1.5">
+                <span className="text-xl">🍫</span>
+                <h4 className="font-bold text-stone-900 text-sm">
+                  Feinste Milchschokolade &amp; Frucht
+                </h4>
+                <p className="text-xs text-stone-500 leading-relaxed">
+                  Zartschmelzende Milchschokolade trifft auf einen knusprigen Fruchtkern – ohne künstliche Konservierungsstoffe.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-1.5">
+                <span className="text-xl">🌿</span>
+                <h4 className="font-bold text-stone-900 text-sm">
+                  100% Frucht – Nichts sonst
+                </h4>
+                <p className="text-xs text-stone-500 leading-relaxed">
+                  Kein raffinierter Zucker, keine Schwefelung, 100% vegan und glutenfrei.
+                </p>
+              </div>
+            )}
 
             <div className="space-y-1.5">
               <span className="text-xl">🔒</span>
@@ -164,7 +177,7 @@ export default async function CategoryPage({ params }: PageProps) {
                 Bequeme & sichere Bezahlung
               </h4>
               <p className="text-xs text-stone-500 leading-relaxed">
-                TWINT, Kreditkarten und Schweizer QR-Rechnung mit 30 Tagen Zahlungsziel.
+                TWINT, Kreditkarten (Visa, Mastercard), Apple Pay und Google Pay.
               </p>
             </div>
           </div>

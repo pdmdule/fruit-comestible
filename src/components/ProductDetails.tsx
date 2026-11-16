@@ -8,6 +8,10 @@ import ProductPurchaseSection, {
 } from '@/components/ProductPurchaseSection';
 import { Leaf, Sparkles, ShieldCheck } from 'lucide-react';
 import type { ProductReviewsSummary } from '@/types/reviews';
+import {
+  isChocolateProduct,
+  hasStoneFruitPitNotice,
+} from '@/lib/productHelpers';
 
 export interface ProductDetailsProps {
   product: {
@@ -171,17 +175,19 @@ export default function ProductDetails({
     if (product.subtitle) return product.subtitle;
 
     if (formLower === 'granulat') {
-      return 'Fruchtiger Knusper-Crunch – ideal für Bowls, Müsli und feine Rezepte.';
+      return 'Fruchtiger Knusper-Crunch – ideal für Bowls, Müesli und feine Rezepte.';
     }
     if (formLower === 'pulver') {
       return '100% reines Fruchtpulver – perfekt für Smoothies, Shakes & Backkreationen.';
     }
     if (formLower === 'ganz') {
-      return 'Schonend gefriergetrocknete Schweizer Früchte voller Aroma und Crunch.';
+      return product.origin_country && !product.origin_country.toLowerCase().includes('schweiz')
+        ? 'Schonend gefriergetrocknete Früchte voller Aroma und Crunch.'
+        : 'Schonend gefriergetrocknete Schweizer Früchte voller Aroma und Crunch.';
     }
 
     return '';
-  }, [selectedVariant, product.subtitle_de, product.short_description_de, product.subtitle, formLower]);
+  }, [selectedVariant, product.subtitle_de, product.short_description_de, product.subtitle, product.origin_country, formLower]);
 
   // 3. Dinamički opis (Description)
   const displayDescription = useMemo(() => {
@@ -198,15 +204,17 @@ export default function ProductDetails({
     return (
       product.description_de ||
       product.description ||
-      'Schonend gefriergetrocknete Schweizer Früchte in Spitzenqualität. 100% Naturprodukt ohne künstliche Zusätze oder Zuckerzusatz.'
+      (product.origin_country && !product.origin_country.toLowerCase().includes('schweiz')
+        ? 'Schonend gefriergetrocknete Früchte in Spitzenqualität. 100% Naturprodukt ohne künstliche Zusätze oder Zuckerzusatz.'
+        : 'Schonend gefriergetrocknete Schweizer Früchte in Spitzenqualität. 100% Naturprodukt ohne künstliche Zusätze oder Zuckerzusatz.')
     );
-  }, [selectedVariant, product.description_de, product.description, formLower]);
+  }, [selectedVariant, product.description_de, product.description, product.origin_country, formLower]);
 
   // 4. Specifičnosti i način upotrebe (Usage / Primjena)
   const displayUsage = useMemo(() => {
     if (selectedVariant?.usage) return selectedVariant.usage;
     if (formLower === 'granulat') {
-      return 'Ideal für Porridge, Müsli-Crunch & Bowls';
+      return 'Ideal für Porridge, Müesli-Crunch & Bowls';
     }
     if (formLower === 'pulver') {
       return 'Perfekt für Smoothies, Shakes & Backkreationen';
@@ -224,7 +232,7 @@ export default function ProductDetails({
     if (formLower === 'granulat') {
       return [
         'Knuspriges Topping auf Açaí-Bowls, Joghurt & Quark',
-        'Fruchtiger Crunch im Müsli oder warmem Porridge',
+        'Fruchtiger Crunch im Müesli oder warmem Porridge',
         'Edles Dekor für Pralinen, Kuchen & feine Desserts',
       ];
     }
@@ -266,6 +274,9 @@ export default function ProductDetails({
     return Array.from(new Set(collected));
   }, [selectedVariant, product]);
 
+  const isChocolate = isChocolateProduct(product);
+  const showPitNotice = hasStoneFruitPitNotice(product);
+
   return (
     <div className="flex flex-col w-full items-stretch lg:grid lg:grid-cols-12 gap-8 lg:gap-16 lg:items-start">
       {/* Left Column: Image Gallery & Rich Product Story */}
@@ -284,7 +295,9 @@ export default function ProductDetails({
         <div className="order-2 lg:order-none w-full space-y-4 pt-2">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs font-extrabold tracking-widest uppercase text-rose-600">
-              100% Natürliche Beeren & Früchte
+              {isChocolate
+                ? 'Feinste Milchschokolade & Knuspriger Fruchtkern'
+                : '100% Natürliche Beeren & Früchte'}
             </span>
             <span className="inline-flex items-center justify-center px-2.5 py-1 rounded-full text-[11px] font-bold leading-none bg-stone-900 text-white shadow-2xs">
               <span className="leading-none">{activeFormDisplayLabel}</span>
@@ -361,49 +374,91 @@ export default function ProductDetails({
 
         {/* 4. Premium Quality Highlights (order-4 on mobile) */}
         <div className="order-4 lg:order-none w-full grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
-          <div className="p-4 rounded-3xl bg-stone-50 border border-stone-200/80 space-y-1.5">
-            <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center mb-1">
-              <Leaf className="w-4 h-4 stroke-[2.5]" />
-            </div>
-            <h3 className="text-sm font-bold text-stone-900">
-              100% Frucht & Vegan
-            </h3>
-            <p className="text-xs text-stone-700 leading-relaxed">
-              Frei von Industriezucker, künstlichen Aromen und Zusätzen.
-            </p>
-          </div>
+          {isChocolate ? (
+            <>
+              <div className="p-4 rounded-3xl bg-stone-50 border border-stone-200/80 space-y-1.5">
+                <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center mb-1">
+                  <Sparkles className="w-4 h-4 stroke-[2.5]" />
+                </div>
+                <h3 className="text-sm font-bold text-stone-900">
+                  Feinste Milchschokolade
+                </h3>
+                <p className="text-xs text-stone-700 leading-relaxed">
+                  Zartschmelzende Schokolade umhüllt ausgewählte gefriergetrocknete Früchte.
+                </p>
+              </div>
 
-          <div className="p-4 rounded-3xl bg-stone-50 border border-stone-200/80 space-y-1.5">
-            <div className="w-8 h-8 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center mb-1">
-              <Sparkles className="w-4 h-4 stroke-[2.5]" />
-            </div>
-            <h3 className="text-sm font-bold text-stone-900">
-              {formLower === 'granulat'
-                ? 'Knuspriger Crunch'
-                : formLower === 'pulver'
-                ? 'Feine Vermahlung'
-                : 'Schonendes Vakuum'}
-            </h3>
-            <p className="text-xs text-stone-700 leading-relaxed">
-              {formLower === 'granulat'
-                ? 'Intensiver Biss für Bowls, Porridge und knusprige Desserts.'
-                : formLower === 'pulver'
-                ? 'Samtiger Mahlgrad – löst sich gleichmässig und ohne Klumpen.'
-                : 'Liofilisation bewahrt bis zu 95% der Vitamine & Struktur.'}
-            </p>
-          </div>
+              <div className="p-4 rounded-3xl bg-stone-50 border border-stone-200/80 space-y-1.5">
+                <div className="w-8 h-8 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center mb-1">
+                  <Sparkles className="w-4 h-4 stroke-[2.5]" />
+                </div>
+                <h3 className="text-sm font-bold text-stone-900">
+                  Knuspriger Fruchtkern
+                </h3>
+                <p className="text-xs text-stone-700 leading-relaxed">
+                  Schonende Gefriertrocknung bewahrt Aroma und herrlich krosse Struktur.
+                </p>
+              </div>
 
-          <div className="p-4 rounded-3xl bg-stone-50 border border-stone-200/80 space-y-1.5">
-            <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-1">
-              <ShieldCheck className="w-4 h-4 stroke-[2.5]" />
-            </div>
-            <h3 className="text-sm font-bold text-stone-900">
-              Schweizer Standard
-            </h3>
-            <p className="text-xs text-stone-700 leading-relaxed">
-              Streng kontrollierte Rohstoffe und höchste Reinheit.
-            </p>
-          </div>
+              <div className="p-4 rounded-3xl bg-stone-50 border border-stone-200/80 space-y-1.5">
+                <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-1">
+                  <ShieldCheck className="w-4 h-4 stroke-[2.5]" />
+                </div>
+                <h3 className="text-sm font-bold text-stone-900">
+                  Ohne künstliche Konservierungsstoffe
+                </h3>
+                <p className="text-xs text-stone-700 leading-relaxed">
+                  Premium-Qualität aus streng kontrollierten Zutaten.
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="p-4 rounded-3xl bg-stone-50 border border-stone-200/80 space-y-1.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center mb-1">
+                  <Leaf className="w-4 h-4 stroke-[2.5]" />
+                </div>
+                <h3 className="text-sm font-bold text-stone-900">
+                  100% Frucht & Vegan
+                </h3>
+                <p className="text-xs text-stone-700 leading-relaxed">
+                  Frei von Industriezucker, künstlichen Aromen und Zusätzen.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-3xl bg-stone-50 border border-stone-200/80 space-y-1.5">
+                <div className="w-8 h-8 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center mb-1">
+                  <Sparkles className="w-4 h-4 stroke-[2.5]" />
+                </div>
+                <h3 className="text-sm font-bold text-stone-900">
+                  {formLower === 'granulat'
+                    ? 'Knuspriger Crunch'
+                    : formLower === 'pulver'
+                    ? 'Feine Vermahlung'
+                    : 'Schonendes Vakuum'}
+                </h3>
+                <p className="text-xs text-stone-700 leading-relaxed">
+                  {formLower === 'granulat'
+                    ? 'Intensiver Biss für Bowls, Porridge und knusprige Desserts.'
+                    : formLower === 'pulver'
+                    ? 'Samtiger Mahlgrad – löst sich gleichmässig und ohne Klumpen.'
+                    : 'Gefriertrocknung bewahrt bis zu 95% der Vitamine & Struktur.'}
+                </p>
+              </div>
+
+              <div className="p-4 rounded-3xl bg-stone-50 border border-stone-200/80 space-y-1.5">
+                <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-1">
+                  <ShieldCheck className="w-4 h-4 stroke-[2.5]" />
+                </div>
+                <h3 className="text-sm font-bold text-stone-900">
+                  Schweizer Standard
+                </h3>
+                <p className="text-xs text-stone-700 leading-relaxed">
+                  Streng kontrollierte Rohstoffe und höchste Reinheit.
+                </p>
+              </div>
+            </>
+          )}
         </div>
 
         {/* 5. Ingredients & Specification Details Box (order-5 on mobile) */}
@@ -439,10 +494,32 @@ export default function ProductDetails({
             <div>
               <dt className="text-xs font-medium text-stone-600">Besonderheit</dt>
               <dd className="font-bold text-stone-900 mt-1">
-                Ohne Gentechnik (GVO-frei) & glutenfrei
+                {isChocolate
+                  ? 'Ohne künstliche Konservierungsstoffe • Premium-Qualität'
+                  : 'Ohne Gentechnik (GVO-frei) & glutenfrei'}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-xs font-medium text-stone-600">Allergene</dt>
+              <dd
+                className={`font-bold mt-1 ${
+                  isChocolate ? 'text-amber-900' : 'text-stone-900'
+                }`}
+              >
+                {isChocolate
+                  ? 'Enthält Milch (Laktose) und Sojalecithin. Kann Spuren von Schalenfrüchten enthalten.'
+                  : 'Keine deklarationspflichtigen Allergene enthalten.'}
               </dd>
             </div>
           </dl>
+
+          {showPitNotice && (
+            <div className="pt-3 border-t border-stone-200/80">
+              <p className="text-xs text-stone-700 bg-amber-50/80 border border-amber-200/80 rounded-xl px-3.5 py-2.5 leading-relaxed">
+                <strong>Hinweis:</strong> Trotz sorgfältiger Verarbeitung und Qualitätskontrolle können bei entsteinten Früchten vereinzelt Fruchtsteine oder Steinfragmente im Produkt verbleiben.
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -453,6 +530,9 @@ export default function ProductDetails({
             variants={variants}
             productName={displayTitle}
             productId={product.id}
+            productSlug={product.slug}
+            productCategory={product.category}
+            productIngredients={product.ingredients_de}
             image={activeImages[0] || primaryImage}
             availableForms={availableForms}
             selectedVariant={selectedVariant}

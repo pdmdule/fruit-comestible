@@ -132,7 +132,7 @@ export default function ProductPageClient({
           `/produkte/${nextEntry.product.slug}`
         );
         if (nextEntry.product.name_de) {
-          document.title = `${nextEntry.product.name_de} | fruit-Comestible`;
+          document.title = `${nextEntry.product.name_de} kaufen – Gefriergetrocknet | Fruit-Comestible Schweiz`;
         }
       }
     },
@@ -240,6 +240,7 @@ export default function ProductPageClient({
             <div className="lg:col-span-6">
               <ProductNutritionChart
                 key={`nutrition-${activeProduct.id}`}
+                product={activeProduct}
                 macroDistribution={
                   activeProduct.macro_distribution ||
                   activeProduct.nutritional_values

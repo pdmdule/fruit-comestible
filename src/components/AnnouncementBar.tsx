@@ -13,15 +13,15 @@ export function AnnouncementBar({ className = '' }: AnnouncementBarProps) {
   const mobileMessages = [
     {
       icon: <Truck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />,
-      text: 'Kostenloser Versand ab CHF 80.–',
+      text: 'Kostenloser Versand ab CHF 80.00–',
     },
     {
       icon: <Leaf className="w-3.5 h-3.5 text-emerald-400 shrink-0" />,
-      text: 'Bio-zertifizierte Premium-Qualität',
+      text: 'Geprüft & verpackt in der Schweiz · Seit 2019',
     },
   ];
 
-  // Subtle mobile ticker to showcase both Free Shipping and Bio Certification
+  // Subtle mobile ticker to showcase both Free Shipping and 100% Natural Quality
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveMobileIndex((prev) => (prev + 1) % mobileMessages.length);
@@ -34,7 +34,7 @@ export function AnnouncementBar({ className = '' }: AnnouncementBarProps) {
       className={`w-full bg-stone-900 dark:bg-stone-950 text-white text-xs font-medium py-2 border-b border-stone-800 ${className}`}
     >
       <div className="max-w-7xl xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
-        {/* Mobilni prikaz: centrirano s ikonicom, naizmjenično (ticker) s Bio oznakom */}
+        {/* Mobilni prikaz: centrirano s ikonicom, naizmjenično (ticker) */}
         <div className="flex md:hidden items-center justify-center gap-1.5 text-center font-medium transition-all duration-300">
           {mobileMessages[activeMobileIndex].icon}
           <span>{mobileMessages[activeMobileIndex].text}</span>
@@ -51,13 +51,13 @@ export function AnnouncementBar({ className = '' }: AnnouncementBarProps) {
           {/* 2. Sredina */}
           <span className="inline-flex items-center gap-1.5 font-semibold text-white">
             <Truck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span>Kostenloser Versand ab CHF 80.–</span>
+            <span>Kostenloser Versand ab CHF 80.00–</span>
           </span>
 
           {/* 3. Desno */}
           <span className="inline-flex items-center gap-1.5">
             <Leaf className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span>Bio-zertifizierte Premium-Qualität</span>
+            <span>Geprüft & verpackt in der Schweiz · Seit 2019</span>
           </span>
         </div>
       </div>

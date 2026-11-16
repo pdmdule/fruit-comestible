@@ -74,19 +74,55 @@ export async function generateMetadata({
   const { slug } = await params;
   const { data: post } = await supabase
     .from('blog_posts')
-    .select('title_de, summary_de')
+    .select('title_de, summary_de, excerpt_de, image_url, cover_image_url, category, recipe_data')
     .eq('slug', slug)
     .single();
 
   if (!post) {
     return {
-      title: 'Artikel nicht gefunden | Fruit Comestible',
+      title: 'Beitrag nicht gefunden',
     };
   }
 
+  const isRecipe =
+    post.category?.toLowerCase().includes('rezept') || Boolean(post.recipe_data);
+  const metaTitle = isRecipe
+    ? `${post.title_de} – Rezept mit gefriergetrockneten Früchten`
+    : `${post.title_de} – Magazin`;
+  const metaDescription =
+    post.summary_de ||
+    post.excerpt_de ||
+    'Kreative Rezepte und Wissen rund um 100 % natürliche gefriergetrocknete Früchte bei Fruit-Comestible Schweiz.';
+  const ogImage =
+    post.image_url ||
+    post.cover_image_url ||
+    'https://www.fruit-comestible.ch/logo.webp';
+  const fullOgTitle = `${metaTitle} | Fruit-Comestible Schweiz`;
+
   return {
-    title: `${post.title_de} | Fruit Comestible Magazin`,
-    description: post.summary_de || 'Fruit Comestible Suisse Magazin & Rezepte',
+    title: metaTitle,
+    description: metaDescription,
+    openGraph: {
+      title: fullOgTitle,
+      description: metaDescription,
+      siteName: 'Fruit-Comestible',
+      locale: 'de_CH',
+      type: 'article',
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 675,
+          alt: post.title_de || 'Fruit-Comestible Rezept',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: fullOgTitle,
+      description: metaDescription,
+      images: [ogImage],
+    },
   };
 }
 
@@ -192,7 +228,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 print:p-0 print:max-w-none space-y-10 print:space-y-4">
         {/* Print-only Brand Header */}
         <div className="hidden print:block text-xs text-stone-500 border-b border-stone-200 pb-2 mb-4">
-          fruit-Comestible • 100 % natürliche gefriergetrocknete Früchte (www.fruit-comestible.ch)
+         fruit-comestible • 100 % natürliche gefriergetrocknete Früchte (www.fruit-comestible.ch)
         </div>
 
         {/* Article Header */}

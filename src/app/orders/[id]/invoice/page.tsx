@@ -215,6 +215,10 @@ export default function OrderInvoicePage() {
       ? 'QR-Rechnung'
       : order.payment_method === 'twint'
       ? 'TWINT'
+      : order.payment_method === 'apple_pay'
+      ? 'Apple Pay'
+      : order.payment_method === 'google_pay'
+      ? 'Google Pay'
       : 'Kreditkarte / Online';
 
   return (
@@ -248,7 +252,7 @@ export default function OrderInvoicePage() {
               Schweizer Qualität
             </p>
             <h1 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900">
-              fruit-Comestible
+             fruit-comestible
             </h1>
             <p className="text-xs sm:text-sm text-stone-600">
               100 % natürliche gefriergetrocknete Früchte
@@ -409,7 +413,7 @@ export default function OrderInvoicePage() {
         {/* Invoice Footer */}
         <footer className="pt-6 border-t border-stone-200 text-center text-xs text-stone-500 space-y-1">
           <p className="font-medium text-stone-700">
-            Vielen Dank für Ihre Bestellung bei fruit-Comestible!
+            Vielen Dank für Ihre Bestellung beifruit-comestible!
           </p>
           <p>
             Dieser Beleg wurde elektronisch erstellt und ist ohne Unterschrift gültig.

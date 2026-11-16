@@ -32,13 +32,20 @@ import {
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Gefriergetrocknete Früchte Schweiz | Fruit-Comestible',
+  title: {
+    absolute: 'Fruit-Comestible | 100 % natürliche gefriergetrocknete Früchte Schweiz',
+  },
   description:
-    'Premium gefriergetrocknete Früchte aus der Schweiz. 100% Naturprodukt ohne Zuckerzusatz & ultimativer Crunch. Entdecke gesunde Snacks für deinen Alltag!',
+    'Knusprige, schonend gefriergetrocknete Früchte in Premium-Qualität. 100 % natürlich, ohne Zuckerzusatz und voller Vitamine. Schneller Versand in der ganzen Schweiz.',
+  alternates: {
+    canonical: 'https://www.fruit-comestible.ch',
+  },
   openGraph: {
-    title: 'Gefriergetrocknete Früchte Schweiz | Fruit-Comestible',
+    title: 'Fruit-Comestible | 100 % natürliche gefriergetrocknete Früchte Schweiz',
     description:
-      'Premium gefriergetrocknete Früchte aus der Schweiz. 100% Naturprodukt ohne Zuckerzusatz & ultimativer Crunch.',
+      'Knusprige, schonend gefriergetrocknete Früchte in Premium-Qualität. 100 % natürlich, ohne Zuckerzusatz und voller Vitamine. Schneller Versand in der ganzen Schweiz.',
+    url: 'https://www.fruit-comestible.ch',
+    siteName: 'Fruit-Comestible',
     type: 'website',
     locale: 'de_CH',
   },
@@ -377,7 +384,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 3. Values Section (Warum Fruit-Comestible? Schweizer Qualität & echter Geschmack) */}
+      {/* 3. Values Section (Warumfruit-comestible? Schweizer Qualität & echter Geschmack) */}
       <ValuesSection />
 
       {/* 4. Visual Category Guide (Nach Verwendung wählen) */}
@@ -427,7 +434,7 @@ export default async function HomePage() {
             Wissenschaft & Natur
           </span>
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-stone-900">
-            Was ist Gefriertrocknung (Liofilisation)?
+            Was ist Gefriertrocknung (Gefriertrocknung)?
           </h2>
           <p className="text-base sm:text-lg text-stone-700 leading-relaxed">
             Die Gefriertrocknung ist die schonendste Methode zur Haltbarmachung von
@@ -444,7 +451,7 @@ export default async function HomePage() {
             <div className="space-y-4">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-700 text-white text-xs font-bold">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>Fruit Comestible Verfahren</span>
+                <span>fruit-comestible Verfahren</span>
               </div>
               <h3 className="text-2xl font-extrabold text-stone-900">
                 Schonende Vakuum-Gefriertrocknung
@@ -458,7 +465,7 @@ export default async function HomePage() {
               <ul className="space-y-3 pt-2 text-sm">
                 <li className="flex items-center gap-2.5 text-stone-800">
                   <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-                  <span><strong>Bis zu 95% Nährstoffe:</strong> Vitamine & Antioxidantien intakt</span>
+                  <span><strong>Schonende Gefriertrocknung: </strong> Farbe, Aroma und Geschmack bleiben erhalten.</span>
                 </li>
                 <li className="flex items-center gap-2.5 text-stone-800">
                   <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />

@@ -21,11 +21,20 @@ import {
 import Breadcrumbs from '@/components/Breadcrumbs';
 
 export const metadata: Metadata = {
-  title: 'Über uns | Unsere Geschichte & Philosophie | fruit-Comestible Suisse',
+  title: 'Über uns – Unsere Geschichte & Philosophie',
   description:
-    'Lernen Sie das Team und die Philosophie von fruit-Comestible kennen: Lukas Pem & Dušica Pem Perić über saubere, unbelastete Lebensmittel, faire Erzeugerpreise und Schweizer Qualitätsstandards.',
+    'Lernen Sie das Team und die Philosophie von Fruit-Comestible kennen: Lukas Pem & Dušica Pem Perić über naturbelassene Lebensmittel, faire Erzeugerpreise und Schweizer Qualitätsstandards.',
   alternates: {
-    canonical: 'https://fruit-comestible.ch/ueber-uns',
+    canonical: 'https://www.fruit-comestible.ch/ueber-uns',
+  },
+  openGraph: {
+    title: 'Über uns – Unsere Geschichte & Philosophie | Fruit-Comestible Schweiz',
+    description:
+      'Lernen Sie das Team und die Philosophie von Fruit-Comestible kennen: 100 % naturbelassene Früchte und Schweizer Qualitätsstandards.',
+    url: 'https://www.fruit-comestible.ch/ueber-uns',
+    siteName: 'Fruit-Comestible',
+    locale: 'de_CH',
+    type: 'website',
   },
 };
 
@@ -83,7 +92,7 @@ export default function UeberUnsPage() {
                 In Westeuropa haben wir es wegen der industriellen Landwirtschaft zum Teil schon
                 verlernt, wie naturbelassene und natürlich gereifte Lebensmittel schmecken. Wir
                 laden Sie dazu ein, dieses Gefühl, welches wir meistens nur noch aus unserer
-                Kindheit kennen, wieder zu erleben. Werden Sie Teil unserer fruit-Comestible
+                Kindheit kennen, wieder zu erleben. Werden Sie Teil unsererfruit-comestible
                 Familie – geniessen Sie mit uns saubere, unbelastete und nachhaltig produzierte
                 gefriergetrocknete Früchte.
               </p>
@@ -95,7 +104,7 @@ export default function UeberUnsPage() {
                 Lukas Pem
               </span>
               <span className="text-xs sm:text-sm text-stone-500 font-medium">
-                Geschäftsführer fruit-Comestible
+                Geschäftsführerfruit-comestible
               </span>
             </div>
           </div>
@@ -110,7 +119,7 @@ export default function UeberUnsPage() {
               Menschen mit Leidenschaft
             </span>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-stone-900 tracking-tight">
-              Das Team hinter fruit-Comestible
+              Das Team hinterfruit-comestible
             </h2>
             <p className="text-sm sm:text-base text-stone-600">
               Persönlich, qualitätsbewusst und mit echter kulinarischer Hingabe für Sie im Einsatz.
@@ -238,7 +247,7 @@ export default function UeberUnsPage() {
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>Geschützte geografische Herkunft der Beeren-Früchte</span>
+                    <span>Himbeeren mit geschützter geografischer Herkunft aus Serbien</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
@@ -397,7 +406,7 @@ export default function UeberUnsPage() {
                 By the way...
               </h3>
               <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
-                Klimaneutraler kostenloser Versand ab CHF 80.– mit Schweizer A-Post &amp; klimapositive, hochbarriere Verpackungen.
+                Klimaneutraler kostenloser Versand ab CHF 80.00– mit Schweizer A-Post &amp; klimapositive, Hochbarriere Verpackungen.
               </p>
             </div>
           </div>
@@ -428,7 +437,7 @@ export default function UeberUnsPage() {
                   F:
                 </span>
                 <h3 className="text-sm sm:text-base md:text-lg font-bold text-stone-900 leading-snug">
-                  Du blickst auf eine eindrückliche Laufbahn zurück – erster Fachlehrer für Systemgastronomie in der Schweiz, Küchenchef für 1500 Mahlzeiten täglich, Ausbildner, Prüfungsexperte und Prorektor/Rektor am IFK Weggis. Was bewegt jemanden nach über 11 Jahren in leitenden Bildungsfunktionen dazu, fruit-Comestible zu gründen?
+                  Du blickst auf eine eindrückliche Laufbahn zurück – erster Fachlehrer für Systemgastronomie in der Schweiz, Küchenchef für 1500 Mahlzeiten täglich, Ausbildner, Prüfungsexperte und Prorektor/Rektor am IFK Weggis. Was bewegt jemanden nach über 11 Jahren in leitenden Bildungsfunktionen dazu,fruit-comestible zu gründen?
                 </h3>
               </div>
 
@@ -491,7 +500,7 @@ export default function UeberUnsPage() {
                   F:
                 </span>
                 <h3 className="text-sm sm:text-base md:text-lg font-bold text-stone-900 leading-snug">
-                  Wie und wo ist die eigentliche Initialzündung für fruit-Comestible entstanden?
+                  Wie und wo ist die eigentliche Initialzündung fürfruit-comestible entstanden?
                 </h3>
               </div>
 
@@ -512,7 +521,7 @@ export default function UeberUnsPage() {
                   F:
                 </span>
                 <h3 className="text-sm sm:text-base md:text-lg font-bold text-stone-900 leading-snug">
-                  Was ist heute die wichtigste Mission von fruit-Comestible?
+                  Was ist heute die wichtigste Mission vonfruit-comestible?
                 </h3>
               </div>
 

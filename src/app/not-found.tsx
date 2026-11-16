@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { ArrowRight, Compass, Home, ShoppingBag } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: '404 – Seite nicht gefunden | Fruit Comestible',
+  title: '404 – Seite nicht gefunden',
   description:
-    'Die gesuchte Seite wurde leider nicht gefunden. Entdecke unsere 100% natürlichen gefriergetrockneten Früchte im Online-Shop.',
+    'Die gesuchte Seite wurde leider nicht gefunden. Entdecke unsere 100 % natürlichen gefriergetrockneten Früchte im Online-Shop.',
 };
 
 const QUICK_LINKS = [
@@ -14,7 +14,7 @@ const QUICK_LINKS = [
   { label: 'Fruchtpulver', href: '/shop/fruchtpulver' },
   { label: 'Schokolade', href: '/shop/schokolade' },
   { label: 'Rezepte & Wissen', href: '/blog' },
-  { label: 'Kontakt & Impressum', href: '/agb#gerichtsstand' },
+  { label: 'Kontakt & Impressum', href: '/impressum' },
 ];
 
 export default function NotFound() {

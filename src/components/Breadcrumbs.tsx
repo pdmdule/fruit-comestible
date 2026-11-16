@@ -21,9 +21,12 @@ const STATIC_SEGMENT_MAP: Record<string, { label: string; defaultHref?: string }
   shop: { label: 'Shop', defaultHref: '/shop' },
   produkte: { label: 'Shop', defaultHref: '/shop' },
   blog: { label: 'Magazin & Rezepte', defaultHref: '/blog' },
-  rezepte: { label: 'Rezepte', defaultHref: '/blog' },
+  rezepte: { label: 'Rezepte', defaultHref: '/rezepte' },
+  kontakt: { label: 'Kontakt', defaultHref: '/kontakt' },
   'ueber-uns': { label: 'Über uns', defaultHref: '/ueber-uns' },
-  agb: { label: 'AGB & Datenschutz', defaultHref: '/agb' },
+  agb: { label: 'AGB', defaultHref: '/agb' },
+  datenschutz: { label: 'Datenschutzerklärung', defaultHref: '/datenschutz' },
+  impressum: { label: 'Impressum', defaultHref: '/impressum' },
   checkout: { label: 'Kasse', defaultHref: '/checkout' },
   login: { label: 'Anmelden', defaultHref: '/login' },
   konto: { label: 'Mein Konto', defaultHref: '/konto' },
@@ -171,7 +174,7 @@ export function Breadcrumbs({
             <li className="inline-flex items-center shrink-0">
               <Link
                 href="/"
-                aria-label="Fruit Comestible Startseite"
+                aria-label="fruit-comestible Startseite"
                 className="inline-flex items-center gap-1.5 text-stone-500 hover:text-stone-900 transition-colors font-medium group"
               >
                 <Home className="w-3.5 h-3.5 text-stone-400 group-hover:text-stone-700 transition-colors" />

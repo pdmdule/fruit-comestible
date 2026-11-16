@@ -19,8 +19,30 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fruit Comestible | Schweizer Gefriergetrocknete Früchte",
-  description: "100% naturbelassene, gefriergetrocknete Schweizer & Europäische Früchte in Premium-Qualität.",
+  metadataBase: new URL("https://www.fruit-comestible.ch"),
+  title: {
+    default: "Fruit-Comestible | 100 % natürliche gefriergetrocknete Früchte Schweiz",
+    template: "%s | Fruit-Comestible Schweiz",
+  },
+  description:
+    "Knusprige, schonend gefriergetrocknete Früchte in Premium-Qualität. 100 % natürlich, ohne Zuckerzusatz und voller Vitamine. Schneller Versand in der ganzen Schweiz.",
+  keywords: [
+    "gefriergetrocknete Früchte Schweiz",
+    "Trockenfrüchte kaufen",
+    "Fruchtpulver",
+    "gefriergetrocknete Erdbeeren",
+    "gesunde Snacks Schweiz",
+    "Fruit-Comestible",
+  ],
+  openGraph: {
+    title: "Fruit-Comestible | 100 % natürliche gefriergetrocknete Früchte Schweiz",
+    description:
+      "Knusprige, schonend gefriergetrocknete Früchte in Premium-Qualität. 100 % natürlich, ohne Zuckerzusatz und voller Vitamine. Schneller Versand in der ganzen Schweiz.",
+    url: "https://www.fruit-comestible.ch",
+    siteName: "Fruit-Comestible",
+    locale: "de_CH",
+    type: "website",
+  },
   icons: {
     icon: "/logo.webp",
     shortcut: "/logo.webp",

@@ -15,7 +15,7 @@ interface CategoryGuideCard {
 const CATEGORY_GUIDES: CategoryGuideCard[] = [
   {
     id: 'muesli-crunch',
-    title: 'Müsli & Crunch',
+    title: 'Müesli & Crunch',
     tag: 'Granulat',
     targetName: 'Granulat & Crunch',
     href: '/shop/granulat',

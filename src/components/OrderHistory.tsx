@@ -368,6 +368,10 @@ export default function OrderHistory({ orders, isLoading }: OrderHistoryProps) {
                       </>
                     ) : order.payment_method === 'twint' ? (
                       <span>TWINT</span>
+                    ) : order.payment_method === 'apple_pay' ? (
+                      <span>Apple Pay</span>
+                    ) : order.payment_method === 'google_pay' ? (
+                      <span>Google Pay</span>
                     ) : (
                       <>
                         <CreditCard className="w-3.5 h-3.5 text-stone-600" />

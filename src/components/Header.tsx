@@ -85,12 +85,12 @@ export default function Header() {
           <div className="flex items-center relative z-10">
             <Link
               href="/"
-              aria-label="Fruit Comestible Startseite"
+              aria-label="fruit-comestible Startseite"
               className="flex items-center shrink-0 transition-opacity duration-200 hover:opacity-85 focus:outline-none"
             >
               <Image
                 src="/logo.webp"
-                alt="Fruit Comestible Logo"
+                alt="fruit-comestible Logo"
                 width={120}
                 height={120}
                 priority
@@ -284,12 +284,12 @@ export default function Header() {
               <Link
                 href="/"
                 onClick={() => setIsMobileMenuOpen(false)}
-                aria-label="Fruit Comestible Startseite"
+                aria-label="fruit-comestible Startseite"
                 className="flex items-center transition-opacity duration-200 hover:opacity-85 shrink-0"
               >
                 <Image
                   src="/logo.webp"
-                  alt="Fruit Comestible Logo"
+                  alt="fruit-comestible Logo"
                   width={100}
                   height={100}
                   priority
@@ -405,7 +405,7 @@ export default function Header() {
             <div className="p-4 mx-4 my-2 rounded-2xl bg-stone-50 border border-stone-200/80 space-y-2 text-xs text-stone-600">
               <div className="flex items-center gap-2 font-semibold text-stone-800">
                 <Truck className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Kostenloser Versand ab CHF 80.–</span>
+                <span>Kostenloser Versand ab CHF 80.00–</span>
               </div>
               <div className="flex items-center gap-2 font-semibold text-stone-800">
                 <Leaf className="w-4 h-4 text-emerald-600 shrink-0" />

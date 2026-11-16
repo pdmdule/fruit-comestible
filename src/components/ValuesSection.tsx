@@ -12,9 +12,9 @@ interface ValueItem {
 
 const BRAND_VALUES: ValueItem[] = [
   {
-    id: 'bio-natur',
-    title: 'BIO Zertifiziert & 100% Natur',
-    text: 'Reiner Fruchtgenuss aus zertifiziertem Bio-Anbau. Ohne Zuckerzusatz, vegan und vollkommen naturbelassen.',
+    id: 'natur-pur',
+    title: 'Reine Früchte – schonend gefriergetrocknet',
+    text: 'Purer Fruchtgenuss – sorgfältig ausgewählt und schonend gefriergetrocknet.',
     icon: Leaf,
     iconBg: 'bg-emerald-100',
     iconColor: 'text-emerald-800',
@@ -54,7 +54,7 @@ export default function ValuesSection() {
             Qualitätsversprechen
           </span>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-stone-900">
-            Warum Fruit-Comestible? Schweizer Qualität & echter Geschmack
+            Warumfruit-comestible? Schweizer Qualität & echter Geschmack
           </h2>
         </div>
 

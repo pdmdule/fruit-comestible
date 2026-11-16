@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { getProductDisplayOrigin } from '@/lib/productOrigins';
 import { getProductDisplayImage } from '@/lib/utils';
+import { isChocolateProduct } from '@/lib/productHelpers';
 
 export interface ProductVariant {
   id: string;
@@ -76,6 +77,7 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
   // Form badge indicator
   const cardForm = product.form || variants[0]?.form || variants[0]?.form_de;
   const productHref = `/produkte/${product.slug}`;
+  const isChocolate = isChocolateProduct(product);
 
   return (
     <Link
@@ -115,8 +117,12 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
       {/* Content */}
       <div className="flex-1 p-3.5 sm:p-5 flex flex-col justify-between h-full space-y-3 sm:space-y-4">
         <div className="space-y-1 sm:space-y-1.5">
-          <span className="text-[10px] sm:text-[11px] font-bold text-emerald-700 uppercase tracking-wider block">
-            100% Natur
+          <span
+            className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-wider block ${
+              isChocolate ? 'text-amber-800' : 'text-emerald-700'
+            }`}
+          >
+            {isChocolate ? 'Feinste Milchschokolade' : '100% Natur'}
           </span>
           <h3 className="text-sm sm:text-base md:text-lg font-semibold text-stone-900 leading-snug line-clamp-2 min-h-[2.5rem] sm:min-h-[2.75rem] md:min-h-[3rem] group-hover:text-rose-700 transition">
             {product.name_de}

@@ -118,7 +118,7 @@ const SLIDES: SlideData[] = [
       icon: Zap,
       badgeBg: 'bg-amber-100',
       badgeText: 'text-amber-800',
-      title: 'Perfekt fürs Müsli & unterwegs',
+      title: 'Perfekt fürs Müesli & unterwegs',
       subtitle: '100% reine Frucht ohne Fett',
     },
   },
@@ -177,7 +177,7 @@ export default function HeroSlider() {
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      aria-label="Fruit Comestible Hero Slider"
+      aria-label="fruit-comestible Hero Slider"
     >
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 relative">
         {/* Navigation Arrows for Desktop */}
@@ -297,7 +297,7 @@ export default function HeroSlider() {
                   <div className="relative aspect-4/3 sm:aspect-square lg:aspect-4/3 xl:aspect-square rounded-3xl overflow-hidden bg-white border border-stone-200 shadow-xl group isolate transform-gpu backface-hidden">
                     <Image
                       src={slide.image}
-                      alt={slide.imageAlt || slide.title || 'Fruit Comestible'}
+                      alt={slide.imageAlt || slide.title || 'fruit-comestible'}
                       fill
                       priority={index === 0 || index === currentSlide}
                       unoptimized

@@ -79,7 +79,9 @@ export default function ProductOriginMap({
           <div className="flex items-center gap-2">
             <span className="text-2xl leading-none">{origin.flag || '📍'}</span>
             <h3 className="text-xl sm:text-2xl font-black text-stone-900 tracking-tight">
-              {origin.region}, {origin.country}
+              {origin.region && origin.region.toLowerCase() !== origin.country.toLowerCase()
+                ? `${origin.region}, ${origin.country}`
+                : origin.country}
             </h3>
           </div>
           <p className="text-xs sm:text-sm text-stone-500">
@@ -128,7 +130,7 @@ export default function ProductOriginMap({
             )}
             <div className="flex items-center gap-1.5">
               <span>🇨🇭</span>
-              <span>Fruit Comestible Manufaktur</span>
+              <span>fruit-comestible Manufaktur</span>
             </div>
             <div className="flex items-center gap-1 text-[11px] text-stone-400">
               <span>🌿 OpenStreetMap / QGIS Geodaten (100% Free & Open-Source)</span>
@@ -140,11 +142,11 @@ export default function ProductOriginMap({
         <div className="lg:col-span-5 space-y-5">
           {/* Authentic Terroir Story / Description */}
           {origin.description && (
-            <div className="p-4 sm:p-5 rounded-2xl bg-stone-50 border border-stone-200/80 space-y-1.5">
+            <div className="p-4 sm:p-5 rounded-2xl bg-stone-50 border border-stone-200/80 space-y-2">
               <div className="flex items-center gap-2">
-                <span className="text-sm">🌱</span>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-stone-600">
-                  Herkunftsgeschichte & Terroir
+                <span className="text-sm">{origin.flag || '🌱'}</span>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-stone-700">
+                  {origin.sectionTitle || 'Herkunftsgeschichte & Terroir'}
                 </h4>
               </div>
               <p className="text-xs sm:text-sm text-stone-700 leading-relaxed font-medium">

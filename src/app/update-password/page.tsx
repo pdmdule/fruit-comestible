@@ -63,7 +63,7 @@ export default function UpdatePasswordPage() {
               Neues Passwort vergeben
             </h1>
             <p className="text-xs sm:text-sm text-stone-500">
-              Wähle ein sicheres neues Passwort für dein Fruit Comestible Konto.
+              Wähle ein sicheres neues Passwort für deinfruit-comestible Konto.
             </p>
           </div>
 

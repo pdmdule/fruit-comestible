@@ -33,7 +33,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
         slug: 'erdbeeren-ganz',
         aliases: ['gefriergetrocknete-erdbeere', 'erdbeeren-ganz', 'erdbeere-ganz'],
         name: 'Gefriergetrocknete Erdbeeren (Ganz)',
-        subtitle: 'Sonnengereifte Schweizer Erdbeeren in schonend gefriergetrockneten Hälften.',
+        subtitle: 'Sonnengereifte Erdbeeren aus Serbien in schonend gefriergetrockneten Hälften.',
         category: 'Früchte & Beeren',
         variantMatch: (form, label) => {
           const str = `${form || ''} ${label || ''}`.toLowerCase();
@@ -46,7 +46,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
         slug: 'erdbeergranulat',
         aliases: ['erdbeergranulat', 'erdbeer-granulat', 'erdbeeren-granulat'],
         name: 'Erdbeergranulat',
-        subtitle: 'Knuspriges Granulat aus gefriergetrockneten Erdbeeren für Bowls und Müsli.',
+        subtitle: 'Knuspriges Granulat aus gefriergetrockneten Erdbeeren für Bowls und Müesli.',
         category: 'Granulat & Crunch',
         variantMatch: (form, label) => {
           const str = `${form || ''} ${label || ''}`.toLowerCase();
@@ -79,7 +79,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
         slug: 'himbeeren-ganz',
         aliases: ['gefriergetrocknete-himbeeren', 'himbeeren-ganz', 'himbeere-ganz'],
         name: 'Gefriergetrocknete Himbeeren (Ganz)',
-        subtitle: 'Ganze, hocharomatische Schweizer Himbeeren schonend vakuumiert.',
+        subtitle: 'Ganze, hocharomatische serbische Himbeeren schonend vakuumiert.',
         category: 'Früchte & Beeren',
         variantMatch: (form, label) => {
           const str = `${form || ''} ${label || ''}`.toLowerCase();
@@ -105,7 +105,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
         slug: 'himbeerpulver',
         aliases: ['himbeerpulver', 'himbeer-pulver', 'himbeeren-pulver'],
         name: 'Himbeerpulver',
-        subtitle: 'Intensives, vitaminreiches Schweizer Himbeerpulver ohne jeglichen Zuckerzusatz.',
+        subtitle: 'Intensives, vitaminreiches serbisches Himbeerpulver ohne jeglichen Zuckerzusatz.',
         category: 'Fruchtpulver',
         variantMatch: (form, label) => {
           const str = `${form || ''} ${label || ''}`.toLowerCase();
@@ -204,7 +204,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
         slug: 'aprikose-schnitze',
         aliases: ['gefriergetrocknete-aprikose', 'aprikose-schnitze', 'aprikosen-ganz'],
         name: 'Gefriergetrocknete Aprikosen (Schnitze)',
-        subtitle: 'Sonnenverwöhnte Walliser Aprikosen in knusprigen Spalten.',
+        subtitle: 'Sonnengereifte serbische Aprikosen in knusprigen Spalten.',
         category: 'Früchte & Beeren',
         variantMatch: (form, label) => {
           const str = `${form || ''} ${label || ''}`.toLowerCase();
@@ -217,7 +217,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
         slug: 'aprikose-granulat',
         aliases: ['aprikose-granulat', 'aprikosengranulat', 'aprikosen-granulat'],
         name: 'Aprikosengranulat',
-        subtitle: 'Feiner Aprikosen-Crunch mit samtig-süssem Schweizer Naturaroma.',
+        subtitle: 'Feiner Aprikosen-Crunch mit samtig-süssem Naturaroma.',
         category: 'Granulat & Crunch',
         variantMatch: (form, label) => {
           const str = `${form || ''} ${label || ''}`.toLowerCase();
@@ -250,7 +250,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
         slug: 'zwetschgen-schnitze',
         aliases: ['gefriergetrocknete-zwetschgen', 'zwetschgen-schnitze', 'zwetschgen-ganz'],
         name: 'Gefriergetrocknete Zwetschgen (Schnitze)',
-        subtitle: 'Klassische Schweizer Zwetschgenspalten, intensiv aromatisch und knusprig.',
+        subtitle: 'Traditionelle serbische Zwetschgenspalten, intensiv aromatisch und knusprig.',
         category: 'Früchte & Beeren',
         variantMatch: (form, label) => {
           const str = `${form || ''} ${label || ''}`.toLowerCase();
@@ -276,7 +276,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
         slug: 'zwetschgen-pulver',
         aliases: ['zwetschgen-pulver', 'zwetschgenpulver'],
         name: 'Zwetschgenpulver',
-        subtitle: 'Naturreines Schweizer Zwetschgenpulver für Teige, Shakes und Cremes.',
+        subtitle: 'Naturreines serbisches Zwetschgenpulver für Teige, Shakes und Cremes.',
         category: 'Fruchtpulver',
         variantMatch: (form, label) => {
           const str = `${form || ''} ${label || ''}`.toLowerCase();
@@ -296,7 +296,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
         slug: 'apfel-Gewurfelt',
         aliases: ['gefriergetrockneter-apfel', 'apfel-gewurfelt', 'apfel-ganz', 'apfelscheiben-ganz'],
         name: 'Gefriergetrocknete Apfelstücke (Ganz)',
-        subtitle: 'Knusprige Schweizer Apfelwürfel mit herrlich erfrischendem Biss.',
+        subtitle: 'Knusprige Apfelwürfel aus Serbien mit herrlich erfrischendem Biss.',
         category: 'Früchte & Beeren',
         variantMatch: (form, label) => {
           const str = `${form || ''} ${label || ''}`.toLowerCase();
@@ -309,7 +309,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
         slug: 'apfel-granulat',
         aliases: ['apfel-granulat', 'apfelgranulat'],
         name: 'Apfelgranulat',
-        subtitle: 'Goldenes Apfelgranulat mit natürlicher Schweizer Apfelsüsse.',
+        subtitle: 'Goldenes Apfelgranulat mit natürlicher Apfelsüsse aus Serbien.',
         category: 'Granulat & Crunch',
         variantMatch: (form, label) => {
           const str = `${form || ''} ${label || ''}`.toLowerCase();
@@ -322,7 +322,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
         slug: 'apfel-pulver',
         aliases: ['apfel-pulver', 'apfelpulver'],
         name: 'Apfelpulver',
-        subtitle: 'Reines Schweizer Apfelpulver reich an Ballaststoffen und natürlichem Pektin.',
+        subtitle: 'Reines serbisches Apfelpulver reich an Ballaststoffen und natürlichem Pektin.',
         category: 'Fruchtpulver',
         variantMatch: (form, label) => {
           const str = `${form || ''} ${label || ''}`.toLowerCase();
@@ -541,7 +541,7 @@ export const FRUIT_FAMILIES: FruitFamilyDef[] = [
         slug: 'ananas-granulat',
         aliases: ['gefriergetrocknete-ananas', 'ananas-granulat', 'ananasgranulat'],
         name: 'Gefriergetrocknete Ananas (Granulat)',
-        subtitle: 'Knusprig-süsser Ananas-Crunch für tropisches Sommerfeeling im Müsli.',
+        subtitle: 'Knusprig-süsser Ananas-Crunch für tropisches Sommerfeeling im Müesli.',
         category: 'Granulat & Crunch',
         variantMatch: () => true,
       },

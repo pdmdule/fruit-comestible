@@ -24,7 +24,7 @@ export const CATEGORIES_CONFIG: CategoryConfig[] = [
     h1: 'Gefriergetrocknete Früchte & Beeren',
     subtitle:
       'Ganze, sonnengereifte Beeren und Fruchtstücke in Schweizer Spitzenqualität. Knusprig, 100% naturbelassen und reich an wertvollen Vitaminen.',
-    metaTitle: 'Gefriergetrocknete Früchte & Beeren kaufen | fruit-Comestible Schweiz',
+    metaTitle: 'Gefriergetrocknete Früchte & Beeren kaufen',
     metaDescription:
       'Gefriergetrocknete Beeren & Früchte aus der Schweiz kaufen. Ganze Himbeeren, Erdbeeren, Heidelbeeren uvm. – schonend vakuumiert und herrlich knusprig.',
     badgeText: '100% Naturbelassen',
@@ -38,7 +38,7 @@ export const CATEGORIES_CONFIG: CategoryConfig[] = [
     h1: 'Gefriergetrocknetes Fruchtpulver',
     subtitle:
       '100% reines Fruchtpulver ohne jegliche Zusatzstoffe. Perfekt für cremige Smoothies, Vital-Shakes, Porridge-Bowls und kreative Pâtisserie.',
-    metaTitle: 'Gefriergetrocknetes Fruchtpulver kaufen | fruit-Comestible Schweiz',
+    metaTitle: 'Gefriergetrocknetes Fruchtpulver kaufen',
     metaDescription:
       'Feinstes Schweizer Fruchtpulver ohne künstliche Aromen oder Zuckerzusatz. Intensiver Naturgeschmack für Shakes, Smoothies und Backkreationen.',
     badgeText: '100% Naturrein',
@@ -60,8 +60,8 @@ export const CATEGORIES_CONFIG: CategoryConfig[] = [
     name: 'Granulat & Crunch',
     h1: 'Gefriergetrocknetes Granulat & Crunch',
     subtitle:
-      'Herrlich knuspriges Fruchtgranulat für den perfekten Crunch im Müsli, Joghurt oder Dessert. Intensiv im Aroma und reich an Ballaststoffen.',
-    metaTitle: 'Gefriergetrocknetes Granulat kaufen | fruit-Comestible Schweiz',
+      'Herrlich knuspriges Fruchtgranulat für den perfekten Crunch im Müesli, Joghurt oder Dessert. Intensiv im Aroma und reich an Ballaststoffen.',
+    metaTitle: 'Gefriergetrocknetes Granulat kaufen',
     metaDescription:
       'Knuspriges Fruchtgranulat schonend gefriergetrocknet aus Schweizer Hand. Perfekt für Porridge, Joghurt und Desserts. 100% Frucht ohne Zuckerzusatz.',
     badgeText: 'Knusprig & Aromatisch',
@@ -84,9 +84,9 @@ export const CATEGORIES_CONFIG: CategoryConfig[] = [
     h1: 'Frucht-Mixes & Gesunde Snacks',
     subtitle:
       'Abgestimmte Früchtemischungen und praktische Vitamin-Snacks für das Büro, Sportler oder die gesunde Zwischenmahlzeit.',
-    metaTitle: 'Frucht-Mixes & Gesunde Snacks kaufen | fruit-Comestible Schweiz',
+    metaTitle: 'Frucht-Mixes & Gesunde Snacks kaufen',
     metaDescription:
-      'Gesunde Frucht-Snacks & Müsli-Mischungen bestellen. Schnelle Energie für Büro, Schule und Sport. Natürlich, vegan und direkt aus der Schweiz.',
+      'Gesunde Frucht-Snacks & Müesli-Mischungen bestellen. Schnelle Energie für Büro, Schule und Sport. Natürlich, vegan und direkt aus der Schweiz.',
     badgeText: 'Für Büro & Unterwegs',
     canonicalPath: '/shop/mixes',
     matches: (p) => {
@@ -108,7 +108,7 @@ export const CATEGORIES_CONFIG: CategoryConfig[] = [
     h1: 'Gefriergetrocknete Früchte in Schweizer Schokolade',
     subtitle:
       'Zartschmelzende Schweizer Milchschokolade trifft auf knusprige Beeren. Der edle Genussmoment für anspruchsvolle Feinschmecker.',
-    metaTitle: 'Früchte in Schweizer Schokolade kaufen | fruit-Comestible Schweiz',
+    metaTitle: 'Früchte in Schweizer Schokolade kaufen',
     metaDescription:
       'Gefriergetrocknete Erdbeeren & Himbeeren umhüllt von zartschmelzender Schweizer Milchschokolade. Jetzt edle Fruchtschokolade online bestellen.',
     badgeText: 'Edler Schweizer Genuss',
@@ -122,7 +122,7 @@ export const CATEGORIES_CONFIG: CategoryConfig[] = [
     h1: 'Fruchtige Geschenkboxen & Probierboxen',
     subtitle:
       'Stilvoll zusammengestellte Geschenkboxen mit knusprigen Früchten. Die gesunde Geschenkidee für Familie, Freunde und Geschäftspartner.',
-    metaTitle: 'Fruchtige Geschenkboxen & Probiersets kaufen | fruit-Comestible Schweiz',
+    metaTitle: 'Fruchtige Geschenkboxen & Probiersets kaufen',
     metaDescription:
       'Hochwertige Geschenkboxen mit gefriergetrockneten Früchten und Probiersäckli. Das gesunde Schweizer Geschenk für jeden Anlass schnell geliefert.',
     badgeText: 'Liebevoll Verpackt',

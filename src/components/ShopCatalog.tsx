@@ -20,6 +20,7 @@ import {
 } from '@/data/categoryDescriptions';
 import { getProductDisplayOrigin } from '@/lib/productOrigins';
 import { getProductDisplayImage } from '@/lib/utils';
+import { isChocolateProduct } from '@/lib/productHelpers';
 
 export interface ProductVariant {
   id: string;
@@ -629,6 +630,7 @@ export default function ShopCatalog({
             // Form badge indicator
             const cardForm = product.form || variants[0]?.form || variants[0]?.form_de;
             const productHref = `/produkte/${product.slug}`;
+            const isChocolate = isChocolateProduct(product);
 
             return (
               <Link
@@ -669,8 +671,12 @@ export default function ShopCatalog({
                 {/* Content */}
                 <div className="flex-1 p-5 flex flex-col justify-between h-full space-y-4">
                   <div className="space-y-1.5">
-                    <span className="text-[11px] font-semibold text-emerald-700 uppercase tracking-wider block">
-                      100% Natur
+                    <span
+                      className={`text-[11px] font-semibold uppercase tracking-wider block ${
+                        isChocolate ? 'text-amber-800' : 'text-emerald-700'
+                      }`}
+                    >
+                      {isChocolate ? 'Feinste Milchschokolade' : '100% Natur'}
                     </span>
                     <h3 className="text-base md:text-lg font-semibold text-stone-900 leading-snug line-clamp-2 min-h-[2.75rem] md:min-h-[3rem] group-hover:text-rose-700 transition">
                       {product.name_de}

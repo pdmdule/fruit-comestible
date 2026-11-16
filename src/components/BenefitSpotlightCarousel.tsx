@@ -107,7 +107,7 @@ export const SPOTLIGHT_DATA: SpotlightSlide[] = [
       topRight: 'Intensiv fruchtiges Aroma',
       left: 'Wenig Kalorien',
       bottomLeft: 'Natürliche Vitalstoffe',
-      bottomRight: 'Perfekt für Müsli & Snacks',
+      bottomRight: 'Perfekt für Müesli & Snacks',
     },
   },
   {

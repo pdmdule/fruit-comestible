@@ -57,7 +57,7 @@ export default function HomeReviews() {
           Das sagen unsere Kunden in der Schweiz
         </h2>
         <p className="text-sm sm:text-base text-stone-700 leading-relaxed">
-          Über 1&apos;200 zufriedene Kunden geniessen unsere puren Früchte im Müsli,
+          Über 1&apos;200 zufriedene Kunden geniessen unsere puren Früchte im Müesli,
           Joghurt oder als gesunden Snack.
         </p>
       </div>

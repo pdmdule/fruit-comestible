@@ -60,8 +60,8 @@ export const HERO_SLIDES: HeroSlideData[] = [
     kicker: 'FRUCHTIGER CRUNCH',
     title: 'Fruchtiger Crunch für dein Schweizer Müesli',
     description:
-      'Starte voller Energie in den Tag. Unser beliebter Müslimix und feines Fruchtgranulat ohne Zuckerzusatz machen jede Bowl zu einem echten Erlebnis.',
-    ctaText: 'Müslimix shoppen',
+      'Starte voller Energie in den Tag. Unser beliebter Müeslimix und feines Fruchtgranulat ohne Zuckerzusatz machen jede Bowl zu einem echten Erlebnis.',
+    ctaText: 'Müeslimix shoppen',
     ctaLink: '/shop?category=mixes',
     image:
       'https://loinzvvygklupiomoisu.supabase.co/storage/v1/object/public/hero/Musli%20mix%20hero-new.webp',
@@ -197,7 +197,7 @@ export function Hero() {
             >
               <Image
                 src={slide.image}
-                alt={slide.imageAlt || slide.title || 'Fruit Comestible'}
+                alt={slide.imageAlt || slide.title || 'fruit-comestible'}
                 fill
                 priority={idx === 0 || isActive}
                 sizes="(max-width: 1024px) 100vw, 50vw"

@@ -146,11 +146,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   let { data: product } = await supabase
     .from('products')
     .select(`
-      name_de,
-      subtitle_de,
-      description_de,
-      form,
-      images,
+      *,
       variants:product_variants (
         id,
         weight_grams,
@@ -171,11 +167,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const byFormSlug = await supabase
       .from('products')
       .select(`
-        name_de,
-        subtitle_de,
-        description_de,
-        form,
-        images,
+        *,
         variants:product_variants (
           id,
           weight_grams,
@@ -198,11 +190,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const fallback = await supabase
       .from('products')
       .select(`
-        name_de,
-        subtitle_de,
-        description_de,
-        form,
-        images,
+        *,
         variants:product_variants (
           id,
           weight_grams,
@@ -223,45 +211,41 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!product && !familyInfo) {
     return {
-      title: 'Produkt nicht gefunden | fruit-Comestible',
+      title: 'Produkt nicht gefunden',
     };
   }
 
-  let productName = product?.name_de || familyInfo?.activeForm?.name || 'Gefriergetrocknete Früchte';
-  if (!productName.toLowerCase().startsWith('gefriergetrocknet')) {
-    productName = `Gefriergetrocknetes ${productName}`;
-  }
+  const rawProduct = product as any;
+  const rawProductName =
+    rawProduct?.name_de || familyInfo?.activeForm?.name || 'Gefriergetrocknete Früchte';
+  const metaTitle = `${rawProductName} kaufen – Gefriergetrocknet`;
+  const fullOgTitle = `${metaTitle} | Fruit-Comestible Schweiz`;
 
-  const rawMetadataVariants = (product as any)?.variants || (product as any)?.product_variants || [];
-  const variants = rawMetadataVariants.filter(
-    (v: any) => v.weight_grams === 100 || v.weight_grams === 200
-  );
-  const weights = Array.from(new Set(variants.map((v: any) => v.weight_grams))).sort(
-    (a: any, b: any) => a - b
-  );
-  const weightString = weights.length > 0 ? weights.map((w) => `${w}g`).join(' / ') : '100g / 200g';
-
-  const metaTitle = `${productName} ${weightString} kaufen | fruit-Comestible`;
-
-  const formType = product?.form || familyInfo?.activeForm?.form;
   let metaDescription = '';
-
-  if (formType === 'Pulver' || slug.includes('pulver')) {
-    metaDescription = `100% reines ${productName} ohne jegliche Zusatzstoffe oder Zuckerzusatz. Reich an natürlichen Vitaminen – ideal für Smoothies, Shakes, Müsli-Bowls und feine Backkreationen. Jetzt in ${weightString} online bestellen.`;
-  } else if (formType === 'Granulat' || slug.includes('granulat')) {
-    metaDescription = `Herrlich knuspriges ${productName} aus schonend gefriergetrockneten Früchten. Der aromatische Knusper-Crunch für dein tägliches Müsli, Porridge & Desserts. Jetzt in ${weightString} probieren.`;
+  if (typeof rawProduct?.short_description_de === 'string' && rawProduct.short_description_de.trim()) {
+    metaDescription = rawProduct.short_description_de.trim();
+  } else if (typeof rawProduct?.description_de === 'string' && rawProduct.description_de.trim()) {
+    const cleanDesc = rawProduct.description_de.trim().replace(/\s+/g, ' ');
+    const excerpt =
+      cleanDesc.length > 155 ? `${cleanDesc.slice(0, 152).trim()}...` : cleanDesc;
+    metaDescription = `${excerpt} Jetzt online bestellen bei Fruit-Comestible Schweiz.`;
+  } else if (typeof rawProduct?.subtitle_de === 'string' && rawProduct.subtitle_de.trim()) {
+    metaDescription = `${rawProduct.subtitle_de.trim()} Jetzt online bestellen bei Fruit-Comestible Schweiz.`;
   } else {
-    metaDescription = `${productName} in kompromissloser Schweizer Spitzenqualität. Schonend gefriergetrocknet, intensiv im Geschmack und reich an Vitaminen. Erhältlich in ${weightString}. Schneller Schweizer Post Versand.`;
+    metaDescription = `${rawProductName} in Premium-Qualität. 100 % natürlich und voller Geschmack. Jetzt online bestellen bei Fruit-Comestible Schweiz.`;
   }
 
-  if (product?.subtitle_de && !metaDescription) {
-    metaDescription = product.subtitle_de;
-  }
-
-  const canonicalUrl = `https://fruit-comestible.ch/produkte/${slug}`;
+  const canonicalUrl = `https://www.fruit-comestible.ch/produkte/${slug}`;
+  const rawMetadataVariants = rawProduct?.variants || rawProduct?.product_variants || [];
+  const variantImage = rawMetadataVariants.find(
+    (v: any) => v?.image_url || (Array.isArray(v?.images) && v.images[0])
+  );
   const ogImage =
-    product?.images?.[0] ||
-    'https://images.unsplash.com/photo-1543528176-61b239494933?q=80&w=1200&auto=format&fit=crop';
+    rawProduct?.image_url ||
+    rawProduct?.images?.[0] ||
+    variantImage?.image_url ||
+    variantImage?.images?.[0] ||
+    'https://www.fruit-comestible.ch/logo.webp';
 
   return {
     title: metaTitle,
@@ -270,10 +254,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: metaTitle,
+      title: fullOgTitle,
       description: metaDescription,
       url: canonicalUrl,
-      siteName: 'fruit-Comestible Schweiz',
+      siteName: 'Fruit-Comestible',
       locale: 'de_CH',
       type: 'website',
       images: [
@@ -281,13 +265,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           url: ogImage,
           width: 1200,
           height: 800,
-          alt: metaTitle,
+          alt: rawProductName,
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: metaTitle,
+      title: fullOgTitle,
       description: metaDescription,
       images: [ogImage],
     },

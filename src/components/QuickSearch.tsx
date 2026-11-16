@@ -43,7 +43,7 @@ const POPULAR_SEARCHES = [
   'Himbeeren',
   'Zwetschgen',
   'Geschenkbox',
-  'Müsli',
+  'Müesli',
   'Tiramisu',
 ];
 

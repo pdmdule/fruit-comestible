@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import ProductRatingStars from '@/components/ProductRatingStars';
 import type { ProductReviewsSummary } from '@/types/reviews';
+import { isChocolateProduct } from '@/lib/productHelpers';
+import { PaymentBadgesRow } from '@/components/PaymentBadges';
 
 export interface ProductVariant {
   id: string;
@@ -60,6 +62,9 @@ interface ProductPurchaseSectionProps {
   variants: ProductVariant[];
   productName?: string;
   productId?: string;
+  productSlug?: string;
+  productCategory?: string;
+  productIngredients?: string;
   image?: string;
   availableForms?: FormLink[];
   selectedVariant?: ProductVariant;
@@ -72,6 +77,9 @@ export default function ProductPurchaseSection({
   variants,
   productName,
   productId,
+  productSlug,
+  productCategory,
+  productIngredients,
   image,
   availableForms = [],
   selectedVariant,
@@ -79,6 +87,12 @@ export default function ProductPurchaseSection({
   onFormSelect,
   reviewsSummary,
 }: ProductPurchaseSectionProps) {
+  const isChocolate = isChocolateProduct({
+    slug: productSlug,
+    name_de: productName,
+    category: productCategory,
+    ingredients_de: productIngredients,
+  });
   const { addItem, openCart } = useCart();
 
   const scrollToReviews = (e: React.MouseEvent) => {
@@ -140,7 +154,7 @@ export default function ProductPurchaseSection({
   }, []);
 
   // Dynamic Fresh Fruit Calculator ("Frische-Frucht-Rechner")
-  // Ratio 1:10 (Liofilisation removes ~90% water)
+  // Ratio 1:10 (Gefriertrocknung removes ~90% water)
   const weightGrams =
     currentVariant?.weight_grams ||
     (currentVariant?.label_de
@@ -383,7 +397,7 @@ export default function ProductPurchaseSection({
           )}
         </div>
         <p className="hidden sm:block text-xs text-stone-500">
-          Kostenloser Versand mit Schweizer Post ab CHF 80.– Bestellwert.
+          Kostenloser Versand mit Schweizer Post ab CHF 80.00– Bestellwert.
         </p>
       </div>
 
@@ -415,19 +429,35 @@ export default function ProductPurchaseSection({
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 p-2.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/60">
-          <div className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-            <Leaf className="w-3.5 h-3.5" />
+        {isChocolate ? (
+          <div className="flex items-center gap-2.5 p-2.5 rounded-2xl bg-amber-50/70 border border-amber-200/60">
+            <div className="w-6 h-6 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+              <Sparkles className="w-3.5 h-3.5" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-bold text-amber-950 truncate">
+                Feinste Milchschokolade
+              </p>
+              <p className="text-[10px] text-amber-800 truncate">
+                Knuspriger Fruchtkern • Premium-Qualität
+              </p>
+            </div>
           </div>
-          <div className="min-w-0">
-            <p className="text-xs font-bold text-emerald-950 truncate">
-              100% Frucht – Ohne Zuckerzusatz
-            </p>
-            <p className="text-[10px] text-emerald-700 truncate">
-              Rein natürlich & 100% vegan
-            </p>
+        ) : (
+          <div className="flex items-center gap-2.5 p-2.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/60">
+            <div className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+              <Leaf className="w-3.5 h-3.5" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-bold text-emerald-950 truncate">
+                100% Frucht – Ohne Zuckerzusatz
+              </p>
+              <p className="text-[10px] text-emerald-700 truncate">
+                Rein natürlich & 100% vegan
+              </p>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="flex items-center gap-2.5 p-2.5 rounded-2xl bg-stone-50 border border-stone-200/60">
           <div className="w-6 h-6 rounded-lg bg-stone-200 text-stone-700 flex items-center justify-center shrink-0">
@@ -438,7 +468,7 @@ export default function ProductPurchaseSection({
               Sichere Bezahlung
             </p>
             <p className="text-[10px] text-stone-500 truncate">
-              TWINT, Karte & QR-Rechnung
+              TWINT, Karte, Apple &amp; Google Pay
             </p>
           </div>
         </div>
@@ -653,6 +683,9 @@ export default function ProductPurchaseSection({
             )}
           </button>
         </div>
+
+        {/* Supported Payment Badges */}
+        <PaymentBadgesRow className="pt-2 justify-center sm:justify-start" />
       </div>
     </div>
 

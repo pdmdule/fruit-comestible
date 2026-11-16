@@ -145,12 +145,14 @@ export default function ProductImageGallery({
             ? '🇵🇪'
             : originCountry?.toLowerCase().includes('ecuador')
             ? '🇪🇨'
-            : originCountry?.toLowerCase().includes('span')
-            ? '🇪🇸'
+            : originCountry?.toLowerCase().includes('guatemal')
+            ? '🇬🇹'
+            : originCountry?.toLowerCase().includes('türkei') ||
+              originCountry?.toLowerCase().includes('tuerkei') ||
+              originCountry?.toLowerCase().includes('turk')
+            ? '🇹🇷'
             : originCountry?.toLowerCase().includes('costa')
             ? '🇨🇷'
-            : originCountry?.toLowerCase().includes('schweden')
-            ? '🇸🇪'
             : '🇨🇭';
           return (
             <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2 pointer-events-none z-10">

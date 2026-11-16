@@ -1,8 +1,8 @@
 export interface ProductOriginData {
-  country: string;              // npr. "Schweiz", "Polen", "Costa Rica", "Serbien", "Ecuador", "Peru", "Spanien", "Schweden"
-  countryCode: string;          // npr. "CH", "PL", "CR", "RS", "SE", "PE", "EC", "ES"
-  flag: string;                 // npr. "🇨🇭", "🇷🇸", "🇸🇪", "🇵🇪", "🇪🇨", "🇪🇸", "🇨🇷"
-  region: string;               // npr. "Thurgau", "Arilje", "Guayas & Los Ríos", "Piura", "Valencia"
+  country: string;              // npr. "Schweiz", "Costa Rica", "Serbien", "Guatemala", "Ecuador", "Peru", "Türkei"
+  countryCode: string;          // npr. "CH", "CR", "RS", "GT", "PE", "EC", "TR"
+  flag: string;                 // npr. "🇨🇭", "🇷🇸", "🇬🇹", "🇵🇪", "🇪🇨", "🇹🇷", "🇨🇷"
+  region: string;               // npr. "Fruchtbare Anbauregionen Serbiens", "Guatemala", "Guayas & Los Ríos", "Piura", "Türkische Mittelmeerküste"
   harvestTime: string;          // npr. "Juni – Juli", "Mai – Juni", "Ganzjährig"
   harvestSeason: string;        // Kompatibilität mit bestehenden UI-Komponenten
   harvestMethod: string;        // Methode der Lese / Ernte
@@ -13,128 +13,144 @@ export interface ProductOriginData {
   gps: [number, number];        // Kompatibilität
   zoomLevel: number;            // Zoom-Faktor
   description: string;          // Spezifische Herkunfts- & Terroir-Geschichte zum Anpassen
+  sectionTitle?: string;        // Optionaler Abschnittstitel / Badge für die Herkunftssektion
 }
 
 // Podaci strogo mapirani na slug svakog konkretnog proizvoda:
 export const PRODUCT_ORIGINS: Record<string, ProductOriginData> = {
   // =========================================================================
-  // 1. HIMBEEREN (Serbien / Arilje)
+  // 1. HIMBEEREN (Serbien – Weltbekannte Beerenqualität)
   // =========================================================================
   'himbeeren-ganz': {
     country: 'Serbien',
     countryCode: 'RS',
     flag: '🇷🇸',
-    region: 'Arilje (Zapadna Srbija)',
+    region: 'Traditionelle Beerenregionen in Serbien',
+    sectionTitle: 'Herkunft: Serbien – Weltbekannte Beerenqualität',
     harvestTime: 'Juni – Juli',
     harvestSeason: 'Juni – Juli',
-    harvestMethod: 'Sorgfältige Handlese der Edelsorte Willamette in den kühlen Morgenstunden',
-    transportMethod: 'Klimaschonender Frischetransport zur Veredelung in die Schweiz',
-    climateInfo: 'Kühle Bergnächte und warme Sonnentage an den Hängen Westserbiens für intensives Fruchtaroma.',
+    harvestMethod: 'Bei voller Reife besonders schonend von Hand verlesen und direkt nach der Ernte verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Ideales Mikroklima mit sonnigen Tagen, kühlen Nächten und fruchtbaren Böden',
     funFacts: [
-      'Die Region Arilje in Westserbien gilt international als die Welthauptstadt des Edelfruchtanbaus.',
-      'Schonende Gefriertrocknung bewahrt über 95% der Vitamine und die delikate Hohlform der Beere.',
-      'Reich an natürlicher Ellagsäure und wertvollen sekundären Pflanzenstoffen.',
+      'Region: Ausgewählte Höhenlagen und traditionelle Beerenregionen in Serbien',
+      'Klima & Boden: Ideales Mikroklima mit sonnigen Tagen, kühlen Nächten und fruchtbaren Böden',
+      'Ernte: Bei voller Reife besonders schonend von Hand verlesen und direkt nach der Ernte verarbeitet',
+      'Qualität: 100 % naturbelassen, aromatisch, formschön und reich an natürlichen Ballaststoffen & Antioxidantien',
     ],
-    coordinates: [43.7533, 20.0964],
-    gps: [43.7533, 20.0964],
-    zoomLevel: 5,
-    description: 'Sonnengereift an den Hängen von Arilje, bekannt für das weltweit feinste Himbeeraroma der Edelsorte Willamette.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Himbeeren stammen aus den traditionsreichen und hügeligen Obstbauregionen Serbiens, das weltweit für seine herausragende Himbeerqualität bekannt ist. Das Zusammenspiel aus mineralstoffreichen Böden, klaren Gebirgsbächen, warmen Sonnentagen und kühlen Nächten schafft ideale Bedingungen für ein langsames, natürliches Heranreifen der Beeren. Dadurch entwickeln die Früchte ihre leuchtend tiefrote Farbe und das unvergleichlich intensive, fein-säuerliche bis süsse Himbeeraroma. Zum Zeitpunkt der perfekten Vollreife werden die empfindlichen Beeren behutsam von Hand gepflückt und direkt vor Ort schonend gefriergetrocknet – für 100 % reinen, knusprigen Fruchtgenuss voller natürlicher Vitamine.',
   },
 
   'himbeergranulat': {
     country: 'Serbien',
     countryCode: 'RS',
     flag: '🇷🇸',
-    region: 'Arilje (Zapadna Srbija)',
+    region: 'Traditionelle Beerenregionen in Serbien',
+    sectionTitle: 'Herkunft: Serbien – Weltbekannte Beerenqualität',
     harvestTime: 'Juni – Juli',
     harvestSeason: 'Juni – Juli',
-    harvestMethod: 'Selektion vollreifer Beeren und behutsames Zerkleinern zu krossem Crunch',
-    transportMethod: 'Direkter Frischetransport zur Schweizer Veredelung',
-    climateInfo: 'Mineralstoffreiche Hangböden im westserbischen Mittelgebirge.',
+    harvestMethod: 'Bei voller Reife besonders schonend von Hand verlesen und direkt nach der Ernte verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Ideales Mikroklima mit sonnigen Tagen, kühlen Nächten und fruchtbaren Böden',
     funFacts: [
-      'Gibt Joghurt, Quark und Porridge sofort eine leuchtend pinke Naturfarbe und frischen Knusper-Biss.',
-      '100% sortenreine Frucht ohne Zuckerzusatz oder Rieselhilfen.',
-      'Perfekt gleichmässige Körnung für kreative Pâtisserie-Dekorationen.',
+      'Region: Ausgewählte Höhenlagen und traditionelle Beerenregionen in Serbien',
+      'Klima & Boden: Ideales Mikroklima mit sonnigen Tagen, kühlen Nächten und fruchtbaren Böden',
+      'Ernte: Bei voller Reife besonders schonend von Hand verlesen und direkt nach der Ernte verarbeitet',
+      'Qualität: 100 % naturbelassen, aromatisch, formschön und reich an natürlichen Ballaststoffen & Antioxidantien',
     ],
-    coordinates: [43.7533, 20.0964],
-    gps: [43.7533, 20.0964],
-    zoomLevel: 5,
-    description: 'Knuspriges Himbeergranulat aus sonnengereiften Früchten von den Hängen von Arilje – ideal für Bowls und Desserts.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Himbeeren stammen aus den traditionsreichen und hügeligen Obstbauregionen Serbiens, das weltweit für seine herausragende Himbeerqualität bekannt ist. Das Zusammenspiel aus mineralstoffreichen Böden, klaren Gebirgsbächen, warmen Sonnentagen und kühlen Nächten schafft ideale Bedingungen für ein langsames, natürliches Heranreifen der Beeren. Dadurch entwickeln die Früchte ihre leuchtend tiefrote Farbe und das unvergleichlich intensive, fein-säuerliche bis süsse Himbeeraroma. Zum Zeitpunkt der perfekten Vollreife werden die empfindlichen Beeren behutsam von Hand gepflückt und direkt vor Ort schonend gefriergetrocknet – für 100 % reinen, knusprigen Fruchtgenuss voller natürlicher Vitamine.',
   },
 
   'himbeerpulver': {
     country: 'Serbien',
     countryCode: 'RS',
     flag: '🇷🇸',
-    region: 'Arilje (Zapadna Srbija)',
+    region: 'Traditionelle Beerenregionen in Serbien',
+    sectionTitle: 'Herkunft: Serbien – Weltbekannte Beerenqualität',
     harvestTime: 'Juni – Juli',
     harvestSeason: 'Juni – Juli',
-    harvestMethod: 'Schonende Feinvermahlung ganzer gefriergetrockneter Beeren ohne Trägerstoffe',
-    transportMethod: 'Klimaschonender Frischetransport nach CH',
-    climateInfo: 'Optimale Tag-Nacht-Temperaturwechsel für hochkonzentrierte Fruchtsäuren.',
+    harvestMethod: 'Bei voller Reife besonders schonend von Hand verlesen und direkt nach der Ernte verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Ideales Mikroklima mit sonnigen Tagen, kühlen Nächten und fruchtbaren Böden',
     funFacts: [
-      'Löst sich hervorragend in Shakes, Smoothies und Glasuren ohne Klumpenbildung.',
-      'Intensivste natürliche Färbekraft und fruchtig-feine Säure.',
-      'Enthält alle Ballaststoffe und Antioxidantien der vollen Frucht.',
+      'Region: Ausgewählte Höhenlagen und traditionelle Beerenregionen in Serbien',
+      'Klima & Boden: Ideales Mikroklima mit sonnigen Tagen, kühlen Nächten und fruchtbaren Böden',
+      'Ernte: Bei voller Reife besonders schonend von Hand verlesen und direkt nach der Ernte verarbeitet',
+      'Qualität: 100 % naturbelassen, aromatisch, formschön und reich an natürlichen Ballaststoffen & Antioxidantien',
     ],
-    coordinates: [43.7533, 20.0964],
-    gps: [43.7533, 20.0964],
-    zoomLevel: 5,
-    description: '100% reines, schonend vermahlenes Fruchtpulver aus vollreifen Beeren aus Arilje ohne jegliche Trägerstoffe.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Himbeeren stammen aus den traditionsreichen und hügeligen Obstbauregionen Serbiens, das weltweit für seine herausragende Himbeerqualität bekannt ist. Das Zusammenspiel aus mineralstoffreichen Böden, klaren Gebirgsbächen, warmen Sonnentagen und kühlen Nächten schafft ideale Bedingungen für ein langsames, natürliches Heranreifen der Beeren. Dadurch entwickeln die Früchte ihre leuchtend tiefrote Farbe und das unvergleichlich intensive, fein-säuerliche bis süsse Himbeeraroma. Zum Zeitpunkt der perfekten Vollreife werden die empfindlichen Beeren behutsam von Hand gepflückt und direkt vor Ort schonend gefriergetrocknet – für 100 % reinen, knusprigen Fruchtgenuss voller natürlicher Vitamine.',
   },
 
   'himbeerpulver-gesiebt-1kg': {
     country: 'Serbien',
     countryCode: 'RS',
     flag: '🇷🇸',
-    region: 'Arilje (Zapadna Srbija)',
+    region: 'Traditionelle Beerenregionen in Serbien',
+    sectionTitle: 'Herkunft: Serbien – Weltbekannte Beerenqualität',
     harvestTime: 'Juni – Juli',
     harvestSeason: 'Juni – Juli',
-    harvestMethod: 'Speziell mikroskopisch feinst gesiebt für Gastronomie und Pâtisserie',
-    transportMethod: 'Direktimport im versiegelten Aromagebinde in die Schweiz',
-    climateInfo: 'Optimale Tag-Nacht-Temperaturwechsel für hochkonzentrierte Fruchtsäuren.',
+    harvestMethod: 'Bei voller Reife besonders schonend von Hand verlesen und direkt nach der Ernte verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Ideales Mikroklima mit sonnigen Tagen, kühlen Nächten und fruchtbaren Böden',
     funFacts: [
-      'Entwickelt für Confiserien und Spitzenköche: garantiert samtige Textur ohne Kerne.',
-      'Grossgebinde mit optimalem Aromaschutzventil für maximale Haltbarkeit.',
-      'Über 10 kg frische Arilje-Himbeeren stecken in einem einzigen Kilogramm dieses Edelpuders.',
+      'Region: Ausgewählte Höhenlagen und traditionelle Beerenregionen in Serbien',
+      'Klima & Boden: Ideales Mikroklima mit sonnigen Tagen, kühlen Nächten und fruchtbaren Böden',
+      'Ernte: Bei voller Reife besonders schonend von Hand verlesen und direkt nach der Ernte verarbeitet',
+      'Qualität: 100 % naturbelassen, aromatisch, formschön und reich an natürlichen Ballaststoffen & Antioxidantien',
     ],
-    coordinates: [43.7533, 20.0964],
-    gps: [43.7533, 20.0964],
-    zoomLevel: 5,
-    description: 'Gastro-Qualität: Meisterhaft feinst gesiebtes Himbeerpulver aus der Erzeugerregion Arilje ohne Kernrückstände.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Himbeeren stammen aus den traditionsreichen und hügeligen Obstbauregionen Serbiens, das weltweit für seine herausragende Himbeerqualität bekannt ist. Das Zusammenspiel aus mineralstoffreichen Böden, klaren Gebirgsbächen, warmen Sonnentagen und kühlen Nächten schafft ideale Bedingungen für ein langsames, natürliches Heranreifen der Beeren. Dadurch entwickeln die Früchte ihre leuchtend tiefrote Farbe und das unvergleichlich intensive, fein-säuerliche bis süsse Himbeeraroma. Zum Zeitpunkt der perfekten Vollreife werden die empfindlichen Beeren behutsam von Hand gepflückt und direkt vor Ort schonend gefriergetrocknet – für 100 % reinen, knusprigen Fruchtgenuss voller natürlicher Vitamine.',
   },
 
   'family-bag-himbeere': {
     country: 'Serbien',
     countryCode: 'RS',
     flag: '🇷🇸',
-    region: 'Arilje (Zapadna Srbija)',
+    region: 'Traditionelle Beerenregionen in Serbien',
+    sectionTitle: 'Herkunft: Serbien – Weltbekannte Beerenqualität',
     harvestTime: 'Juni – Juli',
     harvestSeason: 'Juni – Juli',
-    harvestMethod: 'Schonende Handlese voll ausgereifter Sommerbeeren',
-    transportMethod: 'Direkter Import und aromasichere Schweizer Vorratsverpackung',
-    climateInfo: 'Berglagen von Arilje mit reichlich Sonnenstunden für höchste Fruchtsüsse.',
+    harvestMethod: 'Bei voller Reife besonders schonend von Hand verlesen und direkt nach der Ernte verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Ideales Mikroklima mit sonnigen Tagen, kühlen Nächten und fruchtbaren Böden',
     funFacts: [
-      'Vorratsbeutel mit Aromasiegel für langanhaltenden Knusperspass der ganzen Familie.',
-      'Spart Verpackungsmaterial und hält die Beeren dauerhaft trocken und knackig.',
-      'Ideal zum Nachfüllen der Design-Vorratsgläser.',
+      'Region: Ausgewählte Höhenlagen und traditionelle Beerenregionen in Serbien',
+      'Klima & Boden: Ideales Mikroklima mit sonnigen Tagen, kühlen Nächten und fruchtbaren Böden',
+      'Ernte: Bei voller Reife besonders schonend von Hand verlesen und direkt nach der Ernte verarbeitet',
+      'Qualität: 100 % naturbelassen, aromatisch, formschön und reich an natürlichen Ballaststoffen & Antioxidantien',
     ],
-    coordinates: [43.7533, 20.0964],
-    gps: [43.7533, 20.0964],
-    zoomLevel: 5,
-    description: 'Ganze knusprige Himbeeren aus Arilje im praktischen Grossbeutel zum Nachfüllen.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Himbeeren stammen aus den traditionsreichen und hügeligen Obstbauregionen Serbiens, das weltweit für seine herausragende Himbeerqualität bekannt ist. Das Zusammenspiel aus mineralstoffreichen Böden, klaren Gebirgsbächen, warmen Sonnentagen und kühlen Nächten schafft ideale Bedingungen für ein langsames, natürliches Heranreifen der Beeren. Dadurch entwickeln die Früchte ihre leuchtend tiefrote Farbe und das unvergleichlich intensive, fein-säuerliche bis süsse Himbeeraroma. Zum Zeitpunkt der perfekten Vollreife werden die empfindlichen Beeren behutsam von Hand gepflückt und direkt vor Ort schonend gefriergetrocknet – für 100 % reinen, knusprigen Fruchtgenuss voller natürlicher Vitamine.',
   },
 
   'himbeere-in-milchschokolade-100g': {
     country: 'Schweiz',
     countryCode: 'CH',
     flag: '🇨🇭',
-    region: 'Schweizer Manufaktur & Arilje',
+    region: 'Schweizer Manufaktur & Serbien',
     harvestTime: 'Juni – Juli (Beeren) / Ganzjährig veredelt',
     harvestSeason: 'Ganzjährig veredelt',
-    harvestMethod: 'Handverlesene Beeren aus Arilje, meisterhaft dragiert in Schweizer Milchschokolade',
+    harvestMethod: 'Handverlesene Beeren aus Serbien, meisterhaft dragiert in Schweizer Milchschokolade',
     transportMethod: 'Regionaler Schweizer Manufaktur-Transport',
-    climateInfo: 'Feinste Schweizer Alpenmilch trifft auf aromatische Bergbauern-Himbeeren.',
+    climateInfo: 'Feinste Schweizer Alpenmilch trifft auf aromatische Himbeeren aus Serbien.',
     funFacts: [
       'Harmonische Balance aus knackig-frischer Schokolade und spritziger Beere.',
       'Confiserie-Tradition ohne Palmöl, Fremdfette oder Glanzmittel.',
@@ -147,90 +163,102 @@ export const PRODUCT_ORIGINS: Record<string, ProductOriginData> = {
   },
 
   // =========================================================================
-  // 2. ERDBEEREN (Serbien / Arilje & Loznica)
+  // 2. ERDBEEREN (Serbien – Sonnengereifte Beerenqualität)
   // =========================================================================
   'erdbeeren-ganz': {
     country: 'Serbien',
     countryCode: 'RS',
     flag: '🇷🇸',
-    region: 'Arilje / Loznica',
+    region: 'Fruchtbare Anbauregionen Serbiens',
+    sectionTitle: 'Herkunft: Serbien – Sonnengereifte Beerenqualität',
     harvestTime: 'Mai – Juni',
     harvestSeason: 'Mai – Juni',
-    harvestMethod: 'Schonende Handernte bei voller Reife und Hälftung vor der Gefriertrocknung',
-    transportMethod: 'Klimaschonender Direkttransport zur Veredelung in der Schweiz',
-    climateInfo: 'Sonnige Hanglagen und warmes Kontinentalklima für intensiv-aromatische Früchte.',
+    harvestMethod: 'Handgepflückt bei perfekter Vollreife und unmittelbar nach der Ernte schonend verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Ideales Mikroklima mit vielen Sonnenstunden und fruchtbaren Böden für volle natürliche Süsse',
     funFacts: [
-      'Erdbeeren sind botanisch Sammelnussfrüchte mit über 200 winzigen gelben Nüsschen.',
-      'Für 100g gefriergetrocknete Erdbeeren wird ca. 1.0 kg frische Beeren schonend im Vakuum verarbeitet.',
-      'Reich an sekundären Pflanzenstoffen und wertvollem Vitamin C für das Immunsystem.',
+      'Region: Ausgewählte, sonnenverwöhnte Beerenfelder in Serbien',
+      'Klima & Boden: Ideales Mikroklima mit vielen Sonnenstunden und fruchtbaren Böden für volle natürliche Süsse',
+      'Ernte: Handgepflückt bei perfekter Vollreife und unmittelbar nach der Ernte schonend verarbeitet',
+      'Qualität: 100 % naturbelassen, leuchtend rot und besonders intensiv im Geschmack',
     ],
-    coordinates: [44.5305, 19.2253],
-    gps: [44.5305, 19.2253],
-    zoomLevel: 5,
-    description: 'Sorgfältig von Hand geerntete, vollaromatische Erdbeeren aus traditionellem Anbau Westserbiens.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Erdbeeren stammen aus den traditionsreichen und fruchtbaren Obstbauregionen Serbiens. Dank des milden, sonnenreichen Klimas mit warmen Frühlingstagen und nährstoffreichen Böden reifen die Früchte auf den Feldern langsam und gleichmässig heran. Dadurch entwickeln sie ihre leuchtend rote Farbe, ihre feine natürliche Süsse und das unverwechselbar intensive Erdbeeraroma. Jede Beere wird zum Zeitpunkt der optimalen Vollreife sorgfältig von Hand geerntet und direkt vor Ort schonend gefriergetrocknet – für 100 % reinen, knusprigen Fruchtgenuss wie frisch vom Feld.',
   },
 
   'erdbeergranulat': {
     country: 'Serbien',
     countryCode: 'RS',
     flag: '🇷🇸',
-    region: 'Arilje / Loznica',
+    region: 'Fruchtbare Anbauregionen Serbiens',
+    sectionTitle: 'Herkunft: Serbien – Sonnengereifte Beerenqualität',
     harvestTime: 'Mai – Juni',
     harvestSeason: 'Mai – Juni',
-    harvestMethod: 'Schonendes Granulieren vollreifer gefriergetrockneter Erdbeeren',
-    transportMethod: 'Direkter Frischetransport zur Schweizer Veredelung',
-    climateInfo: 'Sonnige Hänge und fruchtbare Böden Westserbiens.',
+    harvestMethod: 'Handgepflückt bei perfekter Vollreife und unmittelbar nach der Ernte schonend verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Ideales Mikroklima mit vielen Sonnenstunden und fruchtbaren Böden für volle natürliche Süsse',
     funFacts: [
-      'Der perfekte fruchtige Knusper-Crunch für Müslis, Porridge und Dessert-Toppings.',
-      'Behält seine brillante rote Naturfarbe ganz ohne künstliche Farbstoffe.',
-      'Kinder lieben den krossen Biss und die natürliche Fruchtnote.',
+      'Region: Ausgewählte, sonnenverwöhnte Beerenfelder in Serbien',
+      'Klima & Boden: Ideales Mikroklima mit vielen Sonnenstunden und fruchtbaren Böden für volle natürliche Süsse',
+      'Ernte: Handgepflückt bei perfekter Vollreife und unmittelbar nach der Ernte schonend verarbeitet',
+      'Qualität: 100 % naturbelassen, leuchtend rot und besonders intensiv im Geschmack',
     ],
-    coordinates: [44.5305, 19.2253],
-    gps: [44.5305, 19.2253],
-    zoomLevel: 5,
-    description: 'Knuspriger Erdbeer-Crunch aus schonend gefriergetrockneten Früchten für Bowls und Müsli.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Erdbeeren stammen aus den traditionsreichen und fruchtbaren Obstbauregionen Serbiens. Dank des milden, sonnenreichen Klimas mit warmen Frühlingstagen und nährstoffreichen Böden reifen die Früchte auf den Feldern langsam und gleichmässig heran. Dadurch entwickeln sie ihre leuchtend rote Farbe, ihre feine natürliche Süsse und das unverwechselbar intensive Erdbeeraroma. Jede Beere wird zum Zeitpunkt der optimalen Vollreife sorgfältig von Hand geerntet und direkt vor Ort schonend gefriergetrocknet – für 100 % reinen, knusprigen Fruchtgenuss wie frisch vom Feld.',
   },
 
   'erdbeerpulver': {
     country: 'Serbien',
     countryCode: 'RS',
     flag: '🇷🇸',
-    region: 'Arilje / Loznica',
+    region: 'Fruchtbare Anbauregionen Serbiens',
+    sectionTitle: 'Herkunft: Serbien – Sonnengereifte Beerenqualität',
     harvestTime: 'Mai – Juni',
     harvestSeason: 'Mai – Juni',
-    harvestMethod: 'Feinstvermahlung vollreifer Früchte im Kaltverfahren ohne Zusätze',
-    transportMethod: 'Klimaschonender Frischetransport nach CH',
-    climateInfo: 'Optimale Sonnenstunden in den Flusstälern Westserbiens.',
+    harvestMethod: 'Handgepflückt bei perfekter Vollreife und unmittelbar nach der Ernte schonend verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Ideales Mikroklima mit vielen Sonnenstunden und fruchtbaren Böden für volle natürliche Süsse',
     funFacts: [
-      'Verleiht Shakes, Quark und Macarons eine unwiderstehlich fruchtige Erdbeernote.',
-      'Löst sich cremig und rückstandsfrei in kalten und warmen Flüssigkeiten.',
-      '100% reine Erdbeere ohne Zuckerzusatz oder Bindemittel.',
+      'Region: Ausgewählte, sonnenverwöhnte Beerenfelder in Serbien',
+      'Klima & Boden: Ideales Mikroklima mit vielen Sonnenstunden und fruchtbaren Böden für volle natürliche Süsse',
+      'Ernte: Handgepflückt bei perfekter Vollreife und unmittelbar nach der Ernte schonend verarbeitet',
+      'Qualität: 100 % naturbelassen, leuchtend rot und besonders intensiv im Geschmack',
     ],
-    coordinates: [44.5305, 19.2253],
-    gps: [44.5305, 19.2253],
-    zoomLevel: 5,
-    description: '100% naturreines Fruchtpulver aus sonnengereiften Erdbeeren ohne Zuckerzusatz.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Erdbeeren stammen aus den traditionsreichen und fruchtbaren Obstbauregionen Serbiens. Dank des milden, sonnenreichen Klimas mit warmen Frühlingstagen und nährstoffreichen Böden reifen die Früchte auf den Feldern langsam und gleichmässig heran. Dadurch entwickeln sie ihre leuchtend rote Farbe, ihre feine natürliche Süsse und das unverwechselbar intensive Erdbeeraroma. Jede Beere wird zum Zeitpunkt der optimalen Vollreife sorgfältig von Hand geerntet und direkt vor Ort schonend gefriergetrocknet – für 100 % reinen, knusprigen Fruchtgenuss wie frisch vom Feld.',
   },
 
   'family-bag-erdbeere': {
     country: 'Serbien',
     countryCode: 'RS',
     flag: '🇷🇸',
-    region: 'Arilje / Loznica',
+    region: 'Fruchtbare Anbauregionen Serbiens',
+    sectionTitle: 'Herkunft: Serbien – Sonnengereifte Beerenqualität',
     harvestTime: 'Mai – Juni',
     harvestSeason: 'Mai – Juni',
-    harvestMethod: 'Handernte voll ausgereifter Sommererdbeeren',
-    transportMethod: 'Direkter Transport und Schweizer Schutzgasverpackung',
-    climateInfo: 'Warme Frühsommertage für optimalen Fruchtzuckergehalt.',
+    harvestMethod: 'Handgepflückt bei perfekter Vollreife und unmittelbar nach der Ernte schonend verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Ideales Mikroklima mit vielen Sonnenstunden und fruchtbaren Böden für volle natürliche Süsse',
     funFacts: [
-      'Vorratsbeutel voller gefriergetrockneter Erdbeerhälften für gesunden Dauerspass.',
-      'Praktischer Zip-Verschluss für langanhaltende Frische und Knusprigkeit.',
-      'Ideal für Familien, Sportler und Vielgeniesser.',
+      'Region: Ausgewählte, sonnenverwöhnte Beerenfelder in Serbien',
+      'Klima & Boden: Ideales Mikroklima mit vielen Sonnenstunden und fruchtbaren Böden für volle natürliche Süsse',
+      'Ernte: Handgepflückt bei perfekter Vollreife und unmittelbar nach der Ernte schonend verarbeitet',
+      'Qualität: 100 % naturbelassen, leuchtend rot und besonders intensiv im Geschmack',
     ],
-    coordinates: [44.5305, 19.2253],
-    gps: [44.5305, 19.2253],
-    zoomLevel: 5,
-    description: 'Vorratsbeutel voller gefriergetrockneter Erdbeerhälften für gesunden Dauerspass.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Erdbeeren stammen aus den traditionsreichen und fruchtbaren Obstbauregionen Serbiens. Dank des milden, sonnenreichen Klimas mit warmen Frühlingstagen und nährstoffreichen Böden reifen die Früchte auf den Feldern langsam und gleichmässig heran. Dadurch entwickeln sie ihre leuchtend rote Farbe, ihre feine natürliche Süsse und das unverwechselbar intensive Erdbeeraroma. Jede Beere wird zum Zeitpunkt der optimalen Vollreife sorgfältig von Hand geerntet und direkt vor Ort schonend gefriergetrocknet – für 100 % reinen, knusprigen Fruchtgenuss wie frisch vom Feld.',
   },
 
   'erdbeere-in-milchschokolade': {
@@ -255,69 +283,78 @@ export const PRODUCT_ORIGINS: Record<string, ProductOriginData> = {
   },
 
   // =========================================================================
-  // 3. BANANEN (Ecuador / Guayas & Los Ríos)
+  // 3. BANANEN (Guatemala – Tropische Reife auf fruchtbaren Vulkanböden)
   // =========================================================================
   'banane-scheiben': {
-    country: 'Ecuador',
-    countryCode: 'EC',
-    flag: '🇪🇨',
-    region: 'Guayas & Los Ríos',
+    country: 'Guatemala',
+    countryCode: 'GT',
+    flag: '🇬🇹',
+    region: 'Tropische Tiefland- und Küstenregionen',
+    sectionTitle: 'Herkunft: Guatemala – Tropische Reife auf fruchtbaren Vulkanböden',
     harvestTime: 'Ganzjährig sonnengereift',
     harvestSeason: 'Ganzjährig sonnengereift',
-    harvestMethod: 'Nachhaltige Kleinbauern-Ernte von Hand bei goldgelber Vollreife',
-    transportMethod: 'Zertifizierter, klimabewusster Seetransport zur Veredelung in die Schweiz',
-    climateInfo: 'Mineralreiche vulkanische Schwemmlandböden und ganzjährig äquatoriales Tropenklima.',
+    harvestMethod: 'Sonnengereift geerntet bei optimalem Zuckergehalt für ein intensives, süsses Aroma',
+    transportMethod: 'Klimaschonender Direkttransport aus Guatemala in die Schweiz',
+    climateInfo: 'Mineralstoffreiche Vulkanböden und ganzjährig warmes, tropisches Klima',
     funFacts: [
-      'Ecuadors Baby-Bananen zeichnen sich durch intensiven Honiggeschmack und natürliche Süsse aus.',
-      'Im Gegensatz zu üblichen Bananenchips komplett unfrittiert, ohne Palmöl und ohne Zuckerzusatz.',
-      'Ausgezeichnete natürliche Kalium-, Magnesium- und Vitamin-B6-Quelle.',
+      'Region: Tropische Tiefland- und Küstenregionen Guatemalas',
+      'Boden & Klima: Mineralstoffreiche Vulkanböden und ganzjährig warmes, tropisches Klima',
+      'Ernte: Sonnengereift geerntet bei optimalem Zuckergehalt für ein intensives, süsses Aroma',
+      'Qualität: 100 % naturbelassen, knusprig gefriergetrocknet und reich an natürlicher Energie',
     ],
-    coordinates: [-2.1894, -79.8891],
-    gps: [-2.1894, -79.8891],
+    coordinates: [15.7835, -90.2308],
+    gps: [15.7835, -90.2308],
     zoomLevel: 6,
-    description: 'Natursüsse Baby-Bananenscheiben aus nachhaltigem Kleinbauernanbau in Ecuador – unfrittiert, knusprig und ohne Palmöl.',
+    description:
+      'Unsere Bananen stammen aus den tropischen Anbauregionen Guatemalas. Dank des ganzjährig warmen Klimas, reichlich tropischer Sonne und der besonders mineralstoffreichen, vulkanischen Böden finden die Bananenstauden dort perfekte Wachstumsbedingungen. Die Früchte reifen langsam unter der Sonne Mittelamerikas heran, bis sie ihre volle natürliche Süsse und ihr charakteristisches, cremig-vollmundiges Aroma erreicht haben. Unmittelbar nach der Ernte werden die reifen Bananen geschält, geschnitten und schonend gefriergetrocknet – so entsteht ein unwiderstehlich knuspriger Fruchtsnack ganz ohne Zuckerzusatz.',
   },
 
   'banane-granulat': {
-    country: 'Ecuador',
-    countryCode: 'EC',
-    flag: '🇪🇨',
-    region: 'Guayas & Los Ríos',
+    country: 'Guatemala',
+    countryCode: 'GT',
+    flag: '🇬🇹',
+    region: 'Tropische Tiefland- und Küstenregionen',
+    sectionTitle: 'Herkunft: Guatemala – Tropische Reife auf fruchtbaren Vulkanböden',
     harvestTime: 'Ganzjährig sonnengereift',
     harvestSeason: 'Ganzjährig sonnengereift',
-    harvestMethod: 'Schonendes Granulieren vollreifer getrockneter Bananen',
-    transportMethod: 'Klimaschonender Überseetransport nach CH',
-    climateInfo: 'Fruchtbare Böden der Pazifikküste Ecuadors unter tropischer Sonne.',
+    harvestMethod: 'Sonnengereift geerntet bei optimalem Zuckergehalt für ein intensives, süsses Aroma',
+    transportMethod: 'Klimaschonender Direkttransport aus Guatemala in die Schweiz',
+    climateInfo: 'Mineralstoffreiche Vulkanböden und ganzjährig warmes, tropisches Klima',
     funFacts: [
-      'Bringt knusprigen Bananengeschmack direkt ins morgendliche Müsli oder Porridge.',
-      'Verklumpt nicht und bleibt in trockenen Müslimischungen dauerhaft kross.',
-      'Beliebt bei Kindern und Ausdauersportlern als natürlicher Energiespender.',
+      'Region: Tropische Tiefland- und Küstenregionen Guatemalas',
+      'Boden & Klima: Mineralstoffreiche Vulkanböden und ganzjährig warmes, tropisches Klima',
+      'Ernte: Sonnengereift geerntet bei optimalem Zuckergehalt für ein intensives, süsses Aroma',
+      'Qualität: 100 % naturbelassen, knusprig gefriergetrocknet und reich an natürlicher Energie',
     ],
-    coordinates: [-2.1894, -79.8891],
-    gps: [-2.1894, -79.8891],
+    coordinates: [15.7835, -90.2308],
+    gps: [15.7835, -90.2308],
     zoomLevel: 6,
-    description: 'Knuspriges Bananengranulat aus vollreifen ecuadorianischen Früchten für das morgendliche Müsli und Bowls.',
+    description:
+      'Unsere Bananen stammen aus den tropischen Anbauregionen Guatemalas. Dank des ganzjährig warmen Klimas, reichlich tropischer Sonne und der besonders mineralstoffreichen, vulkanischen Böden finden die Bananenstauden dort perfekte Wachstumsbedingungen. Die Früchte reifen langsam unter der Sonne Mittelamerikas heran, bis sie ihre volle natürliche Süsse und ihr charakteristisches, cremig-vollmundiges Aroma erreicht haben. Unmittelbar nach der Ernte werden die reifen Bananen geschält, geschnitten und schonend gefriergetrocknet – so entsteht ein unwiderstehlich knuspriger Fruchtsnack ganz ohne Zuckerzusatz.',
   },
 
   'banane-pulver': {
-    country: 'Ecuador',
-    countryCode: 'EC',
-    flag: '🇪🇨',
-    region: 'Guayas & Los Ríos',
+    country: 'Guatemala',
+    countryCode: 'GT',
+    flag: '🇬🇹',
+    region: 'Tropische Tiefland- und Küstenregionen',
+    sectionTitle: 'Herkunft: Guatemala – Tropische Reife auf fruchtbaren Vulkanböden',
     harvestTime: 'Ganzjährig sonnengereift',
     harvestSeason: 'Ganzjährig sonnengereift',
-    harvestMethod: 'Feinste Kaltvermahlung getrockneter Bananen zu reinem Naturpulver',
-    transportMethod: 'Klimaschonende Fracht und Schweizer Abfüllung',
-    climateInfo: 'Tropisches Äquatorklima mit hoher Feuchte und ganzjähriger Wärme.',
+    harvestMethod: 'Sonnengereift geerntet bei optimalem Zuckergehalt für ein intensives, süsses Aroma',
+    transportMethod: 'Klimaschonender Direkttransport aus Guatemala in die Schweiz',
+    climateInfo: 'Mineralstoffreiche Vulkanböden und ganzjährig warmes, tropisches Klima',
     funFacts: [
-      'Gibt Proteinshakes und Smoothies eine herrlich sämige Textur und natürliche Süsse.',
-      'Perfekter natürlicher Süsskraft-Ersatz beim Backen von Pancakes und Bananenbrot.',
-      'Vollgepackt mit bioverfügbaren Elektrolyten und Ballaststoffen.',
+      'Region: Tropische Tiefland- und Küstenregionen Guatemalas',
+      'Boden & Klima: Mineralstoffreiche Vulkanböden und ganzjährig warmes, tropisches Klima',
+      'Ernte: Sonnengereift geerntet bei optimalem Zuckergehalt für ein intensives, süsses Aroma',
+      'Qualität: 100 % naturbelassen, knusprig gefriergetrocknet und reich an natürlicher Energie',
     ],
-    coordinates: [-2.1894, -79.8891],
-    gps: [-2.1894, -79.8891],
+    coordinates: [15.7835, -90.2308],
+    gps: [15.7835, -90.2308],
     zoomLevel: 6,
-    description: 'Fein gemahlenes Bananenpulver aus Ecuador – der ideale natürliche Energiespender für Shakes und Teige.',
+    description:
+      'Unsere Bananen stammen aus den tropischen Anbauregionen Guatemalas. Dank des ganzjährig warmen Klimas, reichlich tropischer Sonne und der besonders mineralstoffreichen, vulkanischen Böden finden die Bananenstauden dort perfekte Wachstumsbedingungen. Die Früchte reifen langsam unter der Sonne Mittelamerikas heran, bis sie ihre volle natürliche Süsse und ihr charakteristisches, cremig-vollmundiges Aroma erreicht haben. Unmittelbar nach der Ernte werden die reifen Bananen geschält, geschnitten und schonend gefriergetrocknet – so entsteht ein unwiderstehlich knuspriger Fruchtsnack ganz ohne Zuckerzusatz.',
   },
 
   // =========================================================================
@@ -435,468 +472,531 @@ export const PRODUCT_ORIGINS: Record<string, ProductOriginData> = {
   },
 
   // =========================================================================
-  // 7. ZITRUSFRÜCHTE (Spanien / Valencia & Murcia)
+  // 7. ZITRUSFRÜCHTE (Türkei – Sonnenverwöhnte Mittelmeerküste)
   // =========================================================================
   'orange-pulver': {
-    country: 'Spanien',
-    countryCode: 'ES',
-    flag: '🇪🇸',
-    region: 'Valencia',
+    country: 'Türkei',
+    countryCode: 'TR',
+    flag: '🇹🇷',
+    region: 'Türkische Mittelmeer- & Ägäisküste',
+    sectionTitle: 'Herkunft: Türkei – Sonnenverwöhnte Mittelmeerküste',
     harvestTime: 'November – Mai',
     harvestSeason: 'November – Mai',
-    harvestMethod: 'Traditionelle Handsammlung bei voller Fruchtreife im sonnigen Hain',
-    transportMethod: 'Direkter europäischer Landtransport in die Schweiz',
-    climateInfo: 'Mediterranes Sonnenklima mit über 300 Sonnentagen pro Jahr an der spanischen Mittelmeerküste.',
+    harvestMethod: 'Baumgereift, handverlesen und direkt nach der Ernte schonend gefriergetrocknet',
+    transportMethod: 'Klimaschonender Direkttransport aus der Türkei in die Schweiz',
+    climateInfo: 'Bis zu 300 Sonnentage pro Jahr für ein intensives, vollmundiges Zitrusaroma',
     funFacts: [
-      'Die sonnigen Haine Valencias zählen zum traditionsreichsten Zitrusanbaugebiet Europas.',
-      'Reich an ätherischen Ölen und natürlichem Vitamin C in Schale und Fruchtfleisch.',
-      'Schonend vermahlen zu naturreinem Fruchtpulver für Dressings, Shakes und Backkreationen.',
+      'Region: Türkische Mittelmeer- & Ägäisküste (traditionelle Zitrusgärten)',
+      'Klima: Bis zu 300 Sonnentage pro Jahr für ein intensives, vollmundiges Zitrusaroma',
+      'Ernte: Baumgereift, handverlesen und direkt nach der Ernte schonend gefriergetrocknet',
+      'Qualität: 100 % naturbelassen, aromatisch und reich an natürlichem Vitamin C',
     ],
-    coordinates: [39.4699, -0.3763],
-    gps: [39.4699, -0.3763],
+    coordinates: [36.8969, 30.7133],
+    gps: [36.8969, 30.7133],
     zoomLevel: 6,
-    description: '100% naturreines Orangenpulver aus sonnigen Hainen in Valencia – voller Geschmack und natürliches Vitamin C.',
+    description:
+      'Unsere Orangen stammen aus den sonnenverwöhnten Zitrusgärten entlang der türkischen Mittelmeer- und Ägäisküste. Mit bis zu 300 Sonnentagen im Jahr, milden Meeresbrisen und fruchtbaren Böden bietet diese Region ideale Bedingungen für den traditionellen Zitrusanbau. Die Früchte reifen langsam am Baum heran, wodurch sie ihr unvergleichlich intensives, fruchtig-süsses Aroma und ihre leuchtende Farbe entwickeln. Direkt nach der Ernte zum Zeitpunkt der perfekten Reife werden die Orangen schonend gefriergetrocknet – für 100 % natürlichen Fruchtgenuss voller Vitamine.',
   },
 
   'zitrone-pulver': {
-    country: 'Spanien',
-    countryCode: 'ES',
-    flag: '🇪🇸',
-    region: 'Murcia & Valencia',
+    country: 'Türkei',
+    countryCode: 'TR',
+    flag: '🇹🇷',
+    region: 'Türkische Mittelmeerküste',
+    sectionTitle: 'Herkunft: Türkei – Sonnenverwöhnte Mittelmeerküste',
     harvestTime: 'Oktober – April',
     harvestSeason: 'Oktober – April',
-    harvestMethod: 'Handernte sonnengereifter Zitronen bei optimalem Säuregehalt',
-    transportMethod: 'Direkter Landtransport zur Schweizer Veredelung',
-    climateInfo: 'Trockenes, sonnenintensives Mittelmeerklima in der Huerta de Murcia.',
+    harvestMethod: 'Baumgereift, handverlesen und direkt nach der Ernte schonend gefriergetrocknet',
+    transportMethod: 'Klimaschonender Direkttransport aus der Türkei in die Schweiz',
+    climateInfo: 'Bis zu 300 Sonnentage pro Jahr für ein intensives, vollmundiges Zitrusaroma',
     funFacts: [
-      'Murcia gilt als der Obstgarten Europas mit den aromatischsten Zitronen des Kontinents.',
-      'Bringt frischen Zitronenkick ohne Schäl- und Pressaufwand in jede Küche.',
-      '100% reine Zitrone ohne Trennmittel, Rieselhilfen oder künstliche Säureregulatoren.',
+      'Region: Türkische Mittelmeer- & Ägäisküste (traditionelle Zitrusgärten)',
+      'Klima: Bis zu 300 Sonnentage pro Jahr für ein intensives, vollmundiges Zitrusaroma',
+      'Ernte: Baumgereift, handverlesen und direkt nach der Ernte schonend gefriergetrocknet',
+      'Qualität: 100 % naturbelassen, aromatisch und reich an natürlichem Vitamin C',
     ],
-    coordinates: [37.9922, -1.1307],
-    gps: [37.9922, -1.1307],
+    coordinates: [36.8969, 30.7133],
+    gps: [36.8969, 30.7133],
     zoomLevel: 6,
-    description: 'Intensiv aromatisches Zitronenpulver aus Murcia – natürliche Frische und prickelnde Säure für Küche und Pâtisserie.',
+    description:
+      'Unsere Zitronen wachsen in den traditionsreichen Zitrusregionen an der türkischen Mittelmeerküste. Das subtropische Mittelmeerklima mit warmen, sonnigen Tagen und kühlen Nächten verleiht den Zitronen ihre charakteristische, erfrischende Säure sowie einen besonders hohen Gehalt an natürlichen ätherischen Ölen in der Schale. Handverlesen bei optimaler Reife und unmittelbar danach schonend gefriergetrocknet, bleiben das spritzige Zitrusaroma und die wertvollen Inhaltsstoffe vollständig erhalten.',
   },
 
   // =========================================================================
-  // 8. ECHTE HEIDELBEEREN (Schweden / Norrland & Lappland)
+  // 8. ECHTE HEIDELBEEREN (Serbien – Unberührte Bergnatur & Tradition)
   // =========================================================================
   'echte-heidelbeere-ganz': {
-    country: 'Schweden',
-    countryCode: 'SE',
-    flag: '🇸🇪',
-    region: 'Norrland / Lappland',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Höhenlagen & Gebirgsregionen',
+    sectionTitle: 'Herkunft: Serbien – Unberührte Bergnatur & Tradition',
     harvestTime: 'Juli – August',
     harvestSeason: 'Juli – August',
-    harvestMethod: 'Traditionelle Wildsammlung in unberührten Wäldern',
-    transportMethod: 'Zertifizierter Schienen- & Strassentransport',
-    climateInfo: 'Endlose Sommertage unter der Mitternachtssonne erzeugen höchste Konzentrationen an Anthocyanen.',
+    harvestMethod: 'Bei perfekter Vollreife sorgfältig verlesen und direkt vor Ort schonend verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Mineralstoffreiche Waldböden, viel Sonne und frische Bergluft für ein intensives Aroma',
     funFacts: [
-      'Echte Waldheidelbeeren (Vaccinium myrtillus) sind durch und durch tiefblau – im Gegensatz zu Zuchtheidelbeeren.',
-      'Enthalten ein Vielfaches an schützenden Antioxidantien im Vergleich zu herkömmlichen Kulturbeeren.',
-      'Handgepflückt in unberührten, zertifizierten Urwäldern Nordschwedens.',
+      'Region: Höhenlagen und naturbelassene Gebirgsregionen Serbiens',
+      'Boden & Klima: Mineralstoffreiche Waldböden, viel Sonne und frische Bergluft für ein intensives Aroma',
+      'Ernte: Bei perfekter Vollreife sorgfältig verlesen und direkt vor Ort schonend verarbeitet',
+      'Qualität: 100 % naturbelassen, durchgehend tiefblaues Fruchtfleisch und reich an natürlichen Antioxidantien',
     ],
-    coordinates: [63.8258, 20.2630],
-    gps: [63.8258, 20.2630],
-    zoomLevel: 5,
-    description: 'Wilde Waldheidelbeeren (Vaccinium myrtillus) aus unberührten skandinavischen Wäldern – durch und durch tiefblau.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere echten Heidelbeeren stammen aus den naturbelassenen Höhenlagen und fruchtbaren Bergregionen Serbiens. In den klaren, sonnenreichen Gebirgslandschaften mit sauberen Böden und kühlen Nächten finden die Beeren ideale Bedingungen, um langsam heranzureifen. Dadurch entwickeln sie ihr unverwechselbar tiefblaues Fruchtfleisch, einen hohen Gehalt an natürlichen Antioxidantien (Anthocyanen) und ihr intensiv-aromatisches, leicht herbes Waldbeeren-Aroma. Zum Zeitpunkt der vollen Reife sorgfältig von Hand geerntet und unmittelbar danach schonend gefriergetrocknet, bleiben Geschmack, Farbe und wertvolle Nährstoffe in höchster Qualität erhalten.',
   },
 
   'echte-heidelbeere-pulver': {
-    country: 'Schweden',
-    countryCode: 'SE',
-    flag: '🇸🇪',
-    region: 'Norrland / Lappland',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Höhenlagen & Gebirgsregionen',
+    sectionTitle: 'Herkunft: Serbien – Unberührte Bergnatur & Tradition',
     harvestTime: 'Juli – August',
     harvestSeason: 'Juli – August',
-    harvestMethod: 'Schonende Mahlung wild gesammelter Taiga-Heidelbeeren',
-    transportMethod: 'Direkter Transport zur Schweizer Veredelung',
-    climateInfo: 'Polare Lichttage im kurzen nordischen Sommer für hochkonzentrierte Pflanzenfarbstoffe.',
+    harvestMethod: 'Bei perfekter Vollreife sorgfältig verlesen und direkt vor Ort schonend verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Mineralstoffreiche Waldböden, viel Sonne und frische Bergluft für ein intensives Aroma',
     funFacts: [
-      'Verleiht Smoothies, Porridge und Joghurt eine spektakuläre, tief violette Naturfarbe.',
-      'Einer der potentesten natürlichen Radikalfänger überhaupt.',
-      '100% wilde Frucht ohne Zusätze – reinster skandinavischer Waldgeschmack.',
+      'Region: Höhenlagen und naturbelassene Gebirgsregionen Serbiens',
+      'Boden & Klima: Mineralstoffreiche Waldböden, viel Sonne und frische Bergluft für ein intensives Aroma',
+      'Ernte: Bei perfekter Vollreife sorgfältig verlesen und direkt vor Ort schonend verarbeitet',
+      'Qualität: 100 % naturbelassen, durchgehend tiefblaues Fruchtfleisch und reich an natürlichen Antioxidantien',
     ],
-    coordinates: [63.8258, 20.2630],
-    gps: [63.8258, 20.2630],
-    zoomLevel: 5,
-    description: 'Tiefblaues Pulver aus echten schwedischen Waldheidelbeeren – reich an Anthocyanen und natürlicher Vitalität.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere echten Heidelbeeren stammen aus den naturbelassenen Höhenlagen und fruchtbaren Bergregionen Serbiens. In den klaren, sonnenreichen Gebirgslandschaften mit sauberen Böden und kühlen Nächten finden die Beeren ideale Bedingungen, um langsam heranzureifen. Dadurch entwickeln sie ihr unverwechselbar tiefblaues Fruchtfleisch, einen hohen Gehalt an natürlichen Antioxidantien (Anthocyanen) und ihr intensiv-aromatisches, leicht herbes Waldbeeren-Aroma. Zum Zeitpunkt der vollen Reife sorgfältig von Hand geerntet und unmittelbar danach schonend gefriergetrocknet, bleiben Geschmack, Farbe und wertvolle Nährstoffe in höchster Qualität erhalten.',
   },
 
   // =========================================================================
-  // 9. ÄPFEL (Schweiz / Thurgau)
+  // 9. ÄPFEL (Serbien – Traditioneller Obstbau)
   // =========================================================================
   'apfel-gewuerfelt': {
-    country: 'Schweiz',
-    countryCode: 'CH',
-    flag: '🇨🇭',
-    region: 'Thurgau (Bodensee)',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Traditionelle Obstbauregionen',
+    sectionTitle: 'Herkunft: Serbien – Traditioneller Obstbau',
     harvestTime: 'September – Oktober',
     harvestSeason: 'September – Oktober',
-    harvestMethod: 'Sorgfältige Handernte traditioneller Schweizer Apfelsorten',
-    transportMethod: 'Regionaler Kurzstreckentransport (< 80 km) zur Manufaktur',
-    climateInfo: 'Mildes Bodensee-Seeklima mit optimaler Feuchte und Föhnwinden.',
+    harvestMethod: 'Handverlesen bei voller Reife und direkt vor Ort schonend verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Über 2.000 Sonnenstunden pro Jahr und nährstoffreiche Böden für ein intensives Fruchtaroma',
     funFacts: [
-      'Der Thurgau wird wegen seiner Apfelblütenpracht liebevoll Mostindien genannt.',
-      'Knackig gefriergetrocknet ohne Schwefelung, ohne Schalenverlust und ohne Zucker.',
-      'Beliebter ballaststoffreicher Znüni für Schweizer Schüler und Wanderer.',
+      'Region: Ausgewählte Obstgärten in Serbien (traditionelle Obstbauregionen mit idealem Mikroklima)',
+      'Klima & Boden: Über 2.000 Sonnenstunden pro Jahr und nährstoffreiche Böden für ein intensives Fruchtaroma',
+      'Ernte: Handverlesen bei voller Reife und direkt vor Ort schonend verarbeitet',
+      'Qualität: 100 % naturbelassen, ohne Zuckerzusatz und ohne Konservierungsstoffe',
     ],
-    coordinates: [47.5574, 9.1627],
-    gps: [47.5574, 9.1627],
-    zoomLevel: 8,
-    description: 'Knusprige Schweizer Apfelwürfel aus dem Thurgau – herrlich fruchtig, natursüss und ohne jegliche Zusätze.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Äpfel stammen aus den fruchtbaren Obstbauregionen Serbiens – einem Land mit jahrhundertealter Tradition im Obstbau. Durch das ideale kontinentale Klima mit vielen Sonnenstunden und warmen Sommertagen sowie kühlen Nächten entwickeln die Äpfel dort ein besonders intensives, ausgewogenes Verhältnis von natürlicher Süsse und feiner Säure. Geerntet zum Zeitpunkt der perfekten Vollreife in ausgewählten serbischen Obstgärten, werden die Früchte direkt nach der Ernte schonend gefriergetrocknet, sodass das volle Aroma, die natürliche Farbe und die wertvollen Nährstoffe optimal erhalten bleiben.',
   },
 
   'apfel-granulat': {
-    country: 'Schweiz',
-    countryCode: 'CH',
-    flag: '🇨🇭',
-    region: 'Thurgau (Bodensee)',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Traditionelle Obstbauregionen',
+    sectionTitle: 'Herkunft: Serbien – Traditioneller Obstbau',
     harvestTime: 'September – Oktober',
     harvestSeason: 'September – Oktober',
-    harvestMethod: 'Schonendes Zerkleinern Thurgauer Äpfel nach der Gefriertrocknung',
-    transportMethod: 'Kurze regionale Wege im Schweizer Nahverkehr',
-    climateInfo: 'Obstbaulagen des Schweizer Bodenseeraums.',
+    harvestMethod: 'Handverlesen bei voller Reife und direkt vor Ort schonend verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Über 2.000 Sonnenstunden pro Jahr und nährstoffreiche Böden für ein intensives Fruchtaroma',
     funFacts: [
-      'Perfekter knuspriger Topper für das originale Schweizer Bircher Müsli.',
-      'Bringt milde Fruchtsüsse und angenehmen Crunch in jede Bowl.',
-      '100% Schweizer Obstbau mit transparentem Herkunftsnachweis.',
+      'Region: Ausgewählte Obstgärten in Serbien (traditionelle Obstbauregionen mit idealem Mikroklima)',
+      'Klima & Boden: Über 2.000 Sonnenstunden pro Jahr und nährstoffreiche Böden für ein intensives Fruchtaroma',
+      'Ernte: Handverlesen bei voller Reife und direkt vor Ort schonend verarbeitet',
+      'Qualität: 100 % naturbelassen, ohne Zuckerzusatz und ohne Konservierungsstoffe',
     ],
-    coordinates: [47.5574, 9.1627],
-    gps: [47.5574, 9.1627],
-    zoomLevel: 8,
-    description: 'Feines Schweizer Apfelgranulat aus dem Thurgau – das knusprige Herzstück jedes traditionellen Müslis.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Äpfel stammen aus den fruchtbaren Obstbauregionen Serbiens – einem Land mit jahrhundertealter Tradition im Obstbau. Durch das ideale kontinentale Klima mit vielen Sonnenstunden und warmen Sommertagen sowie kühlen Nächten entwickeln die Äpfel dort ein besonders intensives, ausgewogenes Verhältnis von natürlicher Süsse und feiner Säure. Geerntet zum Zeitpunkt der perfekten Vollreife in ausgewählten serbischen Obstgärten, werden die Früchte direkt nach der Ernte schonend gefriergetrocknet, sodass das volle Aroma, die natürliche Farbe und die wertvollen Nährstoffe optimal erhalten bleiben.',
   },
 
   'apfel-pulver': {
-    country: 'Schweiz',
-    countryCode: 'CH',
-    flag: '🇨🇭',
-    region: 'Thurgau (Bodensee)',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Traditionelle Obstbauregionen',
+    sectionTitle: 'Herkunft: Serbien – Traditioneller Obstbau',
     harvestTime: 'September – Oktober',
     harvestSeason: 'September – Oktober',
-    harvestMethod: 'Feinstvermahlung getrockneter Schweizer Äpfel',
-    transportMethod: 'Schweizer Manufaktur-Direktweg',
-    climateInfo: 'Milde Bodenseehänge mit tiefgründigen Lehm- und Moränenböden.',
+    harvestMethod: 'Handverlesen bei voller Reife und direkt vor Ort schonend verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Über 2.000 Sonnenstunden pro Jahr und nährstoffreiche Böden für ein intensives Fruchtaroma',
     funFacts: [
-      'Ideal zum natürlichen Verfeinern von Gebäck, Saucen, Porridge und Desserts.',
-      'Enthält natürliche Pektine und wertvolle Apfelsäuren.',
-      'Frei von Konservierungsstoffen und 100% vegan.',
+      'Region: Ausgewählte Obstgärten in Serbien (traditionelle Obstbauregionen mit idealem Mikroklima)',
+      'Klima & Boden: Über 2.000 Sonnenstunden pro Jahr und nährstoffreiche Böden für ein intensives Fruchtaroma',
+      'Ernte: Handverlesen bei voller Reife und direkt vor Ort schonend verarbeitet',
+      'Qualität: 100 % naturbelassen, ohne Zuckerzusatz und ohne Konservierungsstoffe',
     ],
-    coordinates: [47.5574, 9.1627],
-    gps: [47.5574, 9.1627],
-    zoomLevel: 8,
-    description: '100% reines Schweizer Apfelpulver aus Thurgauer Früchten – sanft süsslich und vielseitig verwendbar.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Äpfel stammen aus den fruchtbaren Obstbauregionen Serbiens – einem Land mit jahrhundertealter Tradition im Obstbau. Durch das ideale kontinentale Klima mit vielen Sonnenstunden und warmen Sommertagen sowie kühlen Nächten entwickeln die Äpfel dort ein besonders intensives, ausgewogenes Verhältnis von natürlicher Süsse und feiner Säure. Geerntet zum Zeitpunkt der perfekten Vollreife in ausgewählten serbischen Obstgärten, werden die Früchte direkt nach der Ernte schonend gefriergetrocknet, sodass das volle Aroma, die natürliche Farbe und die wertvollen Nährstoffe optimal erhalten bleiben.',
   },
 
   // =========================================================================
-  // 10. ZWETSCHGEN (Schweiz / Baselbiet & Aargau)
+  // 10. ZWETSCHGEN (Serbien – Das Herzstück serbischer Obstbautradition)
   // =========================================================================
   'zwetschgen-schnitze': {
-    country: 'Schweiz',
-    countryCode: 'CH',
-    flag: '🇨🇭',
-    region: 'Baselbiet & Aargau',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Traditionelle Zwetschgen-Anbauregionen',
+    sectionTitle: 'Herkunft: Serbien – Das Herzstück serbischer Obstbautradition',
     harvestTime: 'August – September',
     harvestSeason: 'August – September',
-    harvestMethod: 'Traditionelle Handernte bei dunkelblauer Vollreife',
-    transportMethod: 'Regionaler Kurzstreckentransport in der Schweiz',
-    climateInfo: 'Sonnig-warme Jura-Südhänge und Hügelland.',
+    harvestMethod: 'Vollreif geerntet, schonend entsteint und unmittelbar nach der Ernte gefriergetrocknet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Ideales Spätsommerklima für höchste natürliche Süsse und volles Aroma',
     funFacts: [
-      'Schweizer Zwetschgen besitzen ein unvergleichlich tiefes, samtiges Aroma.',
-      'Schonend geschnitzt und im Hochvakuum getrocknet für federleichten Knuspergenuss.',
-      'Hervorragende Ballaststoffquelle für eine gesunde Verdauung.',
+      'Region: Weltbekannte, traditionelle Zwetschgen-Anbauregionen in Serbien',
+      'Klima & Boden: Ideales Spätsommerklima für höchste natürliche Süsse und volles Aroma',
+      'Ernte: Vollreif geerntet, schonend entsteint und unmittelbar nach der Ernte gefriergetrocknet',
+      'Qualität: 100 % naturbelassen, intensiv-fruchtig und reich an natürlichen Ballaststoffen',
     ],
-    coordinates: [47.4814, 7.7336],
-    gps: [47.4814, 7.7336],
-    zoomLevel: 8,
-    description: 'Knusprige Schweizer Zwetschgenschnitze aus dem Baselbiet – herbstlich-aromatisch mit feiner Fruchtsüsse.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Zwetschgen stammen aus den traditionsreichsten Obstbauregionen Serbiens – einem Land, in dem der Anbau von Zwetschgen seit Jahrhunderten tief in der Kultur verwurzelt ist. Auf fruchtbaren Böden und unter der warmen Spätsommersonne reifen die Früchte langsam am Baum heran, bis sie ihre tiefviolette Farbe, ihren hohen natürlichen Zuckergehalt und ihr unverwechselbar würzig-süsses Aroma erreicht haben. Direkt nach der Ernte entsteint und schonend gefriergetrocknet, bieten sie ein unvergleichlich knuspriges, intensives Geschmackserlebnis.',
   },
 
   'zwetschgen-granulat': {
-    country: 'Schweiz',
-    countryCode: 'CH',
-    flag: '🇨🇭',
-    region: 'Baselbiet & Aargau',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Traditionelle Zwetschgen-Anbauregionen',
+    sectionTitle: 'Herkunft: Serbien – Das Herzstück serbischer Obstbautradition',
     harvestTime: 'August – September',
     harvestSeason: 'August – September',
-    harvestMethod: 'Zerkleinerung gefriergetrockneter Zwetschgen zu krossem Crunch',
-    transportMethod: 'Regionaler Transport zur Schweizer Veredelung',
-    climateInfo: 'Sonnige Schweizer Obstgärten im Jura-Vorland.',
+    harvestMethod: 'Vollreif geerntet, schonend entsteint und unmittelbar nach der Ernte gefriergetrocknet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Ideales Spätsommerklima für höchste natürliche Süsse und volles Aroma',
     funFacts: [
-      'Bringt herbstlichen Fruchtgenuss ganzjährig in Frühstück und Gebäck.',
-      'Farbintensiv und reich an sekundären Pflanzenstoffen.',
-      'Passt traumhaft zu Zimt, Nüssen und Haferflocken.',
+      'Region: Weltbekannte, traditionelle Zwetschgen-Anbauregionen in Serbien',
+      'Klima & Boden: Ideales Spätsommerklima für höchste natürliche Süsse und volles Aroma',
+      'Ernte: Vollreif geerntet, schonend entsteint und unmittelbar nach der Ernte gefriergetrocknet',
+      'Qualität: 100 % naturbelassen, intensiv-fruchtig und reich an natürlichen Ballaststoffen',
     ],
-    coordinates: [47.4814, 7.7336],
-    gps: [47.4814, 7.7336],
-    zoomLevel: 8,
-    description: 'Knuspriges Zwetschgengranulat aus Schweizer Ernte – ideal für Quark, Porridge und herbstliche Desserts.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Zwetschgen stammen aus den traditionsreichsten Obstbauregionen Serbiens – einem Land, in dem der Anbau von Zwetschgen seit Jahrhunderten tief in der Kultur verwurzelt ist. Auf fruchtbaren Böden und unter der warmen Spätsommersonne reifen die Früchte langsam am Baum heran, bis sie ihre tiefviolette Farbe, ihren hohen natürlichen Zuckergehalt und ihr unverwechselbar würzig-süsses Aroma erreicht haben. Direkt nach der Ernte entsteint und schonend gefriergetrocknet, bieten sie ein unvergleichlich knuspriges, intensives Geschmackserlebnis.',
   },
 
   'zwetschgen-pulver': {
-    country: 'Schweiz',
-    countryCode: 'CH',
-    flag: '🇨🇭',
-    region: 'Baselbiet & Aargau',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Traditionelle Zwetschgen-Anbauregionen',
+    sectionTitle: 'Herkunft: Serbien – Das Herzstück serbischer Obstbautradition',
     harvestTime: 'August – September',
     harvestSeason: 'August – September',
-    harvestMethod: 'Schonendes Mahlen getrockneter Schweizer Zwetschgen',
-    transportMethod: 'Schweizer Manufaktur-Direktweg',
-    climateInfo: 'Geschützte Schweizer Tallagen mit warmen Spätsommertagen.',
+    harvestMethod: 'Vollreif geerntet, schonend entsteint und unmittelbar nach der Ernte gefriergetrocknet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Ideales Spätsommerklima für höchste natürliche Süsse und volles Aroma',
     funFacts: [
-      'Verleiht Füllungen, Cremes und Smoothies ein tiefes Zwetschgenaroma.',
-      'Keine künstlichen Aromen nötig – pure Naturpower.',
-      '100% reine Schweizer Früchte ohne Zusätze.',
+      'Region: Weltbekannte, traditionelle Zwetschgen-Anbauregionen in Serbien',
+      'Klima & Boden: Ideales Spätsommerklima für höchste natürliche Süsse und volles Aroma',
+      'Ernte: Vollreif geerntet, schonend entsteint und unmittelbar nach der Ernte gefriergetrocknet',
+      'Qualität: 100 % naturbelassen, intensiv-fruchtig und reich an natürlichen Ballaststoffen',
     ],
-    coordinates: [47.4814, 7.7336],
-    gps: [47.4814, 7.7336],
-    zoomLevel: 8,
-    description: 'Fein gemahlenes Schweizer Zwetschgenpulver – intensive Naturfarbe und volles Fruchtaroma.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Zwetschgen stammen aus den traditionsreichsten Obstbauregionen Serbiens – einem Land, in dem der Anbau von Zwetschgen seit Jahrhunderten tief in der Kultur verwurzelt ist. Auf fruchtbaren Böden und unter der warmen Spätsommersonne reifen die Früchte langsam am Baum heran, bis sie ihre tiefviolette Farbe, ihren hohen natürlichen Zuckergehalt und ihr unverwechselbar würzig-süsses Aroma erreicht haben. Direkt nach der Ernte entsteint und schonend gefriergetrocknet, bieten sie ein unvergleichlich knuspriges, intensives Geschmackserlebnis.',
   },
 
   // =========================================================================
-  // 11. APRIKOSEN (Schweiz / Wallis)
+  // 11. APRIKOSEN (Serbien – Sonnengereifte Aprikosen aus traditionellem Obstbau)
   // =========================================================================
   'aprikose-schnitze': {
-    country: 'Schweiz',
-    countryCode: 'CH',
-    flag: '🇨🇭',
-    region: 'Wallis (Valais)',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Traditionsreiche Anbaugebiete Serbiens',
+    sectionTitle: 'Herkunft: Serbien – Sonnengereifte Aprikosen aus traditionellem Obstbau',
     harvestTime: 'Juli – August',
     harvestSeason: 'Juli – August',
-    harvestMethod: 'Handlese sonnengereifter Walliser Aprikosen der Edelsorte Luizet',
-    transportMethod: 'Regionaler Schweizer Alpentransport zur Manufaktur',
-    climateInfo: 'Sonnenreichstes Tal der Schweiz mit trocken-heissem Steppenklima.',
+    harvestMethod: 'Baumgereift von Hand geerntet, sorgfältig entsteint und direkt verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Warme Sommertage und mineralstoffreiche Böden für ein vollmundiges Steinobst-Aroma',
     funFacts: [
-      'Walliser Aprikosen gelten in der Schweiz als Goldstandard für Aroma und Süsse.',
-      'Schonend entkernt und in Schnitze geschnitten vor der Gefriertrocknung.',
-      'Reich an Beta-Carotin, Kalium und wertvollen Antioxidantien.',
+      'Region: Sonnige Obstgärten in den traditionsreichen Anbaugebieten Serbiens',
+      'Klima & Boden: Warme Sommertage und mineralstoffreiche Böden für ein vollmundiges Steinobst-Aroma',
+      'Ernte: Baumgereift von Hand geerntet, sorgfältig entsteint und direkt verarbeitet',
+      'Qualität: 100 % naturbelassen, aromatisch-süss und reich an natürlichem Beta-Carotin',
     ],
-    coordinates: [46.2331, 7.3606],
-    gps: [46.2331, 7.3606],
-    zoomLevel: 8,
-    description: 'Sonnengereifte Walliser Aprikosenschnitze aus den Schweizer Alpen – intensiv aromatisch und herrlich knusprig.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Aprikosen stammen aus den sonnenverwöhnten, sanft hügeligen Obstbauregionen Serbiens. Durch das kontinentale Klima mit warmen, trockenen Sommern und vielen Sonnenstunden entwickeln die Früchte am Baum ihre leuchtend gold-orange Farbe und ein wunderbar ausgewogenes Verhältnis aus intensiver, honigartiger Süsse und feiner Fruchtsäure. Zum Zeitpunkt der vollen Reife von Hand geerntet, entsteint und direkt vor Ort schonend gefriergetrocknet, bleiben das samtige Aroma und die wertvollen Nährstoffe optimal erhalten.',
   },
 
   'aprikose-granulat': {
-    country: 'Schweiz',
-    countryCode: 'CH',
-    flag: '🇨🇭',
-    region: 'Wallis (Valais)',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Traditionsreiche Anbaugebiete Serbiens',
+    sectionTitle: 'Herkunft: Serbien – Sonnengereifte Aprikosen aus traditionellem Obstbau',
     harvestTime: 'Juli – August',
     harvestSeason: 'Juli – August',
-    harvestMethod: 'Körnung gefriergetrockneter Schweizer Aprikosen',
-    transportMethod: 'Regionaler Schweizer Transport',
-    climateInfo: 'Alpine Sonnenhänge im Rhonetal mit über 300 Sonnentagen.',
+    harvestMethod: 'Baumgereift von Hand geerntet, sorgfältig entsteint und direkt verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Warme Sommertage und mineralstoffreiche Böden für ein vollmundiges Steinobst-Aroma',
     funFacts: [
-      'Sonnengelber Crunch für Ihr morgendliches Müsli oder Dessert.',
-      'Natürlicher Fruchtester-Geschmack ohne Zuckerzusatz.',
-      'Beliebt bei Spitzenköchen zur Tellerdekoration.',
+      'Region: Sonnige Obstgärten in den traditionsreichen Anbaugebieten Serbiens',
+      'Klima & Boden: Warme Sommertage und mineralstoffreiche Böden für ein vollmundiges Steinobst-Aroma',
+      'Ernte: Baumgereift von Hand geerntet, sorgfältig entsteint und direkt verarbeitet',
+      'Qualität: 100 % naturbelassen, aromatisch-süss und reich an natürlichem Beta-Carotin',
     ],
-    coordinates: [46.2331, 7.3606],
-    gps: [46.2331, 7.3606],
-    zoomLevel: 8,
-    description: 'Knuspriges Aprikosengranulat aus sonnenverwöhnten Walliser Früchten für Bowls und feine Pâtisserie.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Aprikosen stammen aus den sonnenverwöhnten, sanft hügeligen Obstbauregionen Serbiens. Durch das kontinentale Klima mit warmen, trockenen Sommern und vielen Sonnenstunden entwickeln die Früchte am Baum ihre leuchtend gold-orange Farbe und ein wunderbar ausgewogenes Verhältnis aus intensiver, honigartiger Süsse und feiner Fruchtsäure. Zum Zeitpunkt der vollen Reife von Hand geerntet, entsteint und direkt vor Ort schonend gefriergetrocknet, bleiben das samtige Aroma und die wertvollen Nährstoffe optimal erhalten.',
   },
 
   'aprikose-pulver': {
-    country: 'Schweiz',
-    countryCode: 'CH',
-    flag: '🇨🇭',
-    region: 'Wallis (Valais)',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Traditionsreiche Anbaugebiete Serbiens',
+    sectionTitle: 'Herkunft: Serbien – Sonnengereifte Aprikosen aus traditionellem Obstbau',
     harvestTime: 'Juli – August',
     harvestSeason: 'Juli – August',
-    harvestMethod: 'Kaltvermahlung getrockneter Walliser Aprikosen',
-    transportMethod: 'Schweizer Manufaktur-Direktweg',
-    climateInfo: 'Walliser Sonnenplateaus mit starker Sonneneinstrahlung.',
+    harvestMethod: 'Baumgereift von Hand geerntet, sorgfältig entsteint und direkt verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Warme Sommertage und mineralstoffreiche Böden für ein vollmundiges Steinobst-Aroma',
     funFacts: [
-      'Bringt strahlend gelbe Naturfarbe und sonnige Fruchtnote in Teige und Cremes.',
-      'Sehr feine Mahlung für sofortige Löslichkeit ohne Rückstände.',
-      '100% sortenrein aus der Schweiz ohne Trägerstoffe.',
+      'Region: Sonnige Obstgärten in den traditionsreichen Anbaugebieten Serbiens',
+      'Klima & Boden: Warme Sommertage und mineralstoffreiche Böden für ein vollmundiges Steinobst-Aroma',
+      'Ernte: Baumgereift von Hand geerntet, sorgfältig entsteint und direkt verarbeitet',
+      'Qualität: 100 % naturbelassen, aromatisch-süss und reich an natürlichem Beta-Carotin',
     ],
-    coordinates: [46.2331, 7.3606],
-    gps: [46.2331, 7.3606],
-    zoomLevel: 8,
-    description: '100% reines Walliser Aprikosenpulver – sonnig-süss und ideal für Desserts, Eis und feine Backwaren.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Aprikosen stammen aus den sonnenverwöhnten, sanft hügeligen Obstbauregionen Serbiens. Durch das kontinentale Klima mit warmen, trockenen Sommern und vielen Sonnenstunden entwickeln die Früchte am Baum ihre leuchtend gold-orange Farbe und ein wunderbar ausgewogenes Verhältnis aus intensiver, honigartiger Süsse und feiner Fruchtsäure. Zum Zeitpunkt der vollen Reife von Hand geerntet, entsteint und direkt vor Ort schonend gefriergetrocknet, bleiben das samtige Aroma und die wertvollen Nährstoffe optimal erhalten.',
   },
 
   // =========================================================================
-  // 12. SAUERKIRSCHEN (Schweiz & Serbien / Ostschweiz & Šumadija)
+  // 12. SAUERKIRSCHEN (Serbien – Aromatische Sauerkirschen von höchster Qualität)
   // =========================================================================
   'sauerkirsche-ganz': {
-    country: 'Schweiz',
-    countryCode: 'CH',
-    flag: '🇨🇭',
-    region: 'Ostschweiz / Schweizer Manufaktur',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Obstbauregionen Serbiens',
+    sectionTitle: 'Herkunft: Serbien – Aromatische Sauerkirschen von höchster Qualität',
     harvestTime: 'Juni – Juli',
     harvestSeason: 'Juni – Juli',
-    harvestMethod: 'Sorgfältige Handernte vollreifer Sauerkirschen und behutsames Entkernen',
-    transportMethod: 'Gekühlter Frischetransport und Schweizer Vakuumentfeuchtung',
-    climateInfo: 'Ausgewogenes mitteleuropäisches Klima mit mineralstoffreichen Böden.',
+    harvestMethod: 'Bei voller Reife geerntet, entsteint und direkt vor Ort schonend gefriergetrocknet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Optimale klimatische Bedingungen für das perfekte Spiel aus Fruchtsüsse und erfrischender Säure',
     funFacts: [
-      'Sauerkirschen besitzen ein perfektes Gleichgewicht aus intensiver Fruchtsäure und Fruchtnote.',
-      'Enthalten natürliches Melatonin und sekundäre Pflanzenfarbstoffe (Anthocyane).',
-      'Die Früchte bleiben nach dem Kälte-Vakuum federleicht und vollkommen formstabil.',
+      'Region: Spezialisierte Kirschen-Obstgärten in den besten Lagen Serbiens',
+      'Klima & Boden: Optimale klimatische Bedingungen für das perfekte Spiel aus Fruchtsüsse und erfrischender Säure',
+      'Ernte: Bei voller Reife geerntet, entsteint und direkt vor Ort schonend gefriergetrocknet',
+      'Qualität: 100 % naturbelassen, intensiv dunkelrot und voller natürlicher Antioxidantien',
     ],
-    coordinates: [47.1662, 8.5155],
-    gps: [47.1662, 8.5155],
-    zoomLevel: 8,
-    description: 'Entkernte, knusprige Sauerkirschen – der intensiv säuerlich-fruchtige Knabberspass für echte Fruchtfans.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Sauerkirschen wachsen in den fruchtbaren, sonnenreichen Obstbauregionen Serbiens, die europaweit für ihre erstklassigen, hocharomatischen Sauerkirschsorten geschätzt werden. Das Zusammenspiel aus viel Sonne, kühlen Nächten und nährstoffreichen Böden verleiht den Kirschen ihre tiefdunkelrote Farbe sowie das charakteristische, erfrischend säuerlich-fruchtige Aroma. Bei optimaler Reife geerntet, sorgfältig entsteint und sofort schonend gefriergetrocknet, bleibt der volle, spritzige Geschmack wie frisch vom Baum erhalten.',
   },
 
   'sauerkirsche-granulat': {
-    country: 'Schweiz',
-    countryCode: 'CH',
-    flag: '🇨🇭',
-    region: 'Ostschweiz / Schweizer Manufaktur',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Obstbauregionen Serbiens',
+    sectionTitle: 'Herkunft: Serbien – Aromatische Sauerkirschen von höchster Qualität',
     harvestTime: 'Juni – Juli',
     harvestSeason: 'Juni – Juli',
-    harvestMethod: 'Zerkleinern entkernter gefriergetrockneter Sauerkirschen',
-    transportMethod: 'Schweizer Manufaktur-Transport',
-    climateInfo: 'Gemässigtes Klima mit optimalen Niederschlägen für saftige Steinfrüchte.',
+    harvestMethod: 'Bei voller Reife geerntet, entsteint und direkt vor Ort schonend gefriergetrocknet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Optimale klimatische Bedingungen für das perfekte Spiel aus Fruchtsüsse und erfrischender Säure',
     funFacts: [
-      'Setzt frische, säuerliche Akzente in schokoladigen oder süssen Desserts.',
-      'Perfekt geeignet für Bircher Müsli, Porridge und Joghurt.',
-      '100% rein ohne Zucker oder Konservierungsmittel.',
+      'Region: Spezialisierte Kirschen-Obstgärten in den besten Lagen Serbiens',
+      'Klima & Boden: Optimale klimatische Bedingungen für das perfekte Spiel aus Fruchtsüsse und erfrischender Säure',
+      'Ernte: Bei voller Reife geerntet, entsteint und direkt vor Ort schonend gefriergetrocknet',
+      'Qualität: 100 % naturbelassen, intensiv dunkelrot und voller natürlicher Antioxidantien',
     ],
-    coordinates: [47.1662, 8.5155],
-    gps: [47.1662, 8.5155],
-    zoomLevel: 8,
-    description: 'Knuspriges Sauerkirschgranulat mit spritzig-herber Fruchtnote für Desserts und Müslis.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Sauerkirschen wachsen in den fruchtbaren, sonnenreichen Obstbauregionen Serbiens, die europaweit für ihre erstklassigen, hocharomatischen Sauerkirschsorten geschätzt werden. Das Zusammenspiel aus viel Sonne, kühlen Nächten und nährstoffreichen Böden verleiht den Kirschen ihre tiefdunkelrote Farbe sowie das charakteristische, erfrischend säuerlich-fruchtige Aroma. Bei optimaler Reife geerntet, sorgfältig entsteint und sofort schonend gefriergetrocknet, bleibt der volle, spritzige Geschmack wie frisch vom Baum erhalten.',
   },
 
   'sauerkirsche-pulver': {
-    country: 'Schweiz',
-    countryCode: 'CH',
-    flag: '🇨🇭',
-    region: 'Ostschweiz / Schweizer Manufaktur',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Obstbauregionen Serbiens',
+    sectionTitle: 'Herkunft: Serbien – Aromatische Sauerkirschen von höchster Qualität',
     harvestTime: 'Juni – Juli',
     harvestSeason: 'Juni – Juli',
-    harvestMethod: 'Feinste Mahlung vollreifer gefriergetrockneter Sauerkirschen',
-    transportMethod: 'Schweizer Manufaktur-Direktweg',
-    climateInfo: 'Hügelland der Schweizer Voralpen.',
+    harvestMethod: 'Bei voller Reife geerntet, entsteint und direkt vor Ort schonend gefriergetrocknet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Optimale klimatische Bedingungen für das perfekte Spiel aus Fruchtsüsse und erfrischender Säure',
     funFacts: [
-      'Beliebt bei Sportlern für Regeneration und als natürlicher Fitmacher.',
-      'Tiefrote Färbekraft für Macarons, Glasuren und Smoothies.',
-      'Unverfälschtes Fruchtpulver ohne jegliche Trägerstoffe.',
+      'Region: Spezialisierte Kirschen-Obstgärten in den besten Lagen Serbiens',
+      'Klima & Boden: Optimale klimatische Bedingungen für das perfekte Spiel aus Fruchtsüsse und erfrischender Säure',
+      'Ernte: Bei voller Reife geerntet, entsteint und direkt vor Ort schonend gefriergetrocknet',
+      'Qualität: 100 % naturbelassen, intensiv dunkelrot und voller natürlicher Antioxidantien',
     ],
-    coordinates: [47.1662, 8.5155],
-    gps: [47.1662, 8.5155],
-    zoomLevel: 8,
-    description: 'Reines Sauerkirschpulver – intensiv herb-fruchtig und ein kraftvoller natürlicher Farb- und Vitaminspender.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Sauerkirschen wachsen in den fruchtbaren, sonnenreichen Obstbauregionen Serbiens, die europaweit für ihre erstklassigen, hocharomatischen Sauerkirschsorten geschätzt werden. Das Zusammenspiel aus viel Sonne, kühlen Nächten und nährstoffreichen Böden verleiht den Kirschen ihre tiefdunkelrote Farbe sowie das charakteristische, erfrischend säuerlich-fruchtige Aroma. Bei optimaler Reife geerntet, sorgfältig entsteint und sofort schonend gefriergetrocknet, bleibt der volle, spritzige Geschmack wie frisch vom Baum erhalten.',
   },
 
   // =========================================================================
-  // 13. BROMBEEREN (Schweiz / Thurgau)
+  // 13. BROMBEEREN (Serbien – Sonnengereifte Beeren aus unberührter Natur)
   // =========================================================================
   'brombeere-ganz': {
-    country: 'Schweiz',
-    countryCode: 'CH',
-    flag: '🇨🇭',
-    region: 'Thurgau & Ostschweiz',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Hügellandschaften Serbiens',
+    sectionTitle: 'Herkunft: Serbien – Sonnengereifte Beeren aus unberührter Natur',
     harvestTime: 'Juli – August',
     harvestSeason: 'Juli – August',
-    harvestMethod: 'Sorgfältige Handlese vollreifer, tiefschwarzer Brombeeren',
-    transportMethod: 'Klimaschonender Transport zur Schweizer Manufaktur',
-    climateInfo: 'Feucht-warme Sommerbedingungen für pralle, saftige Wald- und Gartenbeeren.',
+    harvestMethod: 'Behutsam von Hand verlesen bei voller Reife und direkt vor Ort verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Nährstoffreiche Böden und viele Sonnenstunden für tiefdunkle, süss-aromatische Früchte',
     funFacts: [
-      'Brombeeren gehören zu den ballaststoffreichsten Beerenarten überhaupt.',
-      'Dunkelviolette Pigmente (Anthocyane) schützen die Zellen vor freiem Radikalstress.',
-      'Knusprig-luftiger Genuss ganz ohne harte Stiele.',
+      'Region: Sonnige Hügellagen und traditionelle Beerenfelder in Serbien',
+      'Klima & Boden: Nährstoffreiche Böden und viele Sonnenstunden für tiefdunkle, süss-aromatische Früchte',
+      'Ernte: Behutsam von Hand verlesen bei voller Reife und direkt vor Ort verarbeitet',
+      'Qualität: 100 % naturbelassen, reich an Vitaminen, Mineralstoffen und natürlichen Anthocyanen',
     ],
-    coordinates: [47.5574, 9.1627],
-    gps: [47.5574, 9.1627],
-    zoomLevel: 8,
-    description: 'Ganze gefriergetrocknete Brombeeren – tiefschwarz, herrlich knusprig und reich an wertvollen Vitalstoffen.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Brombeeren stammen aus den sonnigen, naturbelassenen Hügellandschaften Serbiens. In den warmen Sommermonaten reifen die Beeren an den Sträuchern langsam heran, bis sie ihre glänzend tiefschwarze Farbe und ihr vollmundiges, süss-herbes Waldbeeren-Aroma vollständig entwickelt haben. Da Brombeeren besonders empfindlich sind, werden sie zum Zeitpunkt der perfekten Vollreife behutsam von Hand gepflückt und unmittelbar nach der Ernte schonend gefriergetrocknet – für 100 % natürlichen, knusprigen Beerengenuss.',
   },
 
   'brombeere-granulat': {
-    country: 'Schweiz',
-    countryCode: 'CH',
-    flag: '🇨🇭',
-    region: 'Thurgau & Ostschweiz',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Hügellandschaften Serbiens',
+    sectionTitle: 'Herkunft: Serbien – Sonnengereifte Beeren aus unberührter Natur',
     harvestTime: 'Juli – August',
     harvestSeason: 'Juli – August',
-    harvestMethod: 'Behutsames Granulieren gefriergetrockneter Brombeeren',
-    transportMethod: 'Schweizer Direktvertrieb',
-    climateInfo: 'Kontrollierter Schweizer Qualitätsstandard in Bio-Gärten.',
+    harvestMethod: 'Behutsam von Hand verlesen bei voller Reife und direkt vor Ort verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Nährstoffreiche Böden und viele Sonnenstunden für tiefdunkle, süss-aromatische Früchte',
     funFacts: [
-      'Knuspriger dunkelvioletter Topper für Smoothie-Bowls und Chia-Pudding.',
-      'Hohe Konzentration an natürlichen Fruchtsäuren und Vitamin C.',
-      '100% reine Frucht ohne jegliche künstliche Zusätze.',
+      'Region: Sonnige Hügellagen und traditionelle Beerenfelder in Serbien',
+      'Klima & Boden: Nährstoffreiche Böden und viele Sonnenstunden für tiefdunkle, süss-aromatische Früchte',
+      'Ernte: Behutsam von Hand verlesen bei voller Reife und direkt vor Ort verarbeitet',
+      'Qualität: 100 % naturbelassen, reich an Vitaminen, Mineralstoffen und natürlichen Anthocyanen',
     ],
-    coordinates: [47.5574, 9.1627],
-    gps: [47.5574, 9.1627],
-    zoomLevel: 8,
-    description: 'Knuspriges Brombeergranulat für das morgendliche Müsli und kreative Dessertkreationen.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Brombeeren stammen aus den sonnigen, naturbelassenen Hügellandschaften Serbiens. In den warmen Sommermonaten reifen die Beeren an den Sträuchern langsam heran, bis sie ihre glänzend tiefschwarze Farbe und ihr vollmundiges, süss-herbes Waldbeeren-Aroma vollständig entwickelt haben. Da Brombeeren besonders empfindlich sind, werden sie zum Zeitpunkt der perfekten Vollreife behutsam von Hand gepflückt und unmittelbar nach der Ernte schonend gefriergetrocknet – für 100 % natürlichen, knusprigen Beerengenuss.',
   },
 
   'brombeere-pulver': {
-    country: 'Schweiz',
-    countryCode: 'CH',
-    flag: '🇨🇭',
-    region: 'Thurgau & Ostschweiz',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Hügellandschaften Serbiens',
+    sectionTitle: 'Herkunft: Serbien – Sonnengereifte Beeren aus unberührter Natur',
     harvestTime: 'Juli – August',
     harvestSeason: 'Juli – August',
-    harvestMethod: 'Kaltvermahlung ganzer gefriergetrockneter Brombeeren',
-    transportMethod: 'Schweizer Manufaktur-Direktweg',
-    climateInfo: 'Optimale Wachstumsbedingungen in geschützten Schweizer Obsthainen.',
+    harvestMethod: 'Behutsam von Hand verlesen bei voller Reife und direkt vor Ort verarbeitet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Nährstoffreiche Böden und viele Sonnenstunden für tiefdunkle, süss-aromatische Früchte',
     funFacts: [
-      'Färbt Teige und Cremes in spektakuläres Dunkelviolett.',
-      'Feines Mundgefühl ohne Kernrückstände in Getränken.',
-      'Volle Antioxidantien-Power der ganzen Beere.',
+      'Region: Sonnige Hügellagen und traditionelle Beerenfelder in Serbien',
+      'Klima & Boden: Nährstoffreiche Böden und viele Sonnenstunden für tiefdunkle, süss-aromatische Früchte',
+      'Ernte: Behutsam von Hand verlesen bei voller Reife und direkt vor Ort verarbeitet',
+      'Qualität: 100 % naturbelassen, reich an Vitaminen, Mineralstoffen und natürlichen Anthocyanen',
     ],
-    coordinates: [47.5574, 9.1627],
-    gps: [47.5574, 9.1627],
-    zoomLevel: 8,
-    description: '100% reines Brombeerpulver – intensive Naturfarbe und edles Waldbeerenaroma.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere Brombeeren stammen aus den sonnigen, naturbelassenen Hügellandschaften Serbiens. In den warmen Sommermonaten reifen die Beeren an den Sträuchern langsam heran, bis sie ihre glänzend tiefschwarze Farbe und ihr vollmundiges, süss-herbes Waldbeeren-Aroma vollständig entwickelt haben. Da Brombeeren besonders empfindlich sind, werden sie zum Zeitpunkt der perfekten Vollreife behutsam von Hand gepflückt und unmittelbar nach der Ernte schonend gefriergetrocknet – für 100 % natürlichen, knusprigen Beerengenuss.',
   },
 
   // =========================================================================
-  // 14. SCHWARZE JOHANNISBEEREN (Schweiz & Polen / Thurgau & Niederschlesien)
+  // 14. SCHWARZE JOHANNISBEEREN (Serbien – Kraftvolle Beeren voller natürlicher Vitamine)
   // =========================================================================
   'schwarze-johannisbeere-ganz': {
-    country: 'Schweiz',
-    countryCode: 'CH',
-    flag: '🇨🇭',
-    region: 'Thurgau / Schweizer Manufaktur',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Fruchtbare Höhen- und Hügellagen Serbiens',
+    sectionTitle: 'Herkunft: Serbien – Kraftvolle Beeren voller natürlicher Vitamine',
     harvestTime: 'Juli – August',
     harvestSeason: 'Juli – August',
-    harvestMethod: 'Traditionelle Handlese bei tiefschwarzer Reife',
-    transportMethod: 'Frischetransport zur Schweizer Veredelung',
-    climateInfo: 'Kühles, gemässigtes mitteleuropäisches Klima mit nährstoffreichen Böden.',
+    harvestMethod: 'Zum Zeitpunkt der höchsten Aromadichte geerntet und sofort schonend gefriergetrocknet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Ideales Mikroklima für einen besonders hohen Gehalt an natürlichen Nährstoffen',
     funFacts: [
-      'Schwarze Johannisbeeren enthalten mehr als das Dreifache an Vitamin C gegenüber Orangen.',
-      'Markant-würziges Fruchtaroma, das Kenner besonders schätzen.',
-      'Krosser Biss und samtiger Fruchtkern im Kälte-Vakuum.',
+      'Region: Ausgewählte Beerenkulturen in den fruchtbaren Regionen Serbiens',
+      'Klima & Boden: Ideales Mikroklima für einen besonders hohen Gehalt an natürlichen Nährstoffen',
+      'Ernte: Zum Zeitpunkt der höchsten Aromadichte geerntet und sofort schonend gefriergetrocknet',
+      'Qualität: 100 % naturbelassen, kräftig-aromatisch und eine natürliche Vitamin-C-Quelle',
     ],
-    coordinates: [47.5574, 9.1627],
-    gps: [47.5574, 9.1627],
-    zoomLevel: 8,
-    description: 'Ganze gefriergetrocknete Schwarze Johannisbeeren – der herb-fruchtige Vitamin-C-Gigant für pure Energie.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere schwarzen Johannisbeeren wachsen in den klaren, fruchtbaren Höhen- und Hügellagen Serbiens. Das ausgeglichene Klima mit warmen Sonnentagen und frischen Nächten sorgt dafür, dass die Beeren ihr charakteristisches, intensiv-herbes und zugleich fruchtig-erfrischendes Aroma sowie einen aussergewöhnlich hohen Gehalt an natürlichem Vitamin C entwickeln. Vollreif geerntet und direkt vor Ort schonend gefriergetrocknet, bleiben sämtliche wertvollen Inhaltsstoffe und die tiefdunkle Farbe bestmöglich bewahrt.',
   },
 
   'schwarze-johannisbeere-pulver': {
-    country: 'Schweiz',
-    countryCode: 'CH',
-    flag: '🇨🇭',
-    region: 'Thurgau / Schweizer Manufaktur',
+    country: 'Serbien',
+    countryCode: 'RS',
+    flag: '🇷🇸',
+    region: 'Fruchtbare Höhen- und Hügellagen Serbiens',
+    sectionTitle: 'Herkunft: Serbien – Kraftvolle Beeren voller natürlicher Vitamine',
     harvestTime: 'Juli – August',
     harvestSeason: 'Juli – August',
-    harvestMethod: 'Feinstvermahlung getrockneter Schwarzer Johannisbeeren',
-    transportMethod: 'Schweizer Manufaktur-Transport',
-    climateInfo: 'Mineralreiche Böden Mitteleuropas für konzentrierte sekundäre Pflanzenstoffe.',
+    harvestMethod: 'Zum Zeitpunkt der höchsten Aromadichte geerntet und sofort schonend gefriergetrocknet',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
+    climateInfo: 'Ideales Mikroklima für einen besonders hohen Gehalt an natürlichen Nährstoffen',
     funFacts: [
-      'Hochgeschätzt für Immunkuren und als herbe Zutat in Shakes.',
-      'Intensive dunkle Naturfarbe und unverwechselbarer Cassis-Geschmack.',
-      '100% naturrein ohne Trägerstoffe.',
+      'Region: Ausgewählte Beerenkulturen in den fruchtbaren Regionen Serbiens',
+      'Klima & Boden: Ideales Mikroklima für einen besonders hohen Gehalt an natürlichen Nährstoffen',
+      'Ernte: Zum Zeitpunkt der höchsten Aromadichte geerntet und sofort schonend gefriergetrocknet',
+      'Qualität: 100 % naturbelassen, kräftig-aromatisch und eine natürliche Vitamin-C-Quelle',
     ],
-    coordinates: [47.5574, 9.1627],
-    gps: [47.5574, 9.1627],
-    zoomLevel: 8,
-    description: '100% reines Schwarzes Johannisbeerpulver (Cassis) – kraftvoller Vitamin-C-Booster mit herbem Spitzenaroma.',
+    coordinates: [44.0165, 21.0059],
+    gps: [44.0165, 21.0059],
+    zoomLevel: 6,
+    description:
+      'Unsere schwarzen Johannisbeeren wachsen in den klaren, fruchtbaren Höhen- und Hügellagen Serbiens. Das ausgeglichene Klima mit warmen Sonnentagen und frischen Nächten sorgt dafür, dass die Beeren ihr charakteristisches, intensiv-herbes und zugleich fruchtig-erfrischendes Aroma sowie einen aussergewöhnlich hohen Gehalt an natürlichem Vitamin C entwickeln. Vollreif geerntet und direkt vor Ort schonend gefriergetrocknet, bleiben sämtliche wertvollen Inhaltsstoffe und die tiefdunkle Farbe bestmöglich bewahrt.',
   },
 
   // =========================================================================
@@ -915,7 +1015,7 @@ export const PRODUCT_ORIGINS: Record<string, ProductOriginData> = {
     funFacts: [
       'Speziell komponiert für die sofortige Verbindung mit Naturjoghurt oder Magerquark.',
       'Zieht im Joghurt leicht Saft und färbt ihn in leuchtendes Pink.',
-      '100% Frucht ohne zugesetzten Kristallzucker.',
+      '100% Frucht ohne zugesetzen Kristallzucker.',
     ],
     coordinates: [47.3769, 8.5417],
     gps: [47.3769, 8.5417],
@@ -930,7 +1030,7 @@ export const PRODUCT_ORIGINS: Record<string, ProductOriginData> = {
     region: 'Schweizer Manufaktur',
     harvestTime: 'Ganzjährig gemischt',
     harvestSeason: 'Ganzjährig',
-    harvestMethod: 'Manufaktur-Mischung aus wilden Taiga-Heidelbeeren',
+    harvestMethod: 'Manufaktur-Mischung aus echten Waldheidelbeeren',
     transportMethod: 'Schweizer Manufaktur-Direktversand',
     climateInfo: 'Schweizer Veredelungstradition.',
     funFacts: [
@@ -1004,7 +1104,7 @@ export const PRODUCT_ORIGINS: Record<string, ProductOriginData> = {
     coordinates: [47.3769, 8.5417],
     gps: [47.3769, 8.5417],
     zoomLevel: 8,
-    description: 'Knuspriges Zwetschgengranulat mit herbstlich-tiefem Fruchtaroma für Joghurt und Müsli.',
+    description: 'Knuspriges Zwetschgengranulat mit herbstlich-tiefem Fruchtaroma für Joghurt und Müesli.',
   },
 
   'joghurtmischung-erdbeere': {
@@ -1029,7 +1129,7 @@ export const PRODUCT_ORIGINS: Record<string, ProductOriginData> = {
   },
 
   // =========================================================================
-  // 16. SNACKS, MÜSLIS & PROBIERSETS (Schweiz / Schweizer Manufaktur)
+  // 16. SNACKS, MüesliS & PROBIERSETS (Schweiz / Schweizer Manufaktur)
   // =========================================================================
   'mein-wander-snack': {
     country: 'Schweiz',
@@ -1105,7 +1205,7 @@ export const PRODUCT_ORIGINS: Record<string, ProductOriginData> = {
     transportMethod: 'Schweizer Post versichert',
     climateInfo: 'Schweizer Manufakturkunst.',
     funFacts: [
-      'Die perfekte Gelegenheit, um die ganze Vielfalt von fruit-comestible zu entdecken.',
+      'Die perfekte Gelegenheit, um die ganze Vielfalt vonfruit-comestible zu entdecken.',
       'Enthält die beliebtesten Beeren- und Fruchtsorten zum Kennenlernen.',
       'Beliebtes kleines Mitbringsel für ernährungsbewusste Freunde.',
     ],
@@ -1143,18 +1243,18 @@ export const PRODUCT_ORIGINS: Record<string, ProductOriginData> = {
     region: 'Schweizer Manufaktur',
     harvestTime: 'Ganzjährig gemischt',
     harvestSeason: 'Ganzjährig',
-    harvestMethod: 'Ausgewogene Komposition von Beeren und Früchten für Müslis',
+    harvestMethod: 'Ausgewogene Komposition von Beeren und Früchten für Müeslis',
     transportMethod: 'Schweizer Post versichert',
     climateInfo: 'Schweizer Veredelungskunst.',
     funFacts: [
-      'Macht jedes Frühstücksmüsli ohne künstliche Aromen zum fruchtigen Erlebnis.',
+      'Macht jedes FrühstücksMüesli ohne künstliche Aromen zum fruchtigen Erlebnis.',
       'Gleichmässig verteilt für die perfekte Balance bei jedem Löffel.',
       'Reich an Ballaststoffen und natürlichen Mineralien.',
     ],
     coordinates: [47.3769, 8.5417],
     gps: [47.3769, 8.5417],
     zoomLevel: 8,
-    description: 'Der ultimative Müslimix aus schonend gefriergetrockneten Früchten für Ihr tägliches Knuspermüsli.',
+    description: 'Der ultimative Müeslimix aus schonend gefriergetrockneten Früchten für Ihr tägliches KnusperMüesli.',
   },
 
   'instant-muesli-mix': {
@@ -1175,14 +1275,14 @@ export const PRODUCT_ORIGINS: Record<string, ProductOriginData> = {
     coordinates: [47.3769, 8.5417],
     gps: [47.3769, 8.5417],
     zoomLevel: 8,
-    description: 'Instant Müsli Mix (200g) mit vollem Fruchtgeschmack für das schnelle, unkomplizierte Power-Frühstück.',
+    description: 'Instant Müesli Mix (200g) mit vollem Fruchtgeschmack für das schnelle, unkomplizierte Power-Frühstück.',
   },
 
   'pure-frucht-muesli-topping': {
     country: 'Serbien',
     countryCode: 'RS',
     flag: '🇷🇸',
-    region: 'Arilje / Loznica & CH Manufaktur',
+    region: 'Fruchtbare Anbauregionen Serbiens & CH Manufaktur',
     harvestTime: 'Mai – Juli',
     harvestSeason: 'Mai – Juli',
     harvestMethod: '100% sortenreine Fruchtstückchen von Hand komponiert',
@@ -1190,13 +1290,13 @@ export const PRODUCT_ORIGINS: Record<string, ProductOriginData> = {
     climateInfo: 'Sonnenreiche Berglagen Westserbiens für maximale Fruchtextrakte.',
     funFacts: [
       'Besteht ausschliesslich aus gefriergetrockneten Früchten ohne Getreidezusatz.',
-      'Ideal für alle, die ihr eigenes Müsli individuell veredeln möchten.',
+      'Ideal für alle, die ihr eigenes Müesli individuell veredeln möchten.',
       'Knuspriger Genuss ganz ohne Zuckerzusätze.',
     ],
     coordinates: [44.5305, 19.2253],
     gps: [44.5305, 19.2253],
     zoomLevel: 5,
-    description: 'Pure Frucht Müsli-Topping aus sonnengereiften Erdbeeren und Himbeeren – 100% Frucht ohne Haferzusatz.',
+    description: 'Pure Frucht Müesli-Topping aus sonnengereiften Erdbeeren und Himbeeren – 100% Frucht ohne Haferzusatz.',
   },
 
   // =========================================================================
@@ -1235,7 +1335,7 @@ export const PRODUCT_ORIGINS: Record<string, ProductOriginData> = {
     climateInfo: 'Schweizer Manufakturkunst.',
     funFacts: [
       'Volle 1.4 kg feinste Früchte für monatelangen gesunden Knusperspass.',
-      'Beinhaltet auch seltene Beerensorten wie echte schwedische Heidelbeeren.',
+      'Beinhaltet auch seltene Beerensorten wie echte Waldheidelbeeren aus Serbien.',
       'Das ideale Geschenk für Hochzeiten, Jubiläen oder Firmenfeiern.',
     ],
     coordinates: [47.3769, 8.5417],
@@ -1340,7 +1440,7 @@ export const PRODUCT_ORIGINS: Record<string, ProductOriginData> = {
     climateInfo: 'Schweizer Manufakturkunst.',
     funFacts: [
       'Verwandelt jedes langweilige Frühstück in ein knuspriges Festmahl.',
-      'Ideal für Müsli, Porridge, Pancakes oder Joghurt-Bowls.',
+      'Ideal für Müesli, Porridge, Pancakes oder Joghurt-Bowls.',
       'Beliebt bei Sportlern für komplexe Kohlenhydrate und Vitamine.',
     ],
     coordinates: [47.3769, 8.5417],
@@ -1478,20 +1578,102 @@ export const PRODUCT_ORIGINS: Record<string, ProductOriginData> = {
 
 // Aliases for legacy DB slugs and alternative URL formats
 PRODUCT_ORIGINS['gefriergetrocknete-erdbeere'] = PRODUCT_ORIGINS['erdbeeren-ganz'];
+PRODUCT_ORIGINS['erdbeere-ganz'] = PRODUCT_ORIGINS['erdbeeren-ganz'];
+PRODUCT_ORIGINS['erdbeere-granulat'] = PRODUCT_ORIGINS['erdbeergranulat'];
+PRODUCT_ORIGINS['erdbeeren-granulat'] = PRODUCT_ORIGINS['erdbeergranulat'];
+PRODUCT_ORIGINS['erdbeere-pulver'] = PRODUCT_ORIGINS['erdbeerpulver'];
+PRODUCT_ORIGINS['erdbeeren-pulver'] = PRODUCT_ORIGINS['erdbeerpulver'];
+PRODUCT_ORIGINS['erdbeere-scheiben'] = PRODUCT_ORIGINS['erdbeeren-ganz'];
+PRODUCT_ORIGINS['erdbeere-stuecke'] = PRODUCT_ORIGINS['erdbeeren-ganz'];
 PRODUCT_ORIGINS['gefriergetrocknete-himbeeren'] = PRODUCT_ORIGINS['himbeeren-ganz'];
+PRODUCT_ORIGINS['himbeere-ganz'] = PRODUCT_ORIGINS['himbeeren-ganz'];
+PRODUCT_ORIGINS['himbeer-granulat'] = PRODUCT_ORIGINS['himbeergranulat'];
+PRODUCT_ORIGINS['himbeeren-granulat'] = PRODUCT_ORIGINS['himbeergranulat'];
+PRODUCT_ORIGINS['himbeer-pulver'] = PRODUCT_ORIGINS['himbeerpulver'];
+PRODUCT_ORIGINS['himbeeren-pulver'] = PRODUCT_ORIGINS['himbeerpulver'];
+PRODUCT_ORIGINS['himbeere-pulver'] = PRODUCT_ORIGINS['himbeerpulver'];
+PRODUCT_ORIGINS['himbeergriess'] = PRODUCT_ORIGINS['himbeergranulat'];
+PRODUCT_ORIGINS['himbeer-griess'] = PRODUCT_ORIGINS['himbeergranulat'];
+PRODUCT_ORIGINS['himbeeren-stuecke'] = PRODUCT_ORIGINS['himbeeren-ganz'];
+PRODUCT_ORIGINS['himbeere-stuecke'] = PRODUCT_ORIGINS['himbeeren-ganz'];
 PRODUCT_ORIGINS['gefriergetrocknete-echte-heidelbeere'] = PRODUCT_ORIGINS['echte-heidelbeere-ganz'];
+PRODUCT_ORIGINS['echte-heidelbeere-granulat'] = PRODUCT_ORIGINS['echte-heidelbeere-ganz'];
+PRODUCT_ORIGINS['heidelbeeren-ganz'] = PRODUCT_ORIGINS['echte-heidelbeere-ganz'];
+PRODUCT_ORIGINS['heidelbeere-ganz'] = PRODUCT_ORIGINS['echte-heidelbeere-ganz'];
+PRODUCT_ORIGINS['heidelbeerpulver'] = PRODUCT_ORIGINS['echte-heidelbeere-pulver'];
+PRODUCT_ORIGINS['heidelbeeren-pulver'] = PRODUCT_ORIGINS['echte-heidelbeere-pulver'];
+PRODUCT_ORIGINS['heidelbeergranulat'] = PRODUCT_ORIGINS['echte-heidelbeere-ganz'];
+PRODUCT_ORIGINS['blaubeere-ganz'] = PRODUCT_ORIGINS['echte-heidelbeere-ganz'];
+PRODUCT_ORIGINS['blaubeeren-ganz'] = PRODUCT_ORIGINS['echte-heidelbeere-ganz'];
+PRODUCT_ORIGINS['wildheidelbeeren'] = PRODUCT_ORIGINS['echte-heidelbeere-ganz'];
 PRODUCT_ORIGINS['gefriergetrocknete-sauerkirsche'] = PRODUCT_ORIGINS['sauerkirsche-ganz'];
+PRODUCT_ORIGINS['sauerkirsche-haelften'] = PRODUCT_ORIGINS['sauerkirsche-ganz'];
+PRODUCT_ORIGINS['sauerkirschen-ganz'] = PRODUCT_ORIGINS['sauerkirsche-ganz'];
+PRODUCT_ORIGINS['sauerkirschgranulat'] = PRODUCT_ORIGINS['sauerkirsche-granulat'];
+PRODUCT_ORIGINS['sauerkirschen-granulat'] = PRODUCT_ORIGINS['sauerkirsche-granulat'];
+PRODUCT_ORIGINS['sauerkirschpulver'] = PRODUCT_ORIGINS['sauerkirsche-pulver'];
+PRODUCT_ORIGINS['sauerkirschen-pulver'] = PRODUCT_ORIGINS['sauerkirsche-pulver'];
 PRODUCT_ORIGINS['gefriergetrocknete-brombeere'] = PRODUCT_ORIGINS['brombeere-ganz'];
+PRODUCT_ORIGINS['brombeeren-ganz'] = PRODUCT_ORIGINS['brombeere-ganz'];
+PRODUCT_ORIGINS['brombeere-stuecke'] = PRODUCT_ORIGINS['brombeere-ganz'];
+PRODUCT_ORIGINS['brombeergranulat'] = PRODUCT_ORIGINS['brombeere-granulat'];
+PRODUCT_ORIGINS['brombeeren-granulat'] = PRODUCT_ORIGINS['brombeere-granulat'];
+PRODUCT_ORIGINS['brombeerpulver'] = PRODUCT_ORIGINS['brombeere-pulver'];
+PRODUCT_ORIGINS['brombeeren-pulver'] = PRODUCT_ORIGINS['brombeere-pulver'];
 PRODUCT_ORIGINS['gefriergetrocknete-schwarze-johannisbeere'] = PRODUCT_ORIGINS['schwarze-johannisbeere-ganz'];
+PRODUCT_ORIGINS['schwarze-johannisbeere-granulat'] = PRODUCT_ORIGINS['schwarze-johannisbeere-ganz'];
+PRODUCT_ORIGINS['johannisbeere-ganz'] = PRODUCT_ORIGINS['schwarze-johannisbeere-ganz'];
+PRODUCT_ORIGINS['johannisbeeren-ganz'] = PRODUCT_ORIGINS['schwarze-johannisbeere-ganz'];
+PRODUCT_ORIGINS['johannisbeerpulver'] = PRODUCT_ORIGINS['schwarze-johannisbeere-pulver'];
+PRODUCT_ORIGINS['cassis-pulver'] = PRODUCT_ORIGINS['schwarze-johannisbeere-pulver'];
 PRODUCT_ORIGINS['gefriergetrockneter-apfel'] = PRODUCT_ORIGINS['apfel-gewuerfelt'];
+PRODUCT_ORIGINS['apfel-gewurfelt'] = PRODUCT_ORIGINS['apfel-gewuerfelt'];
+PRODUCT_ORIGINS['apfel-Gewurfelt'] = PRODUCT_ORIGINS['apfel-gewuerfelt'];
+PRODUCT_ORIGINS['apfel-ganz'] = PRODUCT_ORIGINS['apfel-gewuerfelt'];
+PRODUCT_ORIGINS['apfelscheiben-ganz'] = PRODUCT_ORIGINS['apfel-gewuerfelt'];
+PRODUCT_ORIGINS['apfel-scheiben'] = PRODUCT_ORIGINS['apfel-gewuerfelt'];
+PRODUCT_ORIGINS['apfel-schnitze'] = PRODUCT_ORIGINS['apfel-gewuerfelt'];
+PRODUCT_ORIGINS['apfel-stuecke'] = PRODUCT_ORIGINS['apfel-gewuerfelt'];
+PRODUCT_ORIGINS['apfelgranulat'] = PRODUCT_ORIGINS['apfel-granulat'];
+PRODUCT_ORIGINS['apfelpulver'] = PRODUCT_ORIGINS['apfel-pulver'];
 PRODUCT_ORIGINS['gefriergetrocknete-zwetschgen'] = PRODUCT_ORIGINS['zwetschgen-schnitze'];
+PRODUCT_ORIGINS['zwetschge-schnitze'] = PRODUCT_ORIGINS['zwetschgen-schnitze'];
+PRODUCT_ORIGINS['zwetschgen-ganz'] = PRODUCT_ORIGINS['zwetschgen-schnitze'];
+PRODUCT_ORIGINS['zwetschge-ganz'] = PRODUCT_ORIGINS['zwetschgen-schnitze'];
+PRODUCT_ORIGINS['zwetschge-granulat'] = PRODUCT_ORIGINS['zwetschgen-granulat'];
+PRODUCT_ORIGINS['zwetschgengranulat'] = PRODUCT_ORIGINS['zwetschgen-granulat'];
+PRODUCT_ORIGINS['zwetschge-pulver'] = PRODUCT_ORIGINS['zwetschgen-pulver'];
+PRODUCT_ORIGINS['zwetschgenpulver'] = PRODUCT_ORIGINS['zwetschgen-pulver'];
+PRODUCT_ORIGINS['pflaume-schnitze'] = PRODUCT_ORIGINS['zwetschgen-schnitze'];
 PRODUCT_ORIGINS['gefriergetrocknete-aprikose'] = PRODUCT_ORIGINS['aprikose-schnitze'];
+PRODUCT_ORIGINS['aprikosen-ganz'] = PRODUCT_ORIGINS['aprikose-schnitze'];
+PRODUCT_ORIGINS['aprikose-ganz'] = PRODUCT_ORIGINS['aprikose-schnitze'];
+PRODUCT_ORIGINS['aprikose-haelften'] = PRODUCT_ORIGINS['aprikose-schnitze'];
+PRODUCT_ORIGINS['aprikose-stuecke'] = PRODUCT_ORIGINS['aprikose-schnitze'];
+PRODUCT_ORIGINS['aprikosengranulat'] = PRODUCT_ORIGINS['aprikose-granulat'];
+PRODUCT_ORIGINS['aprikosen-granulat'] = PRODUCT_ORIGINS['aprikose-granulat'];
+PRODUCT_ORIGINS['aprikosenpulver'] = PRODUCT_ORIGINS['aprikose-pulver'];
+PRODUCT_ORIGINS['aprikosen-pulver'] = PRODUCT_ORIGINS['aprikose-pulver'];
 PRODUCT_ORIGINS['gefriergetrocknete-mango'] = PRODUCT_ORIGINS['mango-wuerfel'];
 PRODUCT_ORIGINS['gefriergetrocknete-banane'] = PRODUCT_ORIGINS['banane-scheiben'];
+PRODUCT_ORIGINS['bananen-ganz'] = PRODUCT_ORIGINS['banane-scheiben'];
+PRODUCT_ORIGINS['banane-ganz'] = PRODUCT_ORIGINS['banane-scheiben'];
+PRODUCT_ORIGINS['banane-stuecke'] = PRODUCT_ORIGINS['banane-scheiben'];
+PRODUCT_ORIGINS['bananenpulver'] = PRODUCT_ORIGINS['banane-pulver'];
+PRODUCT_ORIGINS['bananen-pulver'] = PRODUCT_ORIGINS['banane-pulver'];
+PRODUCT_ORIGINS['bananengranulat'] = PRODUCT_ORIGINS['banane-granulat'];
 PRODUCT_ORIGINS['gefriergetrocknete-maracuja'] = PRODUCT_ORIGINS['maracuja-granulat'];
 PRODUCT_ORIGINS['gefriergetrocknete-ananas'] = PRODUCT_ORIGINS['ananas-granulat'];
 PRODUCT_ORIGINS['gefriergetrocknete-orange'] = PRODUCT_ORIGINS['orange-pulver'];
+PRODUCT_ORIGINS['orange-scheiben'] = PRODUCT_ORIGINS['orange-pulver'];
+PRODUCT_ORIGINS['orange-stuecke'] = PRODUCT_ORIGINS['orange-pulver'];
+PRODUCT_ORIGINS['orange-granulat'] = PRODUCT_ORIGINS['orange-pulver'];
+PRODUCT_ORIGINS['orangenpulver'] = PRODUCT_ORIGINS['orange-pulver'];
 PRODUCT_ORIGINS['gefriergetrocknete-zitrone'] = PRODUCT_ORIGINS['zitrone-pulver'];
+PRODUCT_ORIGINS['zitrone-scheiben'] = PRODUCT_ORIGINS['zitrone-pulver'];
+PRODUCT_ORIGINS['zitrone-stuecke'] = PRODUCT_ORIGINS['zitrone-pulver'];
+PRODUCT_ORIGINS['zitrone-granulat'] = PRODUCT_ORIGINS['zitrone-pulver'];
+PRODUCT_ORIGINS['zitronenpulver'] = PRODUCT_ORIGINS['zitrone-pulver'];
 
 // Helper to look up product origin strictly by slug, with robust fallback
 export function getProductOrigin(slug: string, fallbackCountry?: string | null): ProductOriginData {
@@ -1499,11 +1681,113 @@ export function getProductOrigin(slug: string, fallbackCountry?: string | null):
     return PRODUCT_ORIGINS[slug];
   }
 
-  // Check prefix or partial match
   const clean = slug.toLowerCase();
+  if (PRODUCT_ORIGINS[clean]) {
+    return PRODUCT_ORIGINS[clean];
+  }
+
+  // Dedicated match for any apple variant/slug (Scheiben, Schnitze, Stücke, Granulat, Pulver)
+  if (clean.includes('apfel') || clean.includes('äpfel')) {
+    if (clean.includes('granulat')) return PRODUCT_ORIGINS['apfel-granulat'];
+    if (clean.includes('pulver')) return PRODUCT_ORIGINS['apfel-pulver'];
+    return PRODUCT_ORIGINS['apfel-gewuerfelt'];
+  }
+
+  // Dedicated match for stone fruits & Serbian berries (Aprikose, Zwetschge, Sauerkirsche, Brombeere, Johannisbeere)
+  if (clean.includes('aprikos')) {
+    if (clean.includes('granulat')) return PRODUCT_ORIGINS['aprikose-granulat'];
+    if (clean.includes('pulver')) return PRODUCT_ORIGINS['aprikose-pulver'];
+    return PRODUCT_ORIGINS['aprikose-schnitze'];
+  }
+  if (clean.includes('zwetschg') || clean.includes('pflaum')) {
+    if (clean.includes('granulat')) return PRODUCT_ORIGINS['zwetschgen-granulat'];
+    if (clean.includes('pulver')) return PRODUCT_ORIGINS['zwetschgen-pulver'];
+    return PRODUCT_ORIGINS['zwetschgen-schnitze'];
+  }
+  if (clean.includes('sauerkirsch') || clean.includes('kirsch')) {
+    if (clean.includes('granulat')) return PRODUCT_ORIGINS['sauerkirsche-granulat'];
+    if (clean.includes('pulver')) return PRODUCT_ORIGINS['sauerkirsche-pulver'];
+    return PRODUCT_ORIGINS['sauerkirsche-ganz'];
+  }
+  if (clean.includes('brombeer')) {
+    if (clean.includes('granulat')) return PRODUCT_ORIGINS['brombeere-granulat'];
+    if (clean.includes('pulver')) return PRODUCT_ORIGINS['brombeere-pulver'];
+    return PRODUCT_ORIGINS['brombeere-ganz'];
+  }
+  if (clean.includes('johannisbeer')) {
+    if (clean.includes('pulver')) return PRODUCT_ORIGINS['schwarze-johannisbeere-pulver'];
+    return PRODUCT_ORIGINS['schwarze-johannisbeere-ganz'];
+  }
+
+  // Dedicated match for any raspberry variant/slug (non-chocolate)
+  if (
+    clean.includes('himbeer') &&
+    !clean.includes('schoko') &&
+    !clean.includes('cokolad')
+  ) {
+    if (clean.includes('granulat') || clean.includes('griess')) {
+      return PRODUCT_ORIGINS['himbeergranulat'];
+    }
+    if (clean.includes('pulver')) {
+      return PRODUCT_ORIGINS['himbeerpulver'];
+    }
+    return PRODUCT_ORIGINS['himbeeren-ganz'];
+  }
+  // Dedicated match for any strawberry variant/slug (non-chocolate)
+  if (
+    clean.includes('erdbeer') &&
+    !clean.includes('schoko') &&
+    !clean.includes('cokolad')
+  ) {
+    if (clean.includes('granulat')) return PRODUCT_ORIGINS['erdbeergranulat'];
+    if (clean.includes('pulver')) return PRODUCT_ORIGINS['erdbeerpulver'];
+    return PRODUCT_ORIGINS['erdbeeren-ganz'];
+  }
+  // Dedicated match for any orange, lemon, banana, or blueberry variant/slug
+  if (clean.includes('heidelbeer') || clean.includes('blaubeer')) {
+    if (clean.includes('pulver')) return PRODUCT_ORIGINS['echte-heidelbeere-pulver'];
+    return PRODUCT_ORIGINS['echte-heidelbeere-ganz'];
+  }
+  if (clean.includes('banan')) {
+    if (clean.includes('granulat')) return PRODUCT_ORIGINS['banane-granulat'];
+    if (clean.includes('pulver')) return PRODUCT_ORIGINS['banane-pulver'];
+    return PRODUCT_ORIGINS['banane-scheiben'];
+  }
+  if (clean.includes('orange')) {
+    return PRODUCT_ORIGINS['orange-pulver'];
+  }
+  if (clean.includes('zitrone')) {
+    return PRODUCT_ORIGINS['zitrone-pulver'];
+  }
+
+  // Check prefix or partial match
   for (const [key, val] of Object.entries(PRODUCT_ORIGINS)) {
-    if (clean.includes(key) || key.includes(clean)) {
+    if (clean.includes(key.toLowerCase()) || key.toLowerCase().includes(clean)) {
       return val;
+    }
+  }
+
+  // Fallback by country profile when fallbackCountry is specified
+  if (fallbackCountry) {
+    const resolvedKey = resolveCountryKey(fallbackCountry);
+    const profile = COUNTRY_PROFILES[resolvedKey];
+    if (profile && resolvedKey !== 'Schweiz') {
+      return {
+        country: profile.label,
+        countryCode: profile.code,
+        flag: profile.flag,
+        region: profile.region,
+        harvestTime: profile.harvestSeason,
+        harvestSeason: profile.harvestSeason,
+        harvestMethod: profile.harvestMethod,
+        transportMethod: profile.transportMethod,
+        climateInfo: profile.climateInfo,
+        coordinates: [profile.lat, profile.lng],
+        gps: [profile.lat, profile.lng],
+        zoomLevel: profile.zoomLevel,
+        description: `100% naturbelassene Früchte aus ${profile.label}.`,
+        funFacts: profile.funFacts,
+      };
     }
   }
 
@@ -1524,7 +1808,7 @@ export function getProductOrigin(slug: string, fallbackCountry?: string | null):
     description: '100% naturbelassene Früchte aus transparenter Schweizer Herkunft.',
     funFacts: [
       'Gefriertrocknung bewahrt über 95% aller natürlichen Vitamine und Nährstoffe.',
-      'Frei von künstlichen Aromen, Konservierungsstoffen oder zugesetztem Zucker.',
+      'Frei von künstlichen Aromen, Konservierungsstoffen oder zugesetzem Zucker.',
     ],
   };
 }
@@ -1534,10 +1818,53 @@ export function getProductDisplayOrigin(product: {
   name_de?: string;
   origin_country?: string | null;
 }): { country: string; flag: string } {
-  const origin = PRODUCT_ORIGINS[product.slug] || getProductOrigin(product.slug, product.origin_country);
+  const lowerName = (product.name_de || '').toLowerCase();
+  const origin =
+    PRODUCT_ORIGINS[product.slug] ||
+    PRODUCT_ORIGINS[product.slug.toLowerCase()] ||
+    (lowerName.includes('himbeer') &&
+    !lowerName.includes('schoko') &&
+    !lowerName.includes('cokolad')
+      ? (product.slug.toLowerCase().includes('granulat') ||
+        product.slug.toLowerCase().includes('griess')
+          ? PRODUCT_ORIGINS['himbeergranulat']
+          : product.slug.toLowerCase().includes('pulver')
+          ? PRODUCT_ORIGINS['himbeerpulver']
+          : PRODUCT_ORIGINS['himbeeren-ganz'])
+      : lowerName.includes('erdbeer') &&
+    !lowerName.includes('schoko') &&
+    !lowerName.includes('cokolad')
+      ? (product.slug.toLowerCase().includes('granulat')
+          ? PRODUCT_ORIGINS['erdbeergranulat']
+          : product.slug.toLowerCase().includes('pulver')
+          ? PRODUCT_ORIGINS['erdbeerpulver']
+          : PRODUCT_ORIGINS['erdbeeren-ganz'])
+      : lowerName.includes('aprikos')
+      ? PRODUCT_ORIGINS['aprikose-schnitze']
+      : lowerName.includes('zwetschg') || lowerName.includes('pflaum')
+      ? PRODUCT_ORIGINS['zwetschgen-schnitze']
+      : lowerName.includes('sauerkirsch') || lowerName.includes('kirsch')
+      ? PRODUCT_ORIGINS['sauerkirsche-ganz']
+      : lowerName.includes('brombeer')
+      ? PRODUCT_ORIGINS['brombeere-ganz']
+      : lowerName.includes('johannisbeer')
+      ? PRODUCT_ORIGINS['schwarze-johannisbeere-ganz']
+      : lowerName.includes('heidelbeer') || lowerName.includes('blaubeer')
+      ? (product.slug.toLowerCase().includes('pulver')
+          ? PRODUCT_ORIGINS['echte-heidelbeere-pulver']
+          : PRODUCT_ORIGINS['echte-heidelbeere-ganz'])
+      : lowerName.includes('apfel') || lowerName.includes('äpfel')
+      ? PRODUCT_ORIGINS['apfel-gewuerfelt']
+      : lowerName.includes('banan')
+      ? PRODUCT_ORIGINS['banane-scheiben']
+      : lowerName.includes('orange')
+      ? PRODUCT_ORIGINS['orange-pulver']
+      : lowerName.includes('zitrone')
+      ? PRODUCT_ORIGINS['zitrone-pulver']
+      : getProductOrigin(product.slug, product.origin_country));
   return {
     country: origin.country,
-    flag: origin.flag || (origin.countryCode === 'RS' ? '🇷🇸' : origin.countryCode === 'CH' ? '🇨🇭' : origin.countryCode === 'SE' ? '🇸🇪' : origin.countryCode === 'PE' ? '🇵🇪' : origin.countryCode === 'EC' ? '🇪🇨' : origin.countryCode === 'ES' ? '🇪🇸' : origin.countryCode === 'CR' ? '🇨🇷' : '🇨🇭'),
+    flag: origin.flag || (origin.countryCode === 'RS' ? '🇷🇸' : origin.countryCode === 'CH' ? '🇨🇭' : origin.countryCode === 'GT' ? '🇬🇹' : origin.countryCode === 'PE' ? '🇵🇪' : origin.countryCode === 'EC' ? '🇪🇨' : origin.countryCode === 'TR' ? '🇹🇷' : origin.countryCode === 'CR' ? '🇨🇷' : '🇨🇭'),
   };
 }
 
@@ -1545,14 +1872,13 @@ export type ProductOriginInfo = ProductOriginData;
 
 export const countryCoords: Record<string, { lat: number; lng: number; code: string; label: string }> = {
   'Schweiz': { lat: 46.8182, lng: 8.2275, code: 'CH', label: 'Schweiz' },
-  'Serbien': { lat: 44.5305, lng: 19.2253, code: 'RS', label: 'Serbien' },
-  'Serbia': { lat: 44.5305, lng: 19.2253, code: 'RS', label: 'Serbien' },
-  'Schweden': { lat: 63.8258, lng: 20.2630, code: 'SE', label: 'Schweden' },
-  'Sweden': { lat: 63.8258, lng: 20.2630, code: 'SE', label: 'Schweden' },
-  'Polen': { lat: 51.4026, lng: 16.1963, code: 'PL', label: 'Polen' },
+  'Serbien': { lat: 44.0165, lng: 21.0059, code: 'RS', label: 'Serbien' },
+  'Serbia': { lat: 44.0165, lng: 21.0059, code: 'RS', label: 'Serbien' },
   'Peru': { lat: -9.19, lng: -75.0152, code: 'PE', label: 'Peru' },
   'Ecuador': { lat: -1.8312, lng: -78.1834, code: 'EC', label: 'Ecuador' },
-  'Spanien': { lat: 40.4637, lng: -3.7492, code: 'ES', label: 'Spanien' },
+  'Guatemala': { lat: 15.7835, lng: -90.2308, code: 'GT', label: 'Guatemala' },
+  'Türkei': { lat: 36.8969, lng: 30.7133, code: 'TR', label: 'Türkei' },
+  'Turkey': { lat: 36.8969, lng: 30.7133, code: 'TR', label: 'Türkei' },
   'Costa Rica': { lat: 9.7489, lng: -83.7534, code: 'CR', label: 'Costa Rica' },
 };
 
@@ -1567,11 +1893,10 @@ export function resolveCountryKey(rawCountry?: string | null): string {
   const upper = clean.toUpperCase();
   if (upper === 'CH') return 'Schweiz';
   if (upper === 'RS') return 'Serbien';
-  if (upper === 'SE') return 'Schweden';
-  if (upper === 'PL') return 'Polen';
   if (upper === 'PE') return 'Peru';
   if (upper === 'EC') return 'Ecuador';
-  if (upper === 'ES') return 'Spanien';
+  if (upper === 'GT') return 'Guatemala';
+  if (upper === 'TR') return 'Türkei';
   if (upper === 'CR') return 'Costa Rica';
 
   const lower = clean.toLowerCase();
@@ -1581,20 +1906,17 @@ export function resolveCountryKey(rawCountry?: string | null): string {
   if (lower.includes('serb')) {
     return 'Serbien';
   }
-  if (lower.includes('schwed') || lower.includes('swed')) {
-    return 'Schweden';
-  }
-  if (lower.includes('pol')) {
-    return 'Polen';
-  }
   if (lower.includes('peru')) {
     return 'Peru';
   }
   if (lower.includes('ecuador')) {
     return 'Ecuador';
   }
-  if (lower.includes('spanien') || lower.includes('spain')) {
-    return 'Spanien';
+  if (lower.includes('guatemal')) {
+    return 'Guatemala';
+  }
+  if (lower.includes('türkei') || lower.includes('tuerkei') || lower.includes('turk')) {
+    return 'Türkei';
   }
   if (lower.includes('costa rica')) {
     return 'Costa Rica';
@@ -1638,36 +1960,36 @@ export const COUNTRY_PROFILES: Record<string, CountryProfileData> = {
     ],
   },
   'Serbien': {
-    lat: 44.5305,
-    lng: 19.2253,
+    lat: 44.0165,
+    lng: 21.0059,
     code: 'RS',
     label: 'Serbien',
     flag: '🇷🇸',
-    zoomLevel: 5,
-    region: 'Arilje / Loznica',
+    zoomLevel: 6,
+    region: 'Fruchtbare Anbauregionen Serbiens',
     harvestMethod: 'Sorgfältige Handernte bei voller Reife',
     harvestSeason: 'Mai bis Juli',
-    transportMethod: 'Klimaschonender Frischetransport zur Veredelung in der Schweiz',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
     climateInfo: 'Sonnige Hanglagen und warmes Kontinentalklima für intensiv-aromatische Früchte.',
     funFacts: [
-      'Die Region Arilje in Westserbien gilt international als weltweite Hochburg für edelste Himbeeren und Beeren.',
+      'Serbien gilt international als traditionsreiche Hochburg für hocharomatische Erdbeeren, Himbeeren und Waldbeeren.',
       'Schonende Gefriertrocknung bewahrt über 95% der Vitamine und das volle natürliche Aroma.',
     ],
   },
   'Serbia': {
-    lat: 44.5305,
-    lng: 19.2253,
+    lat: 44.0165,
+    lng: 21.0059,
     code: 'RS',
     label: 'Serbien',
     flag: '🇷🇸',
-    zoomLevel: 5,
-    region: 'Arilje / Loznica',
+    zoomLevel: 6,
+    region: 'Fruchtbare Anbauregionen Serbiens',
     harvestMethod: 'Sorgfältige Handernte bei voller Reife',
     harvestSeason: 'Mai bis Juli',
-    transportMethod: 'Klimaschonender Frischetransport zur Veredelung in der Schweiz',
+    transportMethod: 'Klimaschonender Direkttransport aus Serbien in die Schweiz',
     climateInfo: 'Sonnige Hanglagen und warmes Kontinentalklima für intensiv-aromatische Früchte.',
     funFacts: [
-      'Die Region Arilje in Westserbien gilt international als weltweite Hochburg für edelste Himbeeren und Beeren.',
+      'Serbien gilt international als traditionsreiche Hochburg für hocharomatische Erdbeeren, Himbeeren und Waldbeeren.',
       'Schonende Gefriertrocknung bewahrt über 95% der Vitamine und das volle natürliche Aroma.',
     ],
   },
@@ -1702,27 +2024,47 @@ export const COUNTRY_PROFILES: Record<string, CountryProfileData> = {
     transportMethod: 'Zertifizierter, klimabewusster Seetransport',
     climateInfo: 'Mineralreiche vulkanische Schwemmlandböden und ganzjährig äquatoriales Tropenklima.',
     funFacts: [
-      'Ecuador ist weltberühmt für aromatischste Baby-Bananen und Passionsfrüchte mit natürlicher Süsse.',
-      '100% sortenrein gefriertrocknet ohne Frittieren, ohne Palmöl und ohne jegliche Konservierungsstoffe.',
-      'Hervorragender natürlicher Lieferant für Kalium, Magnesium und Vitamin B6.',
+      'Ecuador ist weltberühmt für aromatischste Passionsfrüchte mit feiner Säure.',
+      '100% sortenrein gefriergetrocknet ohne jegliche Konservierungsstoffe.',
+      'Hervorragender natürlicher Lieferant für Vitamin A, Kalium und Pflanzenstoffe.',
     ],
   },
-  'Spanien': {
-    lat: 40.4637,
-    lng: -3.7492,
-    code: 'ES',
-    label: 'Spanien',
-    flag: '🇪🇸',
+  'Guatemala': {
+    lat: 15.7835,
+    lng: -90.2308,
+    code: 'GT',
+    label: 'Guatemala',
+    flag: '🇬🇹',
     zoomLevel: 6,
-    region: 'Valencia & Murcia',
-    harvestMethod: 'Traditionelle Handsammlung bei voller Fruchtreife',
-    harvestSeason: 'November bis Mai',
-    transportMethod: 'Direkter europäischer Landtransport',
-    climateInfo: 'Mediterranes Sonnenklima mit über 300 Sonnentagen pro Jahr an der spanischen Mittelmeerküste.',
+    region: 'Tropische Tiefland- und Küstenregionen',
+    harvestMethod: 'Sonnengereift geerntet bei optimalem Zuckergehalt für ein intensives, süsses Aroma',
+    harvestSeason: 'Ganzjährig sonnengereift',
+    transportMethod: 'Klimaschonender Direkttransport aus Guatemala in die Schweiz',
+    climateInfo: 'Mineralstoffreiche Vulkanböden und ganzjährig warmes, tropisches Klima',
     funFacts: [
-      'Die sonnigen Haine Valencias zählen zum traditionsreichsten Zitrusanbaugebiet Europas.',
-      'Reich an ätherischen Ölen und natürlichem Vitamin C in Schale und Fruchtfleisch.',
-      'Schonend vermahlen zu naturreinem Fruchtpulver für Dressings, Shakes und Backkreationen.',
+      'Region: Tropische Tiefland- und Küstenregionen Guatemalas',
+      'Boden & Klima: Mineralstoffreiche Vulkanböden und ganzjährig warmes, tropisches Klima',
+      'Ernte: Sonnengereift geerntet bei optimalem Zuckergehalt für ein intensives, süsses Aroma',
+      'Qualität: 100 % naturbelassen, knusprig gefriergetrocknet und reich an natürlicher Energie',
+    ],
+  },
+  'Türkei': {
+    lat: 36.8969,
+    lng: 30.7133,
+    code: 'TR',
+    label: 'Türkei',
+    flag: '🇹🇷',
+    zoomLevel: 6,
+    region: 'Türkische Mittelmeer- & Ägäisküste',
+    harvestMethod: 'Baumgereift, handverlesen und direkt nach der Ernte schonend gefriergetrocknet',
+    harvestSeason: 'Oktober bis Mai',
+    transportMethod: 'Klimaschonender Direkttransport aus der Türkei in die Schweiz',
+    climateInfo: 'Bis zu 300 Sonnentage pro Jahr für ein intensives, vollmundiges Zitrusaroma',
+    funFacts: [
+      'Region: Türkische Mittelmeer- & Ägäisküste (traditionelle Zitrusgärten)',
+      'Klima: Bis zu 300 Sonnentage pro Jahr für ein intensives, vollmundiges Zitrusaroma',
+      'Ernte: Baumgereift, handverlesen und direkt nach der Ernte schonend gefriergetrocknet',
+      'Qualität: 100 % naturbelassen, aromatisch und reich an natürlichem Vitamin C',
     ],
   },
   'Costa Rica': {

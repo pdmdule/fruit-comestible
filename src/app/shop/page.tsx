@@ -11,18 +11,18 @@ import { Sparkles, Truck, ShieldCheck, ArrowLeft } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Unser Fruchtsortiment | Fruit Comestible Suisse',
+  title: 'Unser Fruchtsortiment – Gefriergetrocknete Früchte kaufen',
   description:
-    'Entdecken Sie unsere 100% naturbelassenen, gefriergetrockneten Früchte. Ohne Zuckerzusatz, reich an Vitaminen, direkt aus der Schweiz versendet.',
+    'Entdecken Sie unsere 100 % naturbelassenen, gefriergetrockneten Früchte in Premium-Qualität. Reich an Vitaminen, direkt aus der Schweiz versendet.',
   alternates: {
-    canonical: 'https://fruit-comestible.ch/shop',
+    canonical: 'https://www.fruit-comestible.ch/shop',
   },
   openGraph: {
-    title: 'Unser Fruchtsortiment | Fruit Comestible Suisse',
+    title: 'Unser Fruchtsortiment | Fruit-Comestible Schweiz',
     description:
-      'Entdecken Sie unsere 100% naturbelassenen, gefriergetrockneten Früchte. Ohne Zuckerzusatz, reich an Vitaminen, direkt aus der Schweiz versendet.',
-    url: 'https://fruit-comestible.ch/shop',
-    siteName: 'fruit-Comestible Schweiz',
+      'Entdecken Sie unsere 100 % naturbelassenen, gefriergetrockneten Früchte in Premium-Qualität, direkt aus der Schweiz versendet.',
+    url: 'https://www.fruit-comestible.ch/shop',
+    siteName: 'Fruit-Comestible',
     locale: 'de_CH',
     type: 'website',
   },
@@ -79,7 +79,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           <Breadcrumbs customItems={[{ label: 'Shop' }]} />
           <div className="flex items-center gap-2 text-emerald-800 font-medium shrink-0">
             <Truck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Kostenloser Schweizer Post Versand ab CHF 80.–</span>
+            <span>Kostenloser Schweizer Post Versand ab CHF 80.00–</span>
           </div>
         </div>
       </div>
@@ -134,7 +134,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                 Bequeme & sichere Bezahlung
               </h4>
               <p className="text-xs text-stone-700 leading-relaxed">
-                TWINT, Kreditkarten und Schweizer QR-Rechnung mit 30 Tagen Zahlungsziel.
+                TWINT, Kreditkarten (Visa, Mastercard), Apple Pay und Google Pay.
               </p>
             </div>
           </div>

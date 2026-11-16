@@ -145,10 +145,8 @@ export default function OriginMapClient({
                 Qualitätskontrolle & Veredelung in der Schweiz
               </div>
             </div>
-          `,
-            { closeButton: false }
-          )
-          .openPopup();
+          `
+          );
 
         // 3. Animated dashed transport polyline to Switzerland
         L.polyline([startCoordinates, swissGps], {
@@ -196,10 +194,8 @@ export default function OriginMapClient({
               <div style="font-size: 11px; color: #1c1917; font-weight: 700;">${origin.region}</div>
               <div style="font-size: 10px; color: #57534e; margin-top: 2px;">${origin.harvestMethod || 'Sorgfältige Handernte bei voller Reife'}</div>
             </div>
-          `,
-            { closeButton: false }
-          )
-          .openPopup();
+          `
+          );
 
         map.setView(startCoordinates, origin.zoomLevel || 7.5, { animate: false });
       }

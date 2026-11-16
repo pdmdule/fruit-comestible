@@ -67,7 +67,7 @@ interface QuizOption<T> {
 const PURPOSE_OPTIONS: QuizOption<PurposeType>[] = [
   {
     id: 'muesli',
-    title: 'Müsli, Porridge & Frühstück',
+    title: 'Müesli, Porridge & Frühstück',
     description: 'Knuspriges Topping für einen gesunden und aromatischen Start in den Tag.',
     icon: Coffee,
     tag: 'Frühstücks-Power',

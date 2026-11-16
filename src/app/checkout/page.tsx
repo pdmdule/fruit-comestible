@@ -9,15 +9,20 @@ import { supabase } from '@/lib/supabase';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { getProductDisplayImage } from '@/lib/utils';
 import {
+  TwintBadge,
+  VisaBadge,
+  MastercardBadge,
+  ApplePayBadge,
+  GooglePayBadge,
+} from '@/components/PaymentBadges';
+import {
   ShieldCheck,
   Truck,
   CheckCircle2,
   ArrowLeft,
   Smartphone,
   CreditCard,
-  FileText,
   AlertCircle,
-  QrCode,
   Lock,
   Sparkles,
   Tag,
@@ -96,7 +101,7 @@ export default function CheckoutPage() {
     }
   }, [user, profile]);
 
-  const [paymentMethod, setPaymentMethod] = useState<'twint' | 'card' | 'bill'>('twint');
+  const [paymentMethod, setPaymentMethod] = useState<'twint' | 'card' | 'apple_pay' | 'google_pay'>('twint');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -371,18 +376,6 @@ export default function CheckoutPage() {
               <strong className="text-stone-800">{completedOrder.customer_email || formData.email}</strong> gesendet.
             </p>
           </div>
-
-          {paymentMethod === 'bill' && (
-            <div className="p-4 rounded-2xl bg-rose-50/70 border border-rose-200 text-left text-xs space-y-1">
-              <p className="font-bold text-rose-950 flex items-center gap-1.5">
-                <QrCode className="w-4 h-4 text-rose-700" />
-                Schweizer QR-Rechnung
-              </p>
-              <p className="text-rose-800">
-                Die QR-Rechnung mit 30 Tagen Zahlungsfrist liegt Ihrer Lieferung bei.
-              </p>
-            </div>
-          )}
 
           {/* Ordered Items Summary */}
           {completedOrder.items && Array.isArray(completedOrder.items) && completedOrder.items.length > 0 && (
@@ -767,20 +760,23 @@ export default function CheckoutPage() {
                       value="twint"
                       checked={paymentMethod === 'twint'}
                       onChange={() => setPaymentMethod('twint')}
-                      className="mt-1"
+                      className="mt-2"
                     />
                     <div className="flex-1">
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
                         <span className="font-bold text-sm text-stone-900 flex items-center gap-2">
                           <Smartphone className="w-4 h-4 text-emerald-600" />
                           TWINT
                         </span>
-                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                          Schweizer Favorit 🇨🇭
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                            Schweizer Favorit 🇨🇭
+                          </span>
+                          <TwintBadge />
+                        </div>
                       </div>
                       <p className="text-xs text-stone-500 mt-1">
-                        Sekundenschnell mit der TWINT App per QR-Code bezahlen.
+                        Sekundenschnell direkt mit Ihrer TWINT App bezahlen.
                       </p>
                     </div>
                   </label>
@@ -799,28 +795,29 @@ export default function CheckoutPage() {
                       value="card"
                       checked={paymentMethod === 'card'}
                       onChange={() => setPaymentMethod('card')}
-                      className="mt-1"
+                      className="mt-2"
                     />
                     <div className="flex-1">
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
                         <span className="font-bold text-sm text-stone-900 flex items-center gap-2">
                           <CreditCard className="w-4 h-4 text-blue-600" />
                           Kreditkarte / Debitkarte
                         </span>
-                        <span className="text-[11px] font-mono text-stone-400">
-                          Visa, Mastercard, AMEX
-                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <VisaBadge />
+                          <MastercardBadge />
+                        </div>
                       </div>
                       <p className="text-xs text-stone-500 mt-1">
-                        Sichere 256-Bit SSL-verschlüsselte Bezahlung.
+                        Sichere 256-Bit SSL-verschlüsselte Bezahlung mit Visa oder Mastercard.
                       </p>
                     </div>
                   </label>
 
-                  {/* Option 3: Kauf auf Rechnung (Swiss QR-Bill) */}
+                  {/* Option 3: Apple Pay */}
                   <label
                     className={`relative flex items-start gap-4 p-4 rounded-2xl border cursor-pointer transition ${
-                      paymentMethod === 'bill'
+                      paymentMethod === 'apple_pay'
                         ? 'border-stone-900 bg-stone-50 shadow-2xs'
                         : 'border-stone-200 hover:border-stone-300'
                     }`}
@@ -828,23 +825,49 @@ export default function CheckoutPage() {
                     <input
                       type="radio"
                       name="payment"
-                      value="bill"
-                      checked={paymentMethod === 'bill'}
-                      onChange={() => setPaymentMethod('bill')}
-                      className="mt-1"
+                      value="apple_pay"
+                      checked={paymentMethod === 'apple_pay'}
+                      onChange={() => setPaymentMethod('apple_pay')}
+                      className="mt-2"
                     />
                     <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-sm text-stone-900 flex items-center gap-2">
-                          <FileText className="w-4 h-4 text-stone-700" />
-                          Kauf auf Rechnung (QR-Rechnung)
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="font-bold text-sm text-stone-900">
+                          Apple Pay
                         </span>
-                        <span className="text-[11px] font-semibold text-stone-500">
-                          30 Tage Zahlungsfrist
-                        </span>
+                        <ApplePayBadge />
                       </div>
                       <p className="text-xs text-stone-500 mt-1">
-                        Zahlen Sie bequem nach Erhalt der Ware per Schweizer QR-Rechnung.
+                        Schnell und sicher bezahlen mit Touch ID, Face ID oder Apple Wallet.
+                      </p>
+                    </div>
+                  </label>
+
+                  {/* Option 4: Google Pay */}
+                  <label
+                    className={`relative flex items-start gap-4 p-4 rounded-2xl border cursor-pointer transition ${
+                      paymentMethod === 'google_pay'
+                        ? 'border-stone-900 bg-stone-50 shadow-2xs'
+                        : 'border-stone-200 hover:border-stone-300'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment"
+                      value="google_pay"
+                      checked={paymentMethod === 'google_pay'}
+                      onChange={() => setPaymentMethod('google_pay')}
+                      className="mt-2"
+                    />
+                    <div className="flex-1">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="font-bold text-sm text-stone-900">
+                          Google Pay
+                        </span>
+                        <GooglePayBadge />
+                      </div>
+                      <p className="text-xs text-stone-500 mt-1">
+                        Einfach und geschützt bezahlen über Ihr Google-Konto.
                       </p>
                     </div>
                   </label>

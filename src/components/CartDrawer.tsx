@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import { getProductDisplayImage } from '@/lib/utils';
+import { PaymentBadgesRow } from '@/components/PaymentBadges';
 import {
   X,
   Plus,
@@ -284,9 +285,10 @@ export default function CartDrawer() {
                 <ArrowRight className="w-4 h-4" />
               </Link>
 
-              <p className="text-center text-[11px] text-stone-400">
-                Sichere Schweizer Bezahlung mit TWINT, Karte oder QR-Rechnung.
+              <p className="text-center text-[11px] text-stone-500">
+                Sichere Schweizer Bezahlung mit TWINT, Karte, Apple Pay oder Google Pay.
               </p>
+              <PaymentBadgesRow className="justify-center pt-0.5" />
             </div>
           )}
         </div>

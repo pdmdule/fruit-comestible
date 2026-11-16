@@ -6,10 +6,13 @@ import {
   ShieldCheck,
   Heart,
   CheckCircle2,
-  Smartphone,
   CreditCard,
-  FileText,
 } from 'lucide-react';
+import {
+  TwintBadge,
+  ApplePayBadge,
+  GooglePayBadge,
+} from '@/components/PaymentBadges';
 
 export default function Footer() {
   return (
@@ -32,7 +35,7 @@ export default function Footer() {
               </div>
               <div>
                 <p className="font-bold text-white">Schweizer Post Versand</p>
-                <p className="text-white/80 text-xs">Klimaneutral & schnell (1–2 Tage)</p>
+                <p className="text-white/80 text-xs">Geliefert mit der Schweizerischen Post (2-3 Arbeitstage), klimaneutraler Versand</p>
               </div>
             </div>
 
@@ -41,7 +44,7 @@ export default function Footer() {
                 <CheckCircle2 className="w-4 h-4" />
               </div>
               <div>
-                <p className="font-bold text-white">100% Frucht & Vegan</p>
+                <p className="font-bold text-white">100% Frucht</p>
                 <p className="text-white/80 text-xs">Ohne Zuckerzusatz oder Chemie</p>
               </div>
             </div>
@@ -52,7 +55,7 @@ export default function Footer() {
               </div>
               <div>
                 <p className="font-bold text-white">Sicher & Zuverlässig</p>
-                <p className="text-white/80 text-xs">TWINT, Karte & QR-Rechnung</p>
+                <p className="text-white/80 text-xs">TWINT, Karte, Apple &amp; Google Pay</p>
               </div>
             </div>
           </div>
@@ -68,7 +71,7 @@ export default function Footer() {
               <div className="relative w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 shrink-0 transition-transform duration-300 group-hover:scale-105 bg-white/95 p-1 rounded-xl">
                 <Image
                   src="/logo.webp"
-                  alt="Fruit Comestible Logo"
+                  alt="fruit-comestible Logo"
                   fill
                   unoptimized
                   sizes="44px"
@@ -77,18 +80,16 @@ export default function Footer() {
               </div>
               <div className="flex flex-col">
                 <span className="font-black tracking-tight text-base text-white leading-none">
-                  FRUIT COMESTIBLE
+                 fruit-comestible
                 </span>
                 <span className="text-[9px] tracking-widest uppercase font-semibold text-white/75 mt-1">
-                  Suisse Naturelle • Since 2019
+                  Since 2019
                 </span>
               </div>
             </Link>
 
             <p className="text-xs sm:text-sm text-white/90 leading-relaxed max-w-sm">
-              Wir veredeln die reinsten Schweizer und europäischen Sommerbeeren
-              durch schonende Vakuum-Gefriertrocknung. Knusprig intensiv, voller
-              Vitamine und 100% naturbelassen – ohne künstliche Zusätze.
+              Ausgesuchte Früchte aus Serbien und Übersee – schonend gefriergetrocknet, geprüft und verpackt in der Schweiz.
             </p>
 
             <div className="pt-2 flex items-center gap-2 text-xs text-white/80">
@@ -127,14 +128,14 @@ export default function Footer() {
                   Über Gefriertrocknung
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   href="/#faq"
                   className="text-white/85 hover:text-white hover:underline transition"
                 >
                   Häufige Fragen (FAQ)
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link
                   href="/checkout"
@@ -147,52 +148,68 @@ export default function Footer() {
           </div>
 
           {/* Column 3: Legal info Switzerland (lg:col-span-3) */}
-          <div className="lg:col-span-3 space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-white">
-              Rechtliches & Schweiz
-            </h4>
-            <ul className="space-y-2 text-xs sm:text-sm">
-              <li>
-                <Link
-                  href="/agb#gerichtsstand"
-                  className="text-white/85 hover:text-white hover:underline transition"
+          <div className="lg:col-span-3 space-y-4">
+            <div className="space-y-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-white">
+                Rechtliches &amp; Schweiz
+              </h4>
+              <ul className="space-y-2 text-xs sm:text-sm">
+                <li>
+                  <Link
+                    href="/impressum"
+                    className="text-white/85 hover:text-white hover:underline transition"
+                  >
+                    Impressum
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/agb"
+                    className="text-white/85 hover:text-white hover:underline transition font-medium"
+                  >
+                    Allgemeine Geschäftsbedingungen (AGB)
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/datenschutz"
+                    className="text-white/85 hover:text-white hover:underline transition"
+                  >
+                    Datenschutzerklärung
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/agb#lieferung"
+                    className="text-white/85 hover:text-white hover:underline transition"
+                  >
+                    Versand- &amp; Lieferbedingungen
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/agb#retouren"
+                    className="text-white/85 hover:text-white hover:underline transition"
+                  >
+                    Rückgabe &amp; Widerruf
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div className="pt-3 border-t border-white/20 text-xs text-white/85 space-y-0.5">
+              <p className="font-semibold text-white">Fruit-Comestible • Lukas Pem</p>
+              <p>Sandackerstrasse 2, 8200 Schaffhausen, Schweiz</p>
+              <p>
+                <a
+                  href="mailto:info@fruit-comestible.ch"
+                  className="hover:text-white hover:underline"
                 >
-                  Impressum &amp; Rechtssitz (Schweiz)
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/agb"
-                  className="text-white/85 hover:text-white hover:underline transition font-medium"
-                >
-                  Allgemeine Geschäftsbedingungen (AGB)
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/agb#datenschutz"
-                  className="text-white/85 hover:text-white hover:underline transition"
-                >
-                  Datenschutzerklärung (DSG / DSGVO)
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/agb#lieferung"
-                  className="text-white/85 hover:text-white hover:underline transition"
-                >
-                  Versand- &amp; Lieferbedingungen
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/agb#retouren"
-                  className="text-white/85 hover:text-white hover:underline transition"
-                >
-                  Retouren &amp; Rücksendungen
-                </Link>
-              </li>
-            </ul>
+                  info@fruit-comestible.ch
+                </a>{' '}
+                &bull; www.fruit-comestible.ch
+              </p>
+            </div>
           </div>
 
           {/* Column 4: Payment Methods & Swiss Post (lg:col-span-3) */}
@@ -202,27 +219,23 @@ export default function Footer() {
             </h4>
             <div className="grid grid-cols-2 gap-2 text-xs">
               {/* TWINT */}
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white text-stone-900 border border-white/20 shadow-xs font-semibold">
-                <Smartphone className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>TWINT</span>
-              </div>
+              <TwintBadge className="w-full h-10 rounded-xl border-white/20 shadow-xs" />
 
               {/* Kreditkarte */}
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white text-stone-900 border border-white/20 shadow-xs font-semibold">
+              <div
+                className="inline-flex items-center justify-center gap-1.5 h-10 px-3 rounded-xl bg-white text-stone-900 border border-white/20 shadow-xs font-semibold"
+                title="Kreditkarte (Visa, Mastercard)"
+                aria-label="Kreditkarte"
+              >
                 <CreditCard className="w-4 h-4 text-blue-600 shrink-0" />
                 <span>Kreditkarte</span>
               </div>
 
-              {/* QR-Rechnung */}
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white text-stone-900 border border-white/20 shadow-xs font-semibold">
-                <FileText className="w-4 h-4 text-stone-700 shrink-0" />
-                <span>QR-Rechnung</span>
-              </div>
-
               {/* Apple Pay */}
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white text-stone-900 border border-white/20 shadow-xs font-semibold">
-                <span className="font-bold text-xs"> Pay</span>
-              </div>
+              <ApplePayBadge className="w-full h-10 rounded-xl border-white/20 shadow-xs" />
+
+              {/* Google Pay */}
+              <GooglePayBadge className="w-full h-10 rounded-xl border-white/20 shadow-xs" />
             </div>
 
             <div className="pt-2 border-t border-white/20">
@@ -244,7 +257,7 @@ export default function Footer() {
       <div className="border-t border-white/20 bg-black/15 py-6">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/85">
           <p>
-            © 2026 Fruit Comestible Suisse. Alle Rechte vorbehalten.
+            © 2026fruit-comestible Suisse. Alle Rechte vorbehalten.
           </p>
           <p className="font-medium text-white/95">
             Preise in CHF inkl. 2.6% Schweizer MwSt.

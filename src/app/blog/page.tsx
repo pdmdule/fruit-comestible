@@ -9,9 +9,21 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Magazin & Rezepte | Fruit Comestible Suisse',
+  title: 'Magazin & Rezepte mit gefriergetrockneten Früchten',
   description:
-    'Entdecken Sie kreative Rezepte, Clean Food Tipps und wissenswerte Fakten rund um die schonende Gefriertrocknung von Schweizer Sommerbeeren.',
+    'Entdecken Sie kreative Rezepte, Ernährungstipps und Wissenswertes rund um die schonende Gefriertrocknung von 100 % natürlichen Früchten.',
+  alternates: {
+    canonical: 'https://www.fruit-comestible.ch/blog',
+  },
+  openGraph: {
+    title: 'Magazin & Rezepte | Fruit-Comestible Schweiz',
+    description:
+      'Entdecken Sie kreative Rezepte und Wissen rund um gefriergetrocknete Früchte bei Fruit-Comestible Schweiz.',
+    url: 'https://www.fruit-comestible.ch/blog',
+    siteName: 'Fruit-Comestible',
+    locale: 'de_CH',
+    type: 'website',
+  },
 };
 
 export default async function BlogPage() {
@@ -40,7 +52,7 @@ export default async function BlogPage() {
         <div className="max-w-3xl space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 text-rose-700 text-xs font-bold border border-rose-200/60">
             <BookOpen className="w-3.5 h-3.5" />
-            <span>Fruit Comestible Magazin</span>
+            <span>fruit-comestible Magazin</span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-stone-900">
             Wissenswertes & Rezepte

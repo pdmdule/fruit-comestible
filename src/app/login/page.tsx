@@ -241,7 +241,7 @@ function LoginContent() {
           <div className="text-center mb-7 space-y-1.5">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 border border-rose-200/60 text-rose-700 text-xs font-bold mb-1">
               <Sparkles className="w-3.5 h-3.5 text-rose-600" />
-              <span>Fruit Comestible Kundenkonto</span>
+              <span>fruit-comestible Kundenkonto</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-stone-900">
               {showForgotPassword
@@ -523,7 +523,11 @@ function LoginContent() {
                   <p className="text-[11px] text-stone-400 leading-relaxed">
                     Mit deiner Registrierung akzeptierst du unsere{' '}
                     <Link href="/agb" className="underline hover:text-stone-700">
-                      AGB & Datenschutzbestimmungen
+                      AGB
+                    </Link>{' '}
+                    und{' '}
+                    <Link href="/datenschutz" className="underline hover:text-stone-700">
+                      Datenschutzbestimmungen
                     </Link>
                     .
                   </p>

@@ -2,6 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
+import {
+  isChocolateProduct,
+  hasStoneFruitPitNotice,
+  type ChocolateCheckTarget,
+} from '@/lib/productHelpers';
 
 export interface NutrientItem {
   name: string;
@@ -19,7 +24,7 @@ export interface NutrientItem {
 export type MacroItem = NutrientItem;
 
 export interface ProductNutritionChartProps {
-  product?: {
+  product?: ChocolateCheckTarget & {
     macro_distribution?: NutrientItem[] | any[];
     [key: string]: any;
   };
@@ -629,7 +634,26 @@ export default function ProductNutritionChart({
             ))}
           </div>
 
-          <p className="text-xs text-stone-400 pt-2 border-t border-stone-100">
+          {isChocolateProduct(product) ? (
+            <div className="mt-3 p-3.5 rounded-2xl bg-amber-50/90 border border-amber-200 text-xs text-amber-950 space-y-1">
+              <p className="font-bold uppercase tracking-wider text-[11px]">
+                Allergenhinweis
+              </p>
+              <p className="leading-relaxed">
+                Enthält Milch (Laktose) und Sojalecithin. Kann Spuren von Schalenfrüchten enthalten.
+              </p>
+            </div>
+          ) : (
+            <p className="text-xs text-stone-500 pt-2 border-t border-stone-100">
+              Allergene: Keine deklarationspflichtigen Allergene enthalten.
+            </p>
+          )}
+          {hasStoneFruitPitNotice(product) && (
+            <p className="text-xs text-stone-700 bg-amber-50/80 border border-amber-200/80 rounded-xl px-3.5 py-2.5 leading-relaxed">
+              <strong>Hinweis:</strong> Trotz sorgfältiger Verarbeitung und Qualitätskontrolle können bei entsteinten Früchten vereinzelt Fruchtsteine oder Steinfragmente im Produkt verbleiben.
+            </p>
+          )}
+          <p className="text-xs text-stone-400">
             * Natürliche Nährwertschwankungen bei reinen Naturprodukten vorbehalten.
           </p>
         </div>

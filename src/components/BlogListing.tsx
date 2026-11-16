@@ -217,7 +217,7 @@ export default function BlogListing({ posts }: BlogListingProps) {
                     <div className="w-6 h-6 rounded-full bg-stone-100 border border-stone-200 text-stone-600 flex items-center justify-center font-bold text-[10px]">
                       {post.author ? post.author[0] : 'F'}
                     </div>
-                    <span>Von {post.author || 'Fruit Comestible'}</span>
+                    <span>Von {post.author || 'fruit-comestible'}</span>
                   </div>
 
                   <Link
